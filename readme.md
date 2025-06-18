@@ -27,6 +27,14 @@ git clone git@github.com:neuroloops/dotfiles.git
 cd dotfiles
 ```
 
+## Init submodules
+
+```bash
+git submodule update --init --recursive
+```
+
+## Symlinks
+
 Then use GNU stow to create symlinks
 
 ```bash
