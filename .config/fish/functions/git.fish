@@ -43,3 +43,10 @@ function ghfinish --description 'Finish on the issue number found in the current
         echo "This directory is not a Git repository. Please navigate to a Git repository to use this command."
     end
 end
+
+function git-echo-diff
+    set first_commit (git rev-list --max-parents=0 HEAD)
+    git log $first_commit..HEAD --pretty=tformat: --numstat | awk '{ added += $1; removed += $2 } END {
+        printf "Insertions: %'\''d\nDeletions: %'\''d\nTotal changes: %'\''d\n", added, removed, added + removed
+    }'
+end
