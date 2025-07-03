@@ -10,10 +10,8 @@ alias fetch='git fetch'
 alias pull='git pull origin'
 alias push='git push origin'
 # alias stat='git status' # 'status' is protected name so using 'stat' instead
-alias merge-main="checkout main && git merge dev && git push && git checkout dev"
+alias git-deploy="checkout prod && git merge main && git push && git checkout main"
 # github
-
-alias release="checkout main && git merge dev && git push && git checkout dev"
 
 alias ghstart="gh issue develop $argv --checkout"
 # alias ghfinish='gh pr create --fill --body "Closes #issue_number" --base dev && gh pr merge -d -s'
