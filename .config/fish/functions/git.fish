@@ -10,7 +10,7 @@ alias fetch='git fetch'
 alias pull='git pull origin'
 alias push='git push origin'
 # alias stat='git status' # 'status' is protected name so using 'stat' instead
-alias git-deploy="checkout prod && git merge main && git push && git checkout main"
+alias git-deploy="git switch prod && git merge main && git push && git checkout main"
 # github
 
 alias ghstart="gh issue develop $argv --checkout"
@@ -39,6 +39,29 @@ function ghfinish --description 'Finish on the issue number found in the current
         end
     else
         echo "This directory is not a Git repository. Please navigate to a Git repository to use this command."
+    end
+end
+
+function gh_create_issues_from_file
+    set file $argv[1]
+    if test -z "$file"
+        set file "issues.txt"
+    end
+
+    if not test -f "$file"
+        echo "❌ File not found: $file"
+        return 1
+    end
+
+    echo "📤 Creating issues from $file..."
+
+    for line in (cat $file)
+        if test -z "$line"
+            continue
+        end
+        echo "➡️  Creating issue: $line"
+        gh issue create --title "$line" --body "Auto-created via gh CLI."
+        sleep 1
     end
 end
 

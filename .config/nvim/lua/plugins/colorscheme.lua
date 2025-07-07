@@ -17,7 +17,7 @@ return {
     config = function()
       require("kanagawa").setup({
         compile = true, -- enable compiling the colorscheme
-        transparent = true, -- do not set background color
+        -- transparent = true, -- do not set background color
         terminalColors = false, -- define vim.g.terminal_color_{0,17}
         colors = {
           theme = {
