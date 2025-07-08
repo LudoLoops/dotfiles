@@ -7,6 +7,7 @@ if vim.g.neovide then
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = true
   vim.g.neovide_cursor_vfx_mode = "torpedo"
+  vim.opt.guifont = "JetBrainsMono Nerd Font:h13"
   -- vim.cmd("highlight Normal guibg=#141A21")
   -- vim.cmd("highlight NormalNC guibg=#141A21")
 end
