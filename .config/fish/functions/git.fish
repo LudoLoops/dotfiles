@@ -5,7 +5,7 @@ alias addall='git add -A'
 alias branch='git branch'
 alias checkout='git checkout'
 alias clone='git clone'
-alias commit='git add -A && git commit -m'
+
 alias fetch='git fetch'
 alias pull='git pull origin'
 alias push='git push origin'
@@ -15,6 +15,15 @@ alias git-deploy="git switch prod && git merge main && git push && git checkout 
 
 alias ghstart="gh issue develop $argv --checkout"
 # alias ghfinish='gh pr create --fill --body "Closes #issue_number" --base dev && gh pr merge -d -s'
+
+function commit --description 'git add and commit with auto-message'
+    if count $argv >0
+        git add -A && git commit -m "$argv"
+    else
+        set now (date "+%d-%b-%Y %H:%M")
+        git add -A && git commit -m "auto-commit: $now"
+    end
+end
 
 function compush --description 'git add, commit and push'
     git add -A && git commit -m "$argv" && git push
