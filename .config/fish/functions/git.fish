@@ -26,7 +26,7 @@ function commit --description 'git add and commit with auto-message'
 end
 
 function compush --description 'git add, commit and push'
-    git add -A && git commit -m "$argv" && git push
+    commit $argv && git push
 end
 
 function ghfinish --description 'Finish on the issue number found in the current branch name and merge that pull request.'
