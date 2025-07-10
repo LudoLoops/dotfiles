@@ -14,14 +14,13 @@ alias git-deploy="git switch prod && git merge main && git push && git checkout 
 # github
 
 alias ghstart="gh issue develop $argv --checkout"
-# alias ghfinish='gh pr create --fill --body "Closes #issue_number" --base dev && gh pr merge -d -s'
 
 function commit --description 'git add and commit with auto-message'
-    if count $argv >0
+    if test (count $argv) -gt 0
         git add -A && git commit -m "$argv"
     else
-        set now (date "+%d-%b-%Y %H:%M")
-        git add -A && git commit -m "auto-commit: $now"
+        set commit_message "auto-commit: "(date '+%d-%b-%Y %H:%M')
+        git add -A && git commit -m "$commit_message"
     end
 end
 
