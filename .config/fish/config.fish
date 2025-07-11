@@ -58,11 +58,6 @@ end
 
 ## Useful aliases
 # update
-function update
-    paru -Syu --noconfirm
-    pacman -Sc --noconfirm
-    flatpak update -y
-end
 
 function update
     set os (uname -r)
