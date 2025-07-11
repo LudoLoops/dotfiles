@@ -63,6 +63,25 @@ function update
     pacman -Sc --noconfirm
     flatpak update -y
 end
+
+function update
+    set os (uname -r)
+
+    if test -f /etc/arch-release
+        echo "↻ Updating Arch-based system..."
+        paru -Syu --noconfirm
+        sudo pacman -Scc --noconfirm
+        flatpak update -y
+    else if test -f /etc/fedora-release
+        echo "↻ Updating Fedora-based system..."
+        sudo dnf upgrade --refresh -y
+        flatpak update -y
+    else
+        echo "⚠️  Unknown distro – no update command defined."
+    end
+
+end
+#
 # bat
 alias cat='bat --style=plain'
 alias icat='kitten icat'

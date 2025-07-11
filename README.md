@@ -85,10 +85,10 @@ rm ~/.config/kwinrc ~/.config/kglobalshortcutsrc ~/.config/plasmarc
 stow .config
 ```
 
-Or use --adopt (experimental):
+Or go into dofiles folder and use --adopt (experimental):
 
 ```bash
-stow --adopt .config
+stow --adopt .
 ```
 
 ---
