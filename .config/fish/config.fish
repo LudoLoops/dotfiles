@@ -58,8 +58,11 @@ end
 
 ## Useful aliases
 # update
-alias update="paru -Syu --noconfirm && flatpak update -y"
-
+function update
+    paru -Syu --noconfirm
+    pacman -Sc --noconfirm
+    flatpak update -y
+end
 # bat
 alias cat='bat --style=plain'
 alias icat='kitten icat'
