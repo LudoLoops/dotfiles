@@ -24,7 +24,7 @@ sudo pacman -S stow
 Clone the repository into your $HOME:
 
 ```bash
-git clone <git@github.com>:ludoloops/dotfiles.git
+git clone https://github.com/LudoLoops/dotfiles.git
 cd dotfiles
 ```
 
