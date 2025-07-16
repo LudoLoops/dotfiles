@@ -1,5 +1,3 @@
--- ~/.config/nvim/lua/plugins/keyboard_rgb.lua
-
 return {
   "folke/lazy.nvim",
   event = "VeryLazy",

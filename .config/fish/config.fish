@@ -5,7 +5,7 @@
 #end
 
 source ~/.config/fish/functions/index.fish
-set -Ux fish_user_paths ~/.npm-global/bin $fish_user_paths
+set -Ux fish_user_paths ~/.npm-global/bin $fish_user_paths $HOME/.local/bin $HOME/Applications
 
 systemctl --user import-environment EDITOR VISUAL
 
@@ -33,7 +33,6 @@ end
 set -gx EDITOR neovide
 set -gx VISUAL neovide
 
-set -U fish_user_paths $HOME/.local/bin $HOME/Applications $fish_user_paths
 set -x TERM xterm-kitty # Sets the terminal type
 ### fzf option
 set fzf_preview_dir_cmd eza --all --color=always
