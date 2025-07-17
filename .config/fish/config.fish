@@ -65,7 +65,9 @@ function update
         echo "↻ Updating Arch-based system..."
         paru -Syu --noconfirm
         sudo pacman -Scc --noconfirm
-        flatpak update -y
+        if type -q flatpak
+            flatpak update -y
+        end
     else if test -f /etc/fedora-release
         echo "↻ Updating Fedora-based system..."
         sudo dnf upgrade --refresh -y

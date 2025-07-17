@@ -1,0 +1,8 @@
+[Activities][LastVirtualDesktop]
+7b09dfdf-1898-4a5d-b84d-1fed00559816=daf2f469-058e-4938-bf2f-26c2a0e41c7d
+
+[Desktops]
+Number=2
+
+[Tiling][ebd8b189-9778-4ba8-b576-78680679a91d][ed29084a-dc92-4fe1-bf29-29cc36d15614]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
