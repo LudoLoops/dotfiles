@@ -62,14 +62,15 @@ function update
     set os (uname -r)
 
     if test -f /etc/arch-release
-        echo "↻ Updating Arch-based system..."
         paru -Syu --noconfirm
-        sudo pacman -Scc --noconfirm
+        sudo paccache -r
         if type -q flatpak
             flatpak update -y
         end
+        if type -q pnpm
+            pnpm self-update
+        end
     else if test -f /etc/fedora-release
-        echo "↻ Updating Fedora-based system..."
         sudo dnf upgrade --refresh -y
         flatpak update -y
     else
