@@ -1,5 +1,4 @@
-
-function convert_to_prores
+function convert_to_Davinci
     # Vérifie qu'un argument est fourni
     if test (count $argv) -lt 1
         echo "Usage: convert_to_prores <input_file>"
