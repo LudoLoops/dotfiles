@@ -22,8 +22,8 @@ function convert_to_Davinci
     echo "Conversion de '$input_file' en ProRes 422 HQ..."
 
     # Exécute FFmpeg
-    ffmpeg -i $input_file -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le -c:a pcm_s16le -f mov $output_file
 
+    ffmpeg -i $input_file -c:v dnxhd -profile:v dnxhr_lb -pix_fmt yuv422p -c:a pcm_s16le -f mov output.mov
     # Vérifie si la conversion a réussi
     if test $status -eq 0
         echo "Conversion terminée : '$output_file' a été créé."
