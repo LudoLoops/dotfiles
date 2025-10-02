@@ -1,3 +1,6 @@
 [Layout]
+LayoutList=us
 Options=caps:swapescape
 ResetOldOptions=true
+Use=true
+VariantList=altgr-intl

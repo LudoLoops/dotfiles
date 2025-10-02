@@ -5,6 +5,8 @@ switch-to-activity-7b09dfdf-1898-4a5d-b84d-1fed00559816=Meta+F1,none,Switch to a
 switch-to-activity-ccc357ed-e4d5-4b4d-bdb4-ad02b0f6de90=Meta+F4,none,Switch to activity "Music"
 
 [KDE Keyboard Layout Switcher]
+Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
+Switch keyboard layout to English (intl., with AltGr dead keys)=none,none,Switch keyboard layout to English (intl.\\, with AltGr dead keys)
 Switch to Last-Used Keyboard Layout=none,Meta+Alt+L,Switch to Last-Used Keyboard Layout
 Switch to Next Keyboard Layout=none,Meta+Alt+K,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
@@ -108,7 +110,7 @@ Switch Window Left=Meta+Alt+Left,Meta+Alt+Left,Switch to Window to the Left
 Switch Window Right=Meta+Alt+Right,Meta+Alt+Right,Switch to Window to the Right
 Switch Window Up=Meta+Alt+Up,Meta+Alt+Up,Switch to Window Above
 Switch to Desktop 1=Meta+1\tCtrl+F1,Ctrl+F1,Switch to Desktop 1
-Switch to Desktop 10=none,,Switch to Desktop 10
+Switch to Desktop 10=Meta+0,,Switch to Desktop 10
 Switch to Desktop 11=none,,Switch to Desktop 11
 Switch to Desktop 12=none,,Switch to Desktop 12
 Switch to Desktop 13=none,,Switch to Desktop 13

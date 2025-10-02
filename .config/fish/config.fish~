@@ -34,7 +34,6 @@ set -gx EDITOR neovide
 set -gx VISUAL neovide
 
 set -x TERM xterm-kitty # Sets the terminal type
-
 ### fzf option
 set fzf_preview_dir_cmd eza --all --color=always
 set fzf_fd_opts --hidden --ignore node_modules --max-depth 5

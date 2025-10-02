@@ -10,11 +10,24 @@ function zc
 end
 
 function update
+    # set os (uname -r)
+
+    # if test -f /etc/arch-release
     paru -Syu --noconfirm
     sudo paccache -r
     if type -q flatpak
         flatpak update -y
     end
+    # if type -q pnpm
+    #     pnpm self-update
+    # end
+    # else if test -f /etc/fedora-release
+    #     sudo dnf upgrade --refresh -y
+    #     flatpak update -y
+    # else
+    #     echo "⚠️  Unknown distro – no update command defined."
+    # end
+
 end
 
 # Function for creating a backup file

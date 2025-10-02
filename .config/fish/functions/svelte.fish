@@ -19,3 +19,7 @@ function mkroute
         end
     end
 end
+
+function svelteForge
+    p dlx tsx ~/1Dev/Projects/Lelab/SvelteForge/svelteForge/index.ts
+end
