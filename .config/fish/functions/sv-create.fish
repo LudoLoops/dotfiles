@@ -36,7 +36,7 @@ function sv-create --argument path
     end
 
     # Install Skeleton UI packages
-    command pnpm i -D @skeletonlabs/skeleton @skeletonlabs/svelte
+    command pnpm i -D @skeletonlabs/skeleton @skeletonlabs/skeleton-svelte
     or begin
         echo "Error: Failed to install Skeleton UI dependencies." >&2
         return 1
