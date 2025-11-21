@@ -23,3 +23,12 @@ end
 function backup --argument filename
     cp $filename $filename.bak
 end
+
+function zz
+  command zeditor .
+end
+
+
+function svelte-create
+  command pnpx sv create --types ts --install pnpm
+end

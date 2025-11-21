@@ -1,6 +1,7 @@
 [Layout]
-LayoutList=us
+DisplayNames=,
+LayoutList=us,us
 Options=caps:swapescape
 ResetOldOptions=true
 Use=true
-VariantList=altgr-intl
+VariantList=altgr-intl,intl

@@ -112,3 +112,5 @@ set --export PATH $BUN_INSTALL/bin $PATH
 set -gx PATH $PATH /home/loops/.lmstudio/bin
 set -gx VOLTA_HOME "$HOME/.volta"
 set -gx PATH "$VOLTA_HOME/bin" $PATH
+
+alias claude="/home/loops/.claude/local/claude"
