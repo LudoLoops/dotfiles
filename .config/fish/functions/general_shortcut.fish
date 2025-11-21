@@ -1,8 +1,3 @@
-# run cursor from the terminal without "bug"
-function cursor
-    command cursor $argv >/dev/null 2>&1 &
-    disown
-end
 
 function zc
     z $argv && cursor . >/dev/null 2>&1 &
@@ -24,11 +19,17 @@ function backup --argument filename
     cp $filename $filename.bak
 end
 
-function zz
-  command zeditor .
+function zz --argument path
+    if test -n "$path"
+        z "$path"
+    end
+    command zeditor .
 end
 
+# function for creating sveltekit project
+function sv-create --argument path
+  command pnpx sv create --types ts --install pnpm --template minimal --no-add-ons $path
+  cd $path
 
-function svelte-create
-  command pnpx sv create --types ts --install pnpm
+  command pnpx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install pnpm
 end
