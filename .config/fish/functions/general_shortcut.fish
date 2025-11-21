@@ -25,11 +25,3 @@ function zz --argument path
     end
     command zeditor .
 end
-
-# function for creating sveltekit project
-function sv-create --argument path
-  command pnpx sv create --types ts --install pnpm --template minimal --no-add-ons $path
-  cd $path
-
-  command pnpx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install pnpm
-end
