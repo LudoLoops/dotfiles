@@ -65,14 +65,9 @@ function gh-start --description 'Create branch from GitHub issue: gh-start <issu
         return 1
     end
 
-    # If type not provided, show menu
+    # If type not provided, default to feat
     if test -z "$issue_type"
-        echo "📋 Issue #$issue_num: $issue_title"
-        echo ""
-        echo "Select commit type:"
-        select issue_type in "feat" "fix" "refactor" "docs" "test" "chore" "perf" "style"
-            break
-        end
+        set issue_type "feat"
     end
 
     # Validate type
