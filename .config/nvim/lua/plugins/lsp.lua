@@ -64,7 +64,7 @@ return {
 
   -- Mason for LSP/formatter/linter installation
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         "stylua",

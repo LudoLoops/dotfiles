@@ -74,25 +74,6 @@ return {
   {
     "HiPhish/rainbow-delimiters.nvim",
     event = { "BufReadPre", "BufNewFile" },
-    main = "rainbow-delimiters",
-    opts = {
-      strategy = {
-        [""] = "global",
-      },
-      query = {
-        [""] = "rainbow-delimiters",
-        lua = "rainbow-blocks",
-      },
-      highlight = {
-        "RainbowDelimiterRed",
-        "RainbowDelimiterYellow",
-        "RainbowDelimiterBlue",
-        "RainbowDelimiterOrange",
-        "RainbowDelimiterGreen",
-        "RainbowDelimiterViolet",
-        "RainbowDelimiterCyan",
-      },
-    },
   },
 
   -- Illumination of the word under the cursor
