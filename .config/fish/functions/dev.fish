@@ -1,7 +1,8 @@
 # =============================================================================
-# Web Development Tools
+# Web Development Tools & Deployment Pipeline
 # =============================================================================
-# SvelteKit projects, Svelte routes, Go builds, Cursor IDE configuration
+# SvelteKit projects, Svelte routes, Go builds, Cursor IDE configuration,
+# Git workflows, automated deployment (beta & production)
 
 # SvelteKit Project Scaffolder
 # Creates a new SvelteKit project with TypeScript, pnpm, minimal template,
@@ -371,4 +372,306 @@ function check-quality --description "Run linting, type check, and tests"
         echo "❌ Some checks failed. Fix before committing."
         return 1
     end
+end
+
+# =============================================================================
+# Unified Deployment Pipeline (Beta & Prod)
+# =============================================================================
+# Automated deployment to beta or prod with version bumping and auto-deploy
+# Reduces token usage by eliminating Claude involvement in deployment
+
+function ship --description "Deploy to beta or prod: ship [beta|prod]"
+    set target $argv[1]
+
+    # Check if we're in a git repository first
+    if not git rev-parse --git-dir >/dev/null 2>&1
+        echo "❌ Not a git repository"
+        return 1
+    end
+
+    # Check if package.json exists
+    if not test -f package.json
+        echo "❌ package.json not found"
+        return 1
+    end
+
+    # Get current branch
+    set current_branch (git rev-parse --abbrev-ref HEAD)
+    set main_branch (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||' || echo "main")
+
+    # Smart branch detection: if on beta without explicit target, assume prod
+    if test -z "$target" -a "$current_branch" = "beta"
+        set target "prod"
+        echo "📍 Currently on beta branch, deploying to prod..."
+        echo ""
+    end
+
+    # Smart deployment: if on main without explicit target, assume beta
+    if test -z "$target" -a "$current_branch" = "$main_branch"
+        set target "beta"
+        echo "📍 Currently on main branch, deploying to beta..."
+        echo ""
+    end
+
+    # Full deployment: if on main and explicitly requesting prod, do beta then prod
+    if test "$target" = "prod" -a "$current_branch" = "$main_branch"
+        echo "📍 Full deployment: main → beta → prod"
+        echo ""
+        set target "beta-and-prod"
+    end
+
+    # Validate target argument
+    if test -z "$target"
+        echo "❌ Usage: ship [beta|prod]"
+        echo ""
+        echo "Examples:"
+        echo "  ship beta    # Deploy to staging (auto-bumps patch version)"
+        echo "  ship prod    # Deploy full pipeline: main → beta → prod"
+        echo ""
+        echo "💡 Smart shortcuts:"
+        echo "   From main: 'ship' → deploys to beta only"
+        echo "   From main: 'ship prod' → deploys to beta AND prod (full pipeline)"
+        echo "   From beta: 'ship' → deploys to prod only"
+        return 1
+    end
+
+    if not test "$target" = "beta" -o "$target" = "prod" -o "$target" = "beta-and-prod"
+        echo "❌ Invalid target: $target"
+        echo "ℹ️  Use: ship beta  or  ship prod"
+        return 1
+    end
+
+    # Block shipping from other protected branches
+    if string match -q "beta|prod" "$current_branch" -a "$current_branch" != "$target" -a "$target" != "beta-and-prod"
+        echo "❌ Cannot ship from protected branch: $current_branch"
+        echo "ℹ️  Switch to $main_branch first: git checkout $main_branch"
+        return 1
+    end
+
+    # For full deployment, show confirmation
+    if test "$target" = "beta-and-prod"
+        echo "⚠️  Full deployment to PRODUCTION"
+        echo "ℹ️  Will deploy to both beta and prod"
+        echo ""
+    else if test "$target" = "prod"
+        echo "⚠️  Deploying to PRODUCTION"
+        echo "ℹ️  Make sure you've tested changes in beta environment first"
+        echo ""
+    end
+
+    echo "🚀 Starting deployment to $target..."
+    echo ""
+
+    # Step 1: Verify working directory is clean
+    echo "✓ Checking git status..."
+    if not git diff-index --quiet HEAD --
+        echo "❌ Working directory has uncommitted changes"
+        echo "ℹ️  Please commit or stash changes first"
+        return 1
+    end
+
+    # Step 2: Fetch latest from remote
+    echo "✓ Fetching latest from remote..."
+    git fetch origin >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to fetch from remote"
+        return 1
+    end
+
+    # Step 3: Ensure we're on main
+    if test "$current_branch" != "$main_branch"
+        echo "✓ Switching to $main_branch..."
+        git checkout "$main_branch" >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to switch to $main_branch"
+            return 1
+        end
+    end
+
+    # Step 4: Pull latest changes from main
+    echo "✓ Pulling latest changes from $main_branch..."
+    git pull origin "$main_branch" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to pull from $main_branch"
+        return 1
+    end
+
+    # Step 5: Bump version (for beta or beta-and-prod)
+    if test "$target" = "beta" -o "$target" = "beta-and-prod"
+        echo "✓ Bumping version..."
+        pnpm version patch >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to bump version"
+            return 1
+        end
+
+        # Get new version
+        set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
+        echo "   Version bumped to: $new_version"
+
+        # Step 6: Push to main
+        echo "✓ Pushing version bump to $main_branch..."
+        git push origin "$main_branch" >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to push to $main_branch"
+            return 1
+        end
+    else
+        # For prod, get current version
+        set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
+    end
+
+    # Handle beta-and-prod: deploy to beta first, then prod
+    if test "$target" = "beta-and-prod"
+        # Deploy to beta
+        echo "✓ Switching to beta branch..."
+        git checkout beta >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to checkout beta branch"
+            return 1
+        end
+
+        echo "✓ Pulling latest beta..."
+        git pull origin beta >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to pull beta"
+            return 1
+        end
+
+        echo "✓ Merging $main_branch into beta..."
+        git merge "$main_branch" --no-edit >/dev/null 2>&1
+        or begin
+            echo "❌ Merge conflict detected. Please resolve manually."
+            echo "ℹ️  Run: git merge --abort  and try again"
+            return 1
+        end
+
+        echo "✓ Pushing to beta (auto-deploy triggered)..."
+        git push origin beta >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to push to beta"
+            return 1
+        end
+
+        echo ""
+        echo "✓ Beta deployment complete!"
+        echo ""
+
+        # Now deploy to prod
+        echo "✓ Switching to prod branch..."
+        git checkout prod >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to checkout prod branch"
+            return 1
+        end
+
+        echo "✓ Pulling latest prod..."
+        git pull origin prod >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to pull prod"
+            return 1
+        end
+
+        echo "✓ Merging beta into prod..."
+        git merge beta --no-edit >/dev/null 2>&1
+        or begin
+            echo "❌ Merge conflict detected. Please resolve manually."
+            echo "ℹ️  Run: git merge --abort  and try again"
+            return 1
+        end
+
+        echo "✓ Pushing to prod (auto-deploy triggered)..."
+        git push origin prod >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to push to prod"
+            return 1
+        end
+
+        # Return to main
+        echo "✓ Returning to $main_branch..."
+        git checkout "$main_branch" >/dev/null 2>&1
+
+        # Success!
+        echo ""
+        echo "════════════════════════════════════════════════════════"
+        echo "✅ Full Deployment Successful!"
+        echo "════════════════════════════════════════════════════════"
+        echo "🎯 Version: $new_version"
+        echo "📍 Branches: beta → prod"
+        echo "⏳ Auto-deploy in progress on both environments..."
+        echo ""
+        echo "ℹ️  Changes are now live in production!"
+        echo "════════════════════════════════════════════════════════"
+
+        return 0
+    end
+
+    # Regular single-target deployment
+    echo "✓ Switching to $target branch..."
+    git checkout "$target" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to checkout $target branch"
+        return 1
+    end
+
+    echo "✓ Pulling latest $target..."
+    git pull origin "$target" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to pull $target"
+        return 1
+    end
+
+    # For prod, merge beta. For beta, merge main
+    set source_branch (test "$target" = "prod" && echo "beta" || echo "$main_branch")
+
+    echo "✓ Merging $source_branch into $target..."
+    git merge "$source_branch" --no-edit >/dev/null 2>&1
+    or begin
+        echo "❌ Merge conflict detected. Please resolve manually."
+        echo "ℹ️  Run: git merge --abort  and try again"
+        return 1
+    end
+
+    # Step 8: Push to target (triggers auto-deploy)
+    echo "✓ Pushing to $target (auto-deploy triggered)..."
+    git push origin "$target" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to push to $target"
+        return 1
+    end
+
+    # Step 9: Return to main
+    echo "✓ Returning to $main_branch..."
+    git checkout "$main_branch" >/dev/null 2>&1
+
+    # Success!
+    echo ""
+    echo "════════════════════════════════════════════════════════"
+    echo "✅ Deployment to $target Successful!"
+    echo "════════════════════════════════════════════════════════"
+    echo "🎯 Version: $new_version"
+    echo "📍 Branch: $target"
+    echo "⏳ Auto-deploy in progress..."
+    echo ""
+
+    if test "$target" = "beta"
+        echo "ℹ️  Next steps:"
+        echo "   1. Test changes in beta environment"
+        echo "   2. When ready: ship prod"
+    else
+        echo "ℹ️  Changes are now live in production!"
+    end
+
+    echo "════════════════════════════════════════════════════════"
+
+    return 0
+end
+
+# Convenience aliases for quick deployment
+function ship-beta --description "Deploy to beta: ship beta"
+    ship beta $argv
+end
+
+function ship-prod --description "Deploy to prod: ship prod"
+    ship prod $argv
 end

@@ -78,12 +78,88 @@ function-name --help
 
 | Function | File | Purpose |
 |----------|------|---------|
-| `sv-create` | sv-create.fish | Scaffold SvelteKit projects with TS, Tailwind, Skeleton UI |
+| `sv-create` | dev.fish | Scaffold SvelteKit projects with TS, Tailwind, Skeleton UI |
 | `git` aliases | git.fish | Fast git workflows (commit, compush, ghfinish) |
 | `auto_activate_venv` | python.fish | Auto-activate Python virtual env on directory change |
 | `zc` / `zz` | general_shortcut.fish | Quick editor shortcuts with zoxide |
-| `mkroute` | svelte.fish | Scaffold Svelte route files |
+| `mkroute` | dev.fish | Scaffold Svelte route files |
 | `docker` control | dockcontrol.fish | Docker container management |
+| `ship` / `ship-beta` / `ship-prod` | dev.fish | Automated deployment pipeline (beta & prod) |
+
+## Deployment Pipeline (`ship` Command)
+
+The `ship` function automates the entire deployment pipeline (beta & production) with zero Claude involvement needed.
+
+### Usage
+
+**From main branch (development):**
+```bash
+ship              # Deploy to beta only (default)
+ship beta         # Explicitly deploy to beta
+ship prod         # Full pipeline: main → beta → prod
+ship-beta         # Alias for `ship beta`
+ship-prod         # Alias for `ship prod`
+```
+
+**From beta branch (staging):**
+```bash
+ship              # Deploy to prod only (default)
+ship prod         # Explicitly deploy to prod
+ship-prod         # Alias
+```
+
+### Features
+
+- ✅ Automatically detects current branch and chooses appropriate target
+- ✅ Bumps version (patch) only when deploying to beta
+- ✅ Validates clean working directory before deployment
+- ✅ Handles merge conflicts gracefully
+- ✅ Returns to main branch after deployment
+- ✅ Works for any project with `package.json` and git repository
+- ✅ No hardcoded project names (fully generic)
+
+### Typical Workflow
+
+```bash
+# 1. Work on main, test locally
+git checkout main
+
+# 2. Deploy to beta (bumps version patch automatically)
+ship
+# Or explicitly: ship beta
+
+# 3. Test changes in beta environment
+
+# 4. Deploy to prod (from beta)
+ship
+# Or explicitly: ship prod
+
+# 5. After testing, push to prod
+# (if using full pipeline) ship prod  # From main
+```
+
+### What It Does (Step by Step)
+
+**`ship beta` (from main):**
+1. Verify working directory is clean
+2. Fetch latest from remote
+3. Bump version (patch)
+4. Push version bump to main
+5. Merge main into beta
+6. Push to beta (triggers auto-deploy)
+7. Return to main
+
+**`ship prod` (from main):**
+1. Same as above for beta
+2. Then merge beta into prod
+3. Push to prod (triggers auto-deploy)
+
+**`ship` (from beta):**
+1. Verify working directory is clean
+2. Fetch latest from remote
+3. Merge beta into prod
+4. Push to prod (triggers auto-deploy)
+5. Return to main
 
 ## Git Workflow
 

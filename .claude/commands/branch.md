@@ -51,6 +51,8 @@ commit feat: add feature   # Commit changes
 compush                    # Push to remote
 gh-pr                      # Create PR (auto-closes #42)
 gh-finish                  # Merge and cleanup
+ship                       # Deploy to beta (bumps version)
+ship prod                  # Deploy to production
 ```
 
 ## Note:

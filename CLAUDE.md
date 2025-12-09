@@ -72,13 +72,14 @@ Functions are organized by purpose in separate files (all in `functions/`):
   - `gh-labels-init` - Initialize standard labels
   - Aliases: `g`, `addup`, `addall`, `branch`, `checkout`, `clone`, `fetch`, `pull`, `push`
 
-- **dev.fish** (375 lines) - Web development
+- **dev.fish** (675 lines) - Web development & deployment
   - `sv-create` - SvelteKit project scaffolder (TS, pnpm, Tailwind, Skeleton UI, tests)
   - `mkroute` - SvelteKit route creator
   - `go-build-multi` - Multi-platform Go builds (Linux, Windows, macOS)
   - `cursor-rules` - Cursor IDE rule linker
   - `smart-branch` - Deterministic branch creation with validation
   - `check-quality` - Code validation (TypeScript, ESLint, tests)
+  - `ship`, `ship-beta`, `ship-prod` - Automated deployment pipeline (beta & production)
 
 - **system.fish** (108 lines) - System administration
   - `dockcontrol` - Docker/Docker Compose management (start, stop, restart)
@@ -200,6 +201,39 @@ mkroute src/routes/dashboard
 mkroute src/routes/settings src/routes/profile
 ```
 
+### Automated Deployment Pipeline
+
+The `ship` command automates all deployment steps (version bump, merges, auto-deploy). Works for any project with `package.json` and git repository:
+
+```fish
+# From main branch (development)
+ship              # Deploy to beta only (default)
+ship beta         # Explicitly deploy to beta (bumps version patch)
+ship prod         # Full pipeline: main → beta → prod
+ship-beta         # Alias for `ship beta`
+ship-prod         # Alias for `ship prod`
+
+# From beta branch (staging)
+ship              # Deploy to prod only (default)
+ship prod         # Explicitly deploy to prod
+```
+
+**Key features:**
+- Automatically detects branch and chooses appropriate target
+- Bumps version (patch) only when deploying to beta
+- Validates clean working directory before deployment
+- Handles merge conflicts gracefully
+- Returns to main branch after deployment
+- Works for any project (no hardcoding)
+
+**Typical workflow:**
+```fish
+git checkout main
+ship              # Deploy to beta (bumps version)
+# ... test in beta ...
+ship prod         # Deploy to prod (full pipeline: beta → prod)
+```
+
 ### Media Processing
 
 ```fish
@@ -289,6 +323,7 @@ stow .config
 
 - **Fish functions reference:** `~/.claude/docs/fish-dev-functions.md` (global)
 - **Commands optimization:** `~/.claude/docs/commands-optimization.md` (global)
+- **Git workflow & branching:** `~/.claude/GIT_WORKFLOW.md` (global standard)
 - **Global conventions:** `~/.claude/CLAUDE.md` (global)
 - **Project README:** `README.md` (this repository)
 
