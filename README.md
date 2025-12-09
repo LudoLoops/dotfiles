@@ -1,6 +1,6 @@
 # My Dotfiles
 
-This repository contains my system configuration files (dotfiles),
+This repository contains my system configuration files (dotfiles) and Claude Code global configurations,
 organized to be used with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## 🛠 Requirements
@@ -33,10 +33,13 @@ cd dotfiles
 To apply all configurations using Stow:
 
 ```bash
-stow .config
+stow .config .claude
 ```
 
-> This will create symlinks like `~/.config/fish → ~/dotfiles/.config/fish`
+This will create symlinks like:
+- `~/.config/fish → ~/dotfiles/.config/fish`
+- `~/.claude/commands → ~/dotfiles/.claude/commands`
+- `~/.claude/docs → ~/dotfiles/.claude/docs`
 
 ---
 
@@ -64,32 +67,47 @@ These are safe to reuse across machines, even between distros.
 
 Typical directory structure:
 
+```
 dotfiles/
 ├── .config/
-│ ├── fish/
-│ ├── nvim/
-│ ├── kitty/
-│ ├── kwinrc
-│ ├── kglobalshortcutsrc
-│ └── plasmarc
-└── README.md
+│   ├── fish/
+│   ├── nvim/
+│   ├── kitty/
+│   ├── kwinrc
+│   ├── kglobalshortcutsrc
+│   └── plasmarc
+├── .claude/
+│   ├── commands/          # Claude Code commands
+│   ├── docs/              # Documentation and guides
+│   ├── claude/            # Context files
+│   └── CLAUDE.md          # Global Claude Code instructions
+├── CLAUDE.md              # Project-specific instructions
+├── install.sh             # Installation script
+├── README.md              # This file
+└── .gitignore             # Git ignore (excludes sensitive Claude files)
+```
 
 ---
 
 ## ✅ Restore config safely
 
-If files already exist in ~/.config, remove them first:
+If files already exist, remove them first:
 
 ```bash
 rm ~/.config/kwinrc ~/.config/kglobalshortcutsrc ~/.config/plasmarc
-stow .config
+stow .config .claude
 ```
 
-Or go into dofiles folder and use --adopt (experimental):
+Or use the provided install script:
 
 ```bash
-stow --adopt .
+./install.sh
 ```
+
+This will:
+- Install GNU Stow if needed
+- Create symlinks for `.config/` and `.claude/` directories
+- Reload Fish shell configuration
 
 ---
 

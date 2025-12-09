@@ -2,12 +2,29 @@
 
 set -e
 
-echo "📦 Installing base packages..."
-# sudo pacman -S --noconfirm exa zoxide bat fish git chezmoi
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-paru -S zoxide exa yazi fish kitty bat starship nvim --noconfirm
+echo "📦 Installing stow (if needed)..."
+if ! command -v stow &> /dev/null; then
+    echo "Installing GNU Stow..."
+    paru -S stow --noconfirm
+fi
 
-echo "🔗 Initializing dotfiles with chezmoi..."
-chezmoi init --apply youruser/your-dotfiles-repo
+echo "🔗 Creating symlinks with stow..."
+cd "$DOTFILES_DIR"
 
-echo "✅ Done."
+# Stow .config directory
+echo "  • Linking .config..."
+stow .config
+
+# Stow .claude directory (global Claude Code configs)
+echo "  • Linking .claude..."
+stow .claude
+
+echo "🐠 Reloading Fish shell configuration..."
+fish -c "source ~/.config/fish/functions/index.fish" 2>/dev/null || true
+
+echo "✅ Dotfiles installed successfully!"
+echo ""
+echo "💡 To update from this repo in the future:"
+echo "   cd $DOTFILES_DIR && git pull && stow .config .claude"

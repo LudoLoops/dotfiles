@@ -1,2 +1,15 @@
 env.fish
 fish_variables
+
+# Sensitive Claude Code files
+.claude/.credentials.json
+.claude/history.jsonl
+.claude/debug/
+.claude/file-history/
+.claude/local/
+.claude/plans/
+.claude/session-env/
+.claude/todos/
+.claude/statsig/
+.claude/ide/
+.claude/plugins/
