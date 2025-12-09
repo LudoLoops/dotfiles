@@ -1,0 +1,20 @@
+{
+  "model": "haiku",
+  "statusLine": {
+    "type": "command",
+    "command": "input=$(cat); cwd=$(echo \"$input\" | jq -r '.workspace.current_dir'); project_dir=$(echo \"$input\" | jq -r '.workspace.project_dir'); user=$(whoami); host=$(hostname -s); if [ -d \"$project_dir/.git\" ]; then branch=$(cd \"$project_dir\" && git --no-optional-locks branch --show-current 2>/dev/null); if [ -n \"$branch\" ]; then git_info=$(printf \"\\033[35m(\\033[36m%s\\033[35m)\\033[0m\" \"$branch\"); else git_info=\"\"; fi; else git_info=\"\"; fi; if [ \"$cwd\" = \"$project_dir\" ]; then display_dir=\"~\"; else display_dir=$(echo \"$cwd\" | sed \"s|^$project_dir/|~/|\" | sed \"s|^$HOME|~|\"); fi; printf \"\\033[32m%s@%s\\033[0m:\\033[34m%s\\033[0m %s\" \"$user\" \"$host\" \"$display_dir\" \"$git_info\""
+  },
+  "enabledPlugins": {
+    "edmunds-claude-code@edmunds-claude-code": true
+  },
+  "alwaysThinkingEnabled": false,
+  "env": {
+    "EDITOR": "nvim",
+    "VISUAL": "nvim"
+  },
+  "permissions": {
+    "deny": ["Task"]
+  },
+  "disabledMcpjsonServers": ["*"],
+  "enableAllProjectMcpServers": false
+}
