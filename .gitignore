@@ -1,7 +1,7 @@
 env.fish
 fish_variables
 
-# Sensitive Claude Code files
+# Claude Code runtime & generated files (not config)
 .claude/.credentials.json
 .claude/history.jsonl
 .claude/debug/
@@ -13,3 +13,8 @@ fish_variables
 .claude/statsig/
 .claude/ide/
 .claude/plugins/
+.claude/projects/
+.claude/shell-snapshots/
+.claude/.claude/
+.claude/.json
+.claude/.json.backup
