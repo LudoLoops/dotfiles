@@ -221,3 +221,154 @@ function cursor-rules --description "Select and symlink .mdc Cursor rules into .
     echo "✅ Done. Selected rules are now linked in $target_dir/"
 
 end
+
+# =============================================================================
+# Smart Branch Creation (Optimized for token efficiency)
+# =============================================================================
+# Deterministic branch creation using gh CLI + git
+# No Claude involvement needed - guaranteed consistent results
+
+function smart-branch --description "Create intelligent feature branch with validation"
+    if not git rev-parse --git-dir >/dev/null 2>&1
+        echo "❌ Not a git repository"
+        return 1
+    end
+
+    # Ensure on main/master first
+    set current_branch (git rev-parse --abbrev-ref HEAD)
+    set main_branch (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||' || echo "main")
+
+    if test "$current_branch" != "$main_branch"
+        echo "⚠️  Currently on '$current_branch', switching to '$main_branch'..."
+        git checkout "$main_branch"
+        or begin
+            echo "❌ Failed to switch to $main_branch"
+            return 1
+        end
+    end
+
+    # Refresh from remote
+    git fetch origin >/dev/null 2>&1
+
+    # Check type argument
+    set branch_type $argv[1]
+    if test -z "$branch_type"
+        set branch_type "feat"
+    end
+
+    # Validate type
+    if not string match -q "feat|fix|refactor|docs|test|chore|perf|style" "$branch_type"
+        echo "❌ Invalid type. Use: feat, fix, refactor, docs, test, chore, perf, style"
+        return 1
+    end
+
+    # Check if there's an issue number in remaining args
+    set issue_num $argv[2]
+    set branch_name ""
+
+    if test -n "$issue_num"
+        # User provided issue number
+        if string match -qr '^[0-9]+$' "$issue_num"
+            set branch_name "$branch_type/$issue_num"
+        else
+            echo "❌ Issue number must be numeric"
+            return 1
+        end
+    else
+        # Generate deterministic branch name from timestamp
+        set timestamp (date '+%s')
+        set branch_name "$branch_type/auto-$timestamp"
+    end
+
+    # Check if branch already exists
+    if git rev-parse --verify "$branch_name" >/dev/null 2>&1
+        echo "❌ Branch already exists: $branch_name"
+        echo "ℹ️  Use: git checkout $branch_name"
+        return 1
+    end
+
+    # Create and switch to branch
+    git checkout -b "$branch_name"
+
+    if test $status -eq 0
+        echo "✅ Branch created: $branch_name"
+        echo "📍 Current branch: (git branch --show-current)"
+        return 0
+    else
+        echo "❌ Failed to create branch"
+        return 1
+    end
+end
+
+# Code Quality Check (Run linting, type checking, tests)
+# Returns pass/fail status for Claude analysis
+function check-quality --description "Run linting, type check, and tests"
+    set checks_passed 0
+    set checks_failed 0
+
+    echo "🔍 Running code quality checks..."
+    echo ""
+
+    # Check if package.json exists
+    if not test -f package.json
+        echo "⚠️  package.json not found. Skipping quality checks."
+        return 1
+    end
+
+    # ESLint check
+    if grep -q '"eslint"' package.json || grep -q '"@typescript-eslint"' package.json
+        echo "📋 Running ESLint..."
+        pnpm exec eslint src/ 2>&1 | head -20
+        if test $status -eq 0
+            echo "✅ ESLint: PASS"
+            set checks_passed (math $checks_passed + 1)
+        else
+            echo "❌ ESLint: FAIL"
+            set checks_failed (math $checks_failed + 1)
+        end
+        echo ""
+    end
+
+    # TypeScript check
+    if test -f tsconfig.json
+        echo "📘 Running TypeScript check..."
+        pnpm check 2>&1 | tail -5
+        if test $status -eq 0
+            echo "✅ TypeScript: PASS"
+            set checks_passed (math $checks_passed + 1)
+        else
+            echo "❌ TypeScript: FAIL"
+            set checks_failed (math $checks_failed + 1)
+        end
+        echo ""
+    end
+
+    # Tests
+    if grep -q '"test"' package.json
+        echo "🧪 Running tests..."
+        pnpm test 2>&1 | tail -10
+        if test $status -eq 0
+            echo "✅ Tests: PASS"
+            set checks_passed (math $checks_passed + 1)
+        else
+            echo "❌ Tests: FAIL"
+            set checks_failed (math $checks_failed + 1)
+        end
+        echo ""
+    end
+
+    # Summary
+    echo "════════════════════════════════════════════════════════"
+    echo "📊 Quality Check Summary:"
+    echo "   Passed: $checks_passed"
+    echo "   Failed: $checks_failed"
+    echo "════════════════════════════════════════════════════════"
+
+    if test $checks_failed -eq 0
+        echo "✅ All checks passed!"
+        return 0
+    else
+        echo "❌ Some checks failed. Fix before committing."
+        return 1
+    end
+end
