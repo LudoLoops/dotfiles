@@ -104,6 +104,8 @@ gh-finish                # Merge and cleanup
 
 This directory contains instructions and context that Claude Code uses across all projects.
 
+**Managed with GNU Stow:** All configuration files in `~/.claude/` are symlinked from `~/dotfiles/.claude/` for version control and synchronization. Changes in dotfiles are instantly reflected in `~/.claude/`.
+
 | File/Folder | Purpose | For |
 |-------------|---------|-----|
 | `README.md` | Quick overview and navigation | You (human) |
@@ -181,6 +183,8 @@ When Claude Code starts, it automatically:
   - For you to understand the structure
   - Guides on how things work
   - Documentation about documentation
+
+**Important:** Runtime & generated files (`.credentials.json`, `debug/`, `history.jsonl`, `todos/`, `projects/`, etc.) are ignored in `.gitignore` and NOT symlinked. Only configuration and documentation files are managed by Stow.
 
 **Always update documentation when you:**
 - Change a process → update `CLAUDE.md`
