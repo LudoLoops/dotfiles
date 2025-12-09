@@ -30,8 +30,8 @@ if test -d ~/Applications/depot_tools
 end
 
 ### EXPORT ###
-set -gx EDITOR neovide
-set -gx VISUAL neovide
+set -gx EDITOR nvim
+set -gx VISUAL nvim
 
 set -x TERM xterm-kitty # Sets the terminal type
 

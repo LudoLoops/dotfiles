@@ -97,7 +97,7 @@ Functions are organized by purpose in separate files (all in `functions/`):
 
 - **Other specialized files:**
   - **ai.fish** - n8n workflow automation and Ollama LLM server management
-  - **editor.fish** - Neovide GUI editor launcher (detached process)
+  - **editor.fish** - Nvim terminal editor launcher
   - **python.fish** - Python venv auto-activation on directory change
   - **utils.fish** - Generic utilities (bash history support !! and !$)
   - **pnpm.fish** - pnpm aliases: `p`, `pdx` (dlx), `pex` (exec)
@@ -220,8 +220,8 @@ convert_to_Davinci input.mov
 
 **Key variables set in config.fish:**
 
-- `EDITOR=neovide` - GUI text editor
-- `VISUAL=neovide` - GUI visual editor
+- `EDITOR=nvim` - Terminal text editor
+- `VISUAL=nvim` - Terminal visual editor
 - `TERM=xterm-kitty` - Terminal type for Kitty
 - `PIP_REQUIRE_VIRTUALENV=true` - Enforce Python venv usage
 - `MANPAGER="bat"` - Enhanced manual pages

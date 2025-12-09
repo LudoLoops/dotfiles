@@ -1,25 +1,15 @@
 # =============================================================================
 # Editor Configuration & Launchers
 # =============================================================================
-# Neovide GUI editor, Zeditor configuration
+# Nvim editor launcher
 
-# Neovide Helper - Launch detached Neovide instance
-function __launch_detached
-    nohup $argv >/dev/null 2>&1 &
-    set pid $last_pid
-    disown $pid
-end
-
-# Neovide GUI Editor Launcher
-# Launches Neovide (NeoVim GUI) in detached mode
-# Usage: v [path] → opens path or current directory
+# Nvim Editor Launcher
+# Launches Neovim in the current terminal
+# Usage: v [path] → opens path or current directory in nvim
 function v
     if count $argv >/dev/null
-        __launch_detached neovide $argv
+        nvim $argv
     else
-        __launch_detached neovide .
+        nvim .
     end
 end
-
-# Alias for neovide shortcut
-alias neovide='v'
