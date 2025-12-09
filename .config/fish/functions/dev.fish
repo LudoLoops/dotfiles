@@ -425,7 +425,7 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         echo "❌ Usage: ship [beta|prod]"
         echo ""
         echo "Examples:"
-        echo "  ship beta    # Deploy to staging (auto-bumps patch version)"
+        echo "  ship beta    # Deploy to staging (creates release branch, bumps version, asks Claude for CHANGELOG)"
         echo "  ship prod    # Deploy full pipeline: main → beta → prod"
         echo ""
         echo "💡 Smart shortcuts:"
@@ -496,26 +496,125 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         return 1
     end
 
-    # Step 5: Bump version (for beta or beta-and-prod)
+    # Step 5: Create release branch (for beta or beta-and-prod)
     if test "$target" = "beta" -o "$target" = "beta-and-prod"
-        echo "✓ Bumping version..."
-        pnpm version patch >/dev/null 2>&1
+        # Get current version
+        set current_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
+
+        echo "✓ Creating release branch..."
+        set release_branch "chore/release-v$current_version"
+
+        # Check if branch already exists locally, if so delete it
+        if git rev-parse --verify "$release_branch" >/dev/null 2>&1
+            git branch -D "$release_branch" >/dev/null 2>&1
+        end
+
+        git checkout -b "$release_branch" >/dev/null 2>&1
         or begin
-            echo "❌ Failed to bump version"
+            echo "❌ Failed to create release branch"
             return 1
         end
 
-        # Get new version
+        # Step 6: Bump version
+        echo "✓ Bumping version (patch)..."
+        pnpm version patch --no-git-tag-version >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to bump version"
+            git checkout "$main_branch" >/dev/null 2>&1
+            git branch -D "$release_branch" >/dev/null 2>&1
+            return 1
+        end
+
         set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
         echo "   Version bumped to: $new_version"
 
-        # Step 6: Push to main
-        echo "✓ Pushing version bump to $main_branch..."
-        git push origin "$main_branch" >/dev/null 2>&1
+        # Step 7: Create placeholder CHANGELOG entry for Claude to fill in
+        if test -f CHANGELOG.md
+            echo ""
+            echo "📝 CHANGELOG needs to be updated for version $new_version"
+
+            # Create temp file with new changelog entry
+            set temp_changelog (mktemp)
+            set date (date '+%Y-%m-%d')
+
+            echo "## [$new_version] - $date" > "$temp_changelog"
+            echo "" >> "$temp_changelog"
+            echo "### Added" >> "$temp_changelog"
+            echo "- " >> "$temp_changelog"
+            echo "" >> "$temp_changelog"
+            echo "### Changed" >> "$temp_changelog"
+            echo "- " >> "$temp_changelog"
+            echo "" >> "$temp_changelog"
+            echo "### Fixed" >> "$temp_changelog"
+            echo "- " >> "$temp_changelog"
+            echo "" >> "$temp_changelog"
+
+            # Append existing CHANGELOG
+            tail -n +1 CHANGELOG.md >> "$temp_changelog"
+            mv "$temp_changelog" CHANGELOG.md
+            echo "   ✓ Placeholder added to CHANGELOG.md"
+            echo ""
+            echo "⚠️  PAUSE: Please edit CHANGELOG.md with the actual release notes"
+            echo ""
+            echo "When ready, press Enter to continue with the deployment..."
+            read -p ""
+
+            # Check if CHANGELOG was edited
+            if not git diff CHANGELOG.md | grep -q "^[+-]"
+                echo "⚠️  CHANGELOG.md was not modified. Using placeholder entries."
+            end
+        end
+
+        # Step 8: Commit version bump and CHANGELOG
+        echo ""
+        echo "✓ Committing version bump and CHANGELOG..."
+        git add -A
+        git commit -m "chore: bump version to $new_version" >/dev/null 2>&1
         or begin
-            echo "❌ Failed to push to $main_branch"
+            echo "❌ Failed to commit changes"
+            git checkout "$main_branch" >/dev/null 2>&1
+            git branch -D "$release_branch" >/dev/null 2>&1
             return 1
         end
+
+        # Step 9: Push release branch
+        echo "✓ Pushing release branch..."
+        git push -u origin "$release_branch" >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to push release branch"
+            git checkout "$main_branch" >/dev/null 2>&1
+            return 1
+        end
+
+        # Step 10: Create PR
+        echo "✓ Creating PR to merge into $main_branch..."
+        set pr_num (gh pr create --base "$main_branch" --head "$release_branch" --title "chore: bump version to $new_version" --body "Release version $new_version
+
+- Version bumped: $new_version
+- CHANGELOG updated
+- Ready to merge and deploy" 2>&1 | grep -oP 'pull/\K[0-9]+' | head -1)
+
+        if test -z "$pr_num"
+            echo "⚠️  Could not create PR automatically"
+            echo "   Please create manually: https://github.com/ProNeXus-AI/Xtimator/compare/$main_branch...$release_branch"
+            return 1
+        end
+
+        echo "   PR #$pr_num created"
+
+        # Step 11: Merge PR
+        echo "✓ Merging PR #$pr_num..."
+        gh pr merge "$pr_num" --squash --delete-branch >/dev/null 2>&1
+        or begin
+            echo "❌ Failed to merge PR"
+            echo "ℹ️  Merge manually or fix issues and retry"
+            return 1
+        end
+
+        # Step 12: Return to main and pull latest
+        echo "✓ Pulling latest from $main_branch..."
+        git checkout "$main_branch" >/dev/null 2>&1
+        git pull origin "$main_branch" >/dev/null 2>&1
     else
         # For prod, get current version
         set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
