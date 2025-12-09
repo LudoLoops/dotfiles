@@ -1,4 +1,12 @@
-# Functions needed for !! and !$ https://github.com/oh-my-fish/plugin-bang-bang
+# =============================================================================
+# Generic Utilities & Overrides
+# =============================================================================
+# Sudo history support (!!/!$), generic helpers
+
+# History Support for Sudo (!! and !$)
+# Functions needed for !! and !$ features
+# Reference: https://github.com/oh-my-fish/plugin-bang-bang
+
 function __history_previous_command
     switch (commandline -t)
         case "!"

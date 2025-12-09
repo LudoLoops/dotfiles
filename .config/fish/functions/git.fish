@@ -96,20 +96,19 @@ end
 # Alias for backwards compatibility
 alias ghstart='gh-start'
 
-function commit --description 'git add and commit with conventional commit format'
-    if test (count $argv) -eq 0
-        echo "Usage: commit <type>: <subject>"
-        echo "Types: feat, fix, refactor, docs, test, chore, perf, style"
-        echo "Example: commit feat: add new authentication method"
-        return 1
-    end
-
+function commit --description 'git add and commit with conventional commit format or auto-commit with timestamp'
     set message "$argv"
 
-    # Validate conventional commit format (type: subject)
-    if not string match -q '*:*' "$message"
-        echo "❌ Invalid format. Use 'type: subject' (e.g., 'feat: add feature')"
-        return 1
+    # If no arguments, use auto-commit with timestamp
+    if test (count $argv) -eq 0
+        set timestamp (date '+%d-%b-%Y %H:%M')
+        set message "auto-commit: $timestamp"
+    else
+        # Validate conventional commit format (type: subject)
+        if not string match -q '*:*' "$message"
+            echo "❌ Invalid format. Use 'type: subject' (e.g., 'feat: add feature')"
+            return 1
+        end
     end
 
     git add -A && git commit -m "$message"
