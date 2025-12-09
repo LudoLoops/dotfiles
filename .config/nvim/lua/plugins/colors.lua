@@ -5,7 +5,7 @@ return {
     "folke/tokyonight.nvim",
     lazy = true,
     opts = {
-      style = "moon", -- Available: "storm", "moon", "night", "day"
+      style = "night", -- Available: "storm", "moon", "night", "day"
       transparent = false,
       terminal_colors = true,
       styles = {
@@ -49,6 +49,12 @@ return {
         treesitter = true,
       },
     },
+  },
+
+  -- Kanagawa theme (Japanese-inspired, warm and elegant)
+  {
+    "rebelot/kanagawa.nvim",
+    lazy = true,
   },
 
   -- LazyVim configuration
