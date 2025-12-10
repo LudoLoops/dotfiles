@@ -406,18 +406,11 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         echo ""
     end
 
-    # Smart deployment: if on main without explicit target, assume beta
+    # Smart deployment: if on main without explicit target, assume prod (skip beta)
     if test -z "$target" -a "$current_branch" = "$main_branch"
-        set target "beta"
-        echo "📍 Currently on main branch, deploying to beta..."
+        set target "prod"
+        echo "📍 Currently on main branch, deploying to prod..."
         echo ""
-    end
-
-    # Full deployment: if on main and explicitly requesting prod, do beta then prod
-    if test "$target" = "prod" -a "$current_branch" = "$main_branch"
-        echo "📍 Full deployment: main → beta → prod"
-        echo ""
-        set target "beta-and-prod"
     end
 
     # Validate target argument
@@ -425,37 +418,34 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         echo "❌ Usage: ship [beta|prod]"
         echo ""
         echo "Examples:"
-        echo "  ship beta    # Deploy to staging (creates release branch, bumps version, asks Claude for CHANGELOG)"
-        echo "  ship prod    # Deploy full pipeline: main → beta → prod"
+        echo "  ship        # From main: Deploy to prod (bumps version)"
+        echo "  ship beta   # Deploy to beta only (no version bump)"
+        echo "  ship prod   # From main: Deploy to prod (bumps version)"
         echo ""
         echo "💡 Smart shortcuts:"
-        echo "   From main: 'ship' → deploys to beta only"
-        echo "   From main: 'ship prod' → deploys to beta AND prod (full pipeline)"
-        echo "   From beta: 'ship' → deploys to prod only"
+        echo "   From main: 'ship' → deploys to prod directly with version bump"
+        echo "   From beta: 'ship' → deploys to prod"
+        echo "   Explicit: 'ship beta' → deploys to beta without version bump"
         return 1
     end
 
-    if not test "$target" = "beta" -o "$target" = "prod" -o "$target" = "beta-and-prod"
+    if not test "$target" = "beta" -o "$target" = "prod"
         echo "❌ Invalid target: $target"
         echo "ℹ️  Use: ship beta  or  ship prod"
         return 1
     end
 
     # Block shipping from other protected branches
-    if string match -q "beta|prod" "$current_branch" -a "$current_branch" != "$target" -a "$target" != "beta-and-prod"
+    if string match -q "beta|prod" "$current_branch" -a "$current_branch" != "$target"
         echo "❌ Cannot ship from protected branch: $current_branch"
         echo "ℹ️  Switch to $main_branch first: git checkout $main_branch"
         return 1
     end
 
-    # For full deployment, show confirmation
-    if test "$target" = "beta-and-prod"
-        echo "⚠️  Full deployment to PRODUCTION"
-        echo "ℹ️  Will deploy to both beta and prod"
-        echo ""
-    else if test "$target" = "prod"
+    # Show warning for prod deployment
+    if test "$target" = "prod"
         echo "⚠️  Deploying to PRODUCTION"
-        echo "ℹ️  Make sure you've tested changes in beta environment first"
+        echo "ℹ️  Make sure all tests pass before deploying"
         echo ""
     end
 
@@ -496,213 +486,43 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         return 1
     end
 
-    # Step 5: Create release branch (for beta or beta-and-prod)
-    if test "$target" = "beta" -o "$target" = "beta-and-prod"
-        # Get current version
-        set current_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
+    # Step 5: Bump version and generate CHANGELOG (for prod only)
+    if test "$target" = "prod"
+        echo "✓ Bumping version and generating CHANGELOG..."
 
-        echo "✓ Creating release branch..."
-        set release_branch "chore/release-v$current_version"
-
-        # Check if branch already exists locally, if so delete it
-        if git rev-parse --verify "$release_branch" >/dev/null 2>&1
-            git branch -D "$release_branch" >/dev/null 2>&1
-        end
-
-        git checkout -b "$release_branch" >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to create release branch"
-            return 1
-        end
-
-        # Step 6: Bump version
-        echo "✓ Bumping version (patch)..."
-        pnpm version patch --no-git-tag-version >/dev/null 2>&1
+        # Use standard-version to bump version and generate CHANGELOG
+        standard-version --skip.commit --skip.tag >/dev/null 2>&1
         or begin
             echo "❌ Failed to bump version"
             git checkout "$main_branch" >/dev/null 2>&1
-            git branch -D "$release_branch" >/dev/null 2>&1
             return 1
         end
 
+        # Get the new version from package.json
         set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
         echo "   Version bumped to: $new_version"
+        echo "   ✓ CHANGELOG generated automatically"
 
-        # Step 7: Create placeholder CHANGELOG entry for Claude to fill in
-        if test -f CHANGELOG.md
-            echo ""
-            echo "📝 CHANGELOG needs to be updated for version $new_version"
-
-            # Create temp file with new changelog entry
-            set temp_changelog (mktemp)
-            set date (date '+%Y-%m-%d')
-
-            echo "## [$new_version] - $date" > "$temp_changelog"
-            echo "" >> "$temp_changelog"
-            echo "### Added" >> "$temp_changelog"
-            echo "- " >> "$temp_changelog"
-            echo "" >> "$temp_changelog"
-            echo "### Changed" >> "$temp_changelog"
-            echo "- " >> "$temp_changelog"
-            echo "" >> "$temp_changelog"
-            echo "### Fixed" >> "$temp_changelog"
-            echo "- " >> "$temp_changelog"
-            echo "" >> "$temp_changelog"
-
-            # Append existing CHANGELOG
-            tail -n +1 CHANGELOG.md >> "$temp_changelog"
-            mv "$temp_changelog" CHANGELOG.md
-            echo "   ✓ Placeholder added to CHANGELOG.md"
-            echo ""
-            echo "⚠️  PAUSE: Please edit CHANGELOG.md with the actual release notes"
-            echo ""
-            echo "When ready, press Enter to continue with the deployment..."
-            read -p ""
-
-            # Check if CHANGELOG was edited
-            if not git diff CHANGELOG.md | grep -q "^[+-]"
-                echo "⚠️  CHANGELOG.md was not modified. Using placeholder entries."
-            end
-        end
-
-        # Step 8: Commit version bump and CHANGELOG
-        echo ""
+        # Step 6: Commit version bump and CHANGELOG
         echo "✓ Committing version bump and CHANGELOG..."
         git add -A
-        git commit -m "chore: bump version to $new_version" >/dev/null 2>&1
+        git commit -m "chore: release version $new_version" >/dev/null 2>&1
         or begin
             echo "❌ Failed to commit changes"
             git checkout "$main_branch" >/dev/null 2>&1
-            git branch -D "$release_branch" >/dev/null 2>&1
             return 1
         end
 
-        # Step 9: Push release branch
-        echo "✓ Pushing release branch..."
-        git push -u origin "$release_branch" >/dev/null 2>&1
+        # Step 7: Push changes to main
+        echo "✓ Pushing changes to $main_branch..."
+        git push origin "$main_branch" >/dev/null 2>&1
         or begin
-            echo "❌ Failed to push release branch"
-            git checkout "$main_branch" >/dev/null 2>&1
+            echo "❌ Failed to push to $main_branch"
             return 1
         end
-
-        # Step 10: Create PR
-        echo "✓ Creating PR to merge into $main_branch..."
-        set pr_num (gh pr create --base "$main_branch" --head "$release_branch" --title "chore: bump version to $new_version" --body "Release version $new_version
-
-- Version bumped: $new_version
-- CHANGELOG updated
-- Ready to merge and deploy" 2>&1 | grep -oP 'pull/\K[0-9]+' | head -1)
-
-        if test -z "$pr_num"
-            echo "⚠️  Could not create PR automatically"
-            echo "   Please create manually: https://github.com/ProNeXus-AI/Xtimator/compare/$main_branch...$release_branch"
-            return 1
-        end
-
-        echo "   PR #$pr_num created"
-
-        # Step 11: Merge PR
-        echo "✓ Merging PR #$pr_num..."
-        gh pr merge "$pr_num" --squash --delete-branch >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to merge PR"
-            echo "ℹ️  Merge manually or fix issues and retry"
-            return 1
-        end
-
-        # Step 12: Return to main and pull latest
-        echo "✓ Pulling latest from $main_branch..."
-        git checkout "$main_branch" >/dev/null 2>&1
-        git pull origin "$main_branch" >/dev/null 2>&1
     else
-        # For prod, get current version
+        # For beta, just get current version without bumping
         set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
-    end
-
-    # Handle beta-and-prod: deploy to beta first, then prod
-    if test "$target" = "beta-and-prod"
-        # Deploy to beta
-        echo "✓ Switching to beta branch..."
-        git checkout beta >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to checkout beta branch"
-            return 1
-        end
-
-        echo "✓ Pulling latest beta..."
-        git pull origin beta >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to pull beta"
-            return 1
-        end
-
-        echo "✓ Merging $main_branch into beta..."
-        git merge "$main_branch" --no-edit >/dev/null 2>&1
-        or begin
-            echo "❌ Merge conflict detected. Please resolve manually."
-            echo "ℹ️  Run: git merge --abort  and try again"
-            return 1
-        end
-
-        echo "✓ Pushing to beta (auto-deploy triggered)..."
-        git push origin beta >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to push to beta"
-            return 1
-        end
-
-        echo ""
-        echo "✓ Beta deployment complete!"
-        echo ""
-
-        # Now deploy to prod
-        echo "✓ Switching to prod branch..."
-        git checkout prod >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to checkout prod branch"
-            return 1
-        end
-
-        echo "✓ Pulling latest prod..."
-        git pull origin prod >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to pull prod"
-            return 1
-        end
-
-        echo "✓ Merging beta into prod..."
-        git merge beta --no-edit >/dev/null 2>&1
-        or begin
-            echo "❌ Merge conflict detected. Please resolve manually."
-            echo "ℹ️  Run: git merge --abort  and try again"
-            return 1
-        end
-
-        echo "✓ Pushing to prod (auto-deploy triggered)..."
-        git push origin prod >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to push to prod"
-            return 1
-        end
-
-        # Return to main
-        echo "✓ Returning to $main_branch..."
-        git checkout "$main_branch" >/dev/null 2>&1
-
-        # Success!
-        echo ""
-        echo "════════════════════════════════════════════════════════"
-        echo "✅ Full Deployment Successful!"
-        echo "════════════════════════════════════════════════════════"
-        echo "🎯 Version: $new_version"
-        echo "📍 Branches: beta → prod"
-        echo "⏳ Auto-deploy in progress on both environments..."
-        echo ""
-        echo "ℹ️  Changes are now live in production!"
-        echo "════════════════════════════════════════════════════════"
-
-        return 0
     end
 
     # Regular single-target deployment
@@ -720,8 +540,19 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         return 1
     end
 
-    # For prod, merge beta. For beta, merge main
-    set source_branch (test "$target" = "prod" && echo "beta" || echo "$main_branch")
+    # Determine source branch based on target
+    if test "$target" = "prod"
+        # If deploying to prod and we just bumped from main, source is main
+        if test "$current_branch" = "$main_branch"
+            set source_branch "$main_branch"
+        else
+            # If on beta, merge beta into prod
+            set source_branch "beta"
+        end
+    else
+        # For beta, merge from main
+        set source_branch "$main_branch"
+    end
 
     echo "✓ Merging $source_branch into $target..."
     git merge "$source_branch" --no-edit >/dev/null 2>&1
