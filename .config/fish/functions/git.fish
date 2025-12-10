@@ -214,10 +214,15 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
         return 1
     end
 
-    # Check for uncommitted changes
-    if not git diff-index --quiet HEAD --
-        echo "❌ You have uncommitted changes"
-        echo "💡 Commit them first: commit '<type>: <message>'"
+    # Check for uncommitted changes (both staged and unstaged)
+    set status_output (git status --porcelain)
+    if test -n "$status_output"
+        echo "❌ You have uncommitted changes:"
+        echo "$status_output"
+        echo ""
+        echo "💡 Either:"
+        echo "   • Commit them: commit '<type>: <message>'"
+        echo "   • Or stash them: git stash"
         return 1
     end
 
