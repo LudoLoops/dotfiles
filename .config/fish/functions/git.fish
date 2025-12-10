@@ -205,8 +205,8 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
         return 1
     end
 
-    # Extract issue number from branch name
-    set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" -c)
+    # Extract issue number from branch name (format: type/issue-slug)
+    set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" | head -1)
 
     if test -z "$issue_number"
         echo "❌ Branch name doesn't match pattern: <type>/<issue-#>-<slug>"
