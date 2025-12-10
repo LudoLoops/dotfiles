@@ -73,7 +73,7 @@ function gh-start --description 'Create branch from GitHub issue: gh-start <issu
     end
 
     # Fetch issue title from GitHub
-    set issue_title (gh issue view $issue_num --json title --query '.title' 2>/dev/null)
+    set issue_title (gh issue view $issue_num --json title --jq '.title' 2>/dev/null)
 
     if test -z "$issue_title"
         echo "❌ Could not fetch issue #$issue_num. Check if it exists."
@@ -86,7 +86,7 @@ function gh-start --description 'Create branch from GitHub issue: gh-start <issu
     end
 
     # Validate type
-    if not string match -q "feat|fix|refactor|docs|test|chore|perf|style" "$issue_type"
+    if not string match -q -r '^(feat|fix|refactor|docs|test|chore|perf|style)$' "$issue_type"
         echo "❌ Invalid type. Use: feat, fix, refactor, docs, test, chore, perf, style"
         return 1
     end

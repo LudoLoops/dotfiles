@@ -1,6 +1,11 @@
 env.fish
 fish_variables
 
+# Machine-specific config files (DO NOT sync)
+.config/kwinrc
+.config/kxkbrc
+.config/plasmarc
+
 # Claude Code runtime & generated files (not config)
 .claude/.credentials.json
 .claude/history.jsonl
