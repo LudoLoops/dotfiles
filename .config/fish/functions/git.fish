@@ -13,25 +13,40 @@ alias push='git push origin'
 alias git-deploy="git switch prod && git merge main && git push && git checkout main"
 # github
 
-function gh-workflow --description 'Complete GitHub workflow: issue → branch → commit → PR → merge'
+function gh-workflow --description 'Complete GitHub workflow: gh-start issue → commit changes → gh-finish (push, PR, merge, cleanup)'
     echo "📋 GitHub Workflow Guide"
     echo ""
+    echo "🚀 SIMPLIFIED WORKFLOW (Recommended)"
+    echo ""
     echo "1️⃣  Start work on an issue:"
-    echo "   gh-branch <issue-number> <slug-name>"
-    echo "   Example: gh-branch 42 add-user-auth"
+    echo "   gh-start <issue-number>"
+    echo "   Example: gh-start 42"
     echo ""
     echo "2️⃣  Make changes and commit:"
     echo "   commit <type>: <description>"
     echo "   Example: commit feat: add JWT authentication"
-    echo "   compush <type>: <description>  (commit + push)"
     echo ""
-    echo "3️⃣  Create PR (auto-closes issue #42):"
-    echo "   gh-pr"
-    echo ""
-    echo "4️⃣  Merge PR and cleanup:"
+    echo "3️⃣  Finish: Push, create PR, merge, cleanup (ALL AUTOMATED!):"
     echo "   gh-finish"
     echo ""
-    echo "✨ Types: feat, fix, refactor, docs, test, chore, perf, style"
+    echo "   That's it! gh-finish handles everything:"
+    echo "   ✅ Pushes branch to remote"
+    echo "   ✅ Creates PR (auto-fills title, closes issue)"
+    echo "   ✅ Squash merges to main"
+    echo "   ✅ Deletes remote branch"
+    echo "   ✅ Returns to main"
+    echo ""
+    echo "---"
+    echo ""
+    echo "📚 MANUAL WORKFLOW (if you prefer step-by-step control)"
+    echo ""
+    echo "1️⃣  Create branch: gh-branch <issue-#> <slug>"
+    echo "2️⃣  Make changes and commit: commit <type>: <description>"
+    echo "3️⃣  Push: git push -u origin"
+    echo "4️⃣  Create PR: gh-pr"
+    echo "5️⃣  Merge: gh pr merge --squash --delete-branch"
+    echo ""
+    echo "✨ Commit types: feat, fix, refactor, docs, test, chore, perf, style"
 end
 
 function gh-start --description 'Create branch from GitHub issue: gh-start <issue-number> [type]'
@@ -175,13 +190,22 @@ function gh-pr --description 'Create PR from current branch and close associated
     end
 end
 
-function gh-finish --description 'Merge PR and cleanup'
+function gh-finish --description 'Complete PR workflow: push → create PR → squash merge → cleanup (requires uncommitted changes committed first)'
     if not git rev-parse --git-dir >/dev/null 2>&1
         echo "❌ Not a git repository"
         return 1
     end
 
     set branch_name (git rev-parse --abbrev-ref HEAD)
+
+    # Check if on a protected branch
+    if string match -q "main|master|beta|prod" "$branch_name"
+        echo "❌ Cannot finish on protected branch: $branch_name"
+        echo "⚠️  Always work on feature branches, never on main/beta/prod"
+        return 1
+    end
+
+    # Extract issue number from branch name
     set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" -c)
 
     if test -z "$issue_number"
@@ -190,16 +214,52 @@ function gh-finish --description 'Merge PR and cleanup'
         return 1
     end
 
-    echo "🔀 Merging PR for issue #$issue_number..."
-    gh pr merge -d -s
+    # Check for uncommitted changes
+    if not git diff-index --quiet HEAD --
+        echo "❌ You have uncommitted changes"
+        echo "💡 Commit them first: commit '<type>: <message>'"
+        return 1
+    end
 
-    if test $status -eq 0
-        echo "✅ PR merged and branch deleted"
-        git checkout main
-    else
+    echo "📤 Step 1: Pushing branch to remote..."
+    git push -u origin "$branch_name"
+
+    if test $status -ne 0
+        echo "❌ Failed to push branch"
+        return 1
+    end
+    echo "✅ Branch pushed"
+
+    echo ""
+    echo "📝 Step 2: Creating PR for issue #$issue_number..."
+    gh pr create --fill --body "Closes #$issue_number"
+
+    if test $status -ne 0
+        echo "❌ Failed to create PR"
+        return 1
+    end
+    echo "✅ PR created"
+
+    echo ""
+    echo "🔀 Step 3: Merging PR (squash merge)..."
+    gh pr merge --squash --delete-branch
+
+    if test $status -ne 0
         echo "❌ Failed to merge PR"
         return 1
     end
+    echo "✅ PR merged and remote branch deleted"
+
+    echo ""
+    echo "🏠 Step 4: Returning to main..."
+    git checkout main
+    git pull origin main
+
+    echo ""
+    echo "✅ ✅ ✅ Workflow complete!"
+    echo "   Issue #$issue_number closed"
+    echo "   PR merged with squash"
+    echo "   Branch cleaned up"
 end
 
 # Alias for backwards compatibility
