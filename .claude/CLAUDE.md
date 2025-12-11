@@ -15,6 +15,25 @@ pnpm test             # Run tests
 pnpm build            # Build
 ```
 
+## ⚠️ CRITICAL RULES - ZERO EXCEPTIONS
+
+**These rules MUST be followed without exception. Failure is not acceptable.**
+
+1. **🚫 NEVER COMMIT TO MAIN/BETA/PROD**
+   - ALWAYS create a feature branch FIRST before ANY file changes
+   - Format: `<type>/<issue-#>-<slug>` (e.g., `feat/113-fix-changelog`)
+   - If you find yourself on main/beta/prod: STOP, create branch, cherry-pick changes
+
+2. **🔒 PROTECTED BRANCHES ARE SACRED**
+   - main, beta, prod are read-only
+   - Only way to change them: PR → Review → Merge via GitHub
+   - NO exceptions for "quick fixes" or "small changes"
+
+3. **📋 ALWAYS CREATE A BRANCH BEFORE EDITING ANY FILES**
+   - This is the first step, before anything else
+   - Check current branch: `git branch`
+   - If on main/beta/prod: `git checkout -b <new-branch>`
+
 ## 🎯 Key Principles
 
 1. **pnpm everywhere** - Never npm or yarn
@@ -51,12 +70,16 @@ Closes #<issue-number>
 
 ### Non-negotiable Rules
 
-- ✅ Never commit to main → use feature branches
+- 🚫 **NEVER commit to main, beta, or prod** - Zero exceptions, always use feature branches
+- 🚫 **NEVER edit files while on main, beta, or prod** - Create branch FIRST
+- ✅ Always create feature branch BEFORE making ANY changes
 - ✅ Always reference issue in commits (`Closes #11`)
 - ✅ One issue per branch
 - ✅ Tests must pass: `pnpm test`
 - ✅ Code must be formatted: `pnpm format`
 - ✅ TypeScript must check: `pnpm check`
+- ✅ Create PR and wait for approval before merging
+- ✅ NEVER force push to main/beta/prod
 
 ### GitHub Labels
 
