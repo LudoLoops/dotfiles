@@ -488,10 +488,10 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
 
     # Step 5: Bump version and generate CHANGELOG (for prod only)
     if test "$target" = "prod"
+        # Use pnpm exec to ensure we're using the project's standard-version
+        # Note: standard-version will create commit + tag automatically
         echo "✓ Bumping version and generating CHANGELOG..."
-
-        # Use standard-version to bump version and generate CHANGELOG
-        standard-version --skip.commit --skip.tag >/dev/null 2>&1
+        pnpm exec standard-version 2>&1 >/dev/null
         or begin
             echo "❌ Failed to bump version"
             git checkout "$main_branch" >/dev/null 2>&1
@@ -500,22 +500,31 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
 
         # Get the new version from package.json
         set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
+        set tag_name "v$new_version"
         echo "   Version bumped to: $new_version"
         echo "   ✓ CHANGELOG generated automatically"
 
-        # Step 6: Commit version bump and CHANGELOG
-        echo "✓ Committing version bump and CHANGELOG..."
-        git add -A
-        git commit -m "chore: release version $new_version" >/dev/null 2>&1
-        or begin
-            echo "❌ Failed to commit changes"
-            git checkout "$main_branch" >/dev/null 2>&1
-            return 1
+        # Copy CHANGELOG.md to static/ for public access
+        if test -f CHANGELOG.md
+            cp CHANGELOG.md static/CHANGELOG.md
+            echo "   ✓ CHANGELOG copied to static/"
+        else
+            echo "   ⚠️  CHANGELOG.md not found after generation"
         end
 
-        # Step 7: Push changes to main
-        echo "✓ Pushing changes to $main_branch..."
-        git push origin "$main_branch" >/dev/null 2>&1
+        # Stage the static/CHANGELOG.md copy
+        echo "✓ Staging static/CHANGELOG.md..."
+        git add static/CHANGELOG.md >/dev/null 2>&1
+
+        # Amend the commit to include static/CHANGELOG.md
+        git commit --amend --no-edit >/dev/null 2>&1
+        or begin
+            echo "⚠️  Could not amend commit, but version bump is done"
+        end
+
+        # Step 6: Push changes and tag to main
+        echo "✓ Pushing changes and tag to $main_branch..."
+        git push origin "$main_branch" "$tag_name" >/dev/null 2>&1
         or begin
             echo "❌ Failed to push to $main_branch"
             return 1
@@ -555,7 +564,16 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     end
 
     echo "✓ Merging $source_branch into $target..."
-    git merge "$source_branch" --no-edit >/dev/null 2>&1
+
+    # Create explicit merge commit message with version info
+    set merge_message "merge: release version $new_version to $target"
+    if test "$target" = "prod"
+        set merge_message "merge: release v$new_version to production"
+    else if test "$target" = "beta"
+        set merge_message "merge: deploy v$new_version to staging"
+    end
+
+    git merge "$source_branch" -m "$merge_message" >/dev/null 2>&1
     or begin
         echo "❌ Merge conflict detected. Please resolve manually."
         echo "ℹ️  Run: git merge --abort  and try again"
