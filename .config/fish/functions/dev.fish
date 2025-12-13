@@ -22,7 +22,7 @@ function sv-create --argument path
     end
 
     # Create SvelteKit project with options
-    command pnpx sv create --types ts --install pnpm --template minimal --no-add-ons "$path"
+    command bunx sv create --types ts --install bun --template minimal --no-add-ons "$path"
     or begin
         echo "Error: Failed to create SvelteKit project." >&2
         return 1
@@ -36,14 +36,14 @@ function sv-create --argument path
     end
 
     # Add dependencies via sv add
-    command pnpx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install pnpm
+    command bunx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install bun
     or begin
         echo "Error: Failed to add dependencies." >&2
         return 1
     end
 
     # Install Skeleton UI packages
-    command pnpm i -D @skeletonlabs/skeleton @skeletonlabs/skeleton-svelte
+    command bun i -D @skeletonlabs/skeleton @skeletonlabs/skeleton-svelte
     or begin
         echo "Error: Failed to install Skeleton UI dependencies." >&2
         return 1
@@ -55,7 +55,7 @@ function sv-create --argument path
         command touch "$css_file"
     end
 
-    command echo -e '@import \'tailwindcss\';\n@import \'@skeletonlabs/skeleton\';\n@import \'@skeletonlabs/svelte\';\n@import \'@skeletonlabs/skeleton/themes/cerberus\';' >> "$css_file"
+    command echo -e '@import \'tailwindcss\';\n@import \'@skeletonlabs/skeleton\';\n@import \'@skeletonlabs/svelte\';\n@import \'@skeletonlabs/skeleton/themes/cerberus\';' >>"$css_file"
     or begin
         echo "Error: Could not append to $css_file." >&2
         return 1
@@ -66,7 +66,7 @@ function sv-create --argument path
     if test -f "$app_html"
         # Create a temporary file for cross-platform compatibility
         set temp_file (mktemp)
-        command sed 's/<html/<html data-theme="cerberus"/' "$app_html" > "$temp_file"
+        command sed 's/<html/<html data-theme="cerberus"/' "$app_html" >"$temp_file"
         and mv "$temp_file" "$app_html"
         or begin
             echo "Error: Failed to update $app_html with data-theme." >&2
@@ -254,7 +254,7 @@ function smart-branch --description "Create intelligent feature branch with vali
     # Check type argument
     set branch_type $argv[1]
     if test -z "$branch_type"
-        set branch_type "feat"
+        set branch_type feat
     end
 
     # Validate type
@@ -319,7 +319,7 @@ function check-quality --description "Run linting, type check, and tests"
     # ESLint check
     if grep -q '"eslint"' package.json || grep -q '"@typescript-eslint"' package.json
         echo "📋 Running ESLint..."
-        pnpm exec eslint src/ 2>&1 | head -20
+        bun exec eslint src/ 2>&1 | head -20
         if test $status -eq 0
             echo "✅ ESLint: PASS"
             set checks_passed (math $checks_passed + 1)
@@ -333,7 +333,7 @@ function check-quality --description "Run linting, type check, and tests"
     # TypeScript check
     if test -f tsconfig.json
         echo "📘 Running TypeScript check..."
-        pnpm check 2>&1 | tail -5
+        bun check 2>&1 | tail -5
         if test $status -eq 0
             echo "✅ TypeScript: PASS"
             set checks_passed (math $checks_passed + 1)
@@ -347,7 +347,7 @@ function check-quality --description "Run linting, type check, and tests"
     # Tests
     if grep -q '"test"' package.json
         echo "🧪 Running tests..."
-        pnpm test 2>&1 | tail -10
+        bun test 2>&1 | tail -10
         if test $status -eq 0
             echo "✅ Tests: PASS"
             set checks_passed (math $checks_passed + 1)
@@ -400,15 +400,15 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     set main_branch (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||' || echo "main")
 
     # Smart branch detection: if on beta without explicit target, assume prod
-    if test -z "$target" -a "$current_branch" = "beta"
-        set target "prod"
+    if test -z "$target" -a "$current_branch" = beta
+        set target prod
         echo "📍 Currently on beta branch, deploying to prod..."
         echo ""
     end
 
     # Smart deployment: if on main without explicit target, assume prod (skip beta)
     if test -z "$target" -a "$current_branch" = "$main_branch"
-        set target "prod"
+        set target prod
         echo "📍 Currently on main branch, deploying to prod..."
         echo ""
     end
@@ -429,7 +429,7 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
         return 1
     end
 
-    if not test "$target" = "beta" -o "$target" = "prod"
+    if not test "$target" = beta -o "$target" = prod
         echo "❌ Invalid target: $target"
         echo "ℹ️  Use: ship beta  or  ship prod"
         return 1
@@ -443,7 +443,7 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     end
 
     # Show warning for prod deployment
-    if test "$target" = "prod"
+    if test "$target" = prod
         echo "⚠️  Deploying to PRODUCTION"
         echo "ℹ️  Make sure all tests pass before deploying"
         echo ""
@@ -487,7 +487,7 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     end
 
     # Step 5: Bump version and generate CHANGELOG (for prod only)
-    if test "$target" = "prod"
+    if test "$target" = prod
         # Use pnpm exec to ensure we're using the project's standard-version
         # Note: standard-version will create commit + tag automatically
         echo "✓ Bumping version and generating CHANGELOG..."
@@ -550,13 +550,13 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     end
 
     # Determine source branch based on target
-    if test "$target" = "prod"
+    if test "$target" = prod
         # If deploying to prod and we just bumped from main, source is main
         if test "$current_branch" = "$main_branch"
             set source_branch "$main_branch"
         else
             # If on beta, merge beta into prod
-            set source_branch "beta"
+            set source_branch beta
         end
     else
         # For beta, merge from main
@@ -567,9 +567,9 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
 
     # Create explicit merge commit message with version info
     set merge_message "merge: release version $new_version to $target"
-    if test "$target" = "prod"
+    if test "$target" = prod
         set merge_message "merge: release v$new_version to production"
-    else if test "$target" = "beta"
+    else if test "$target" = beta
         set merge_message "merge: deploy v$new_version to staging"
     end
 
@@ -602,7 +602,7 @@ function ship --description "Deploy to beta or prod: ship [beta|prod]"
     echo "⏳ Auto-deploy in progress..."
     echo ""
 
-    if test "$target" = "beta"
+    if test "$target" = beta
         echo "ℹ️  Next steps:"
         echo "   1. Test changes in beta environment"
         echo "   2. When ready: ship prod"
