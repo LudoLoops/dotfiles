@@ -2,13 +2,16 @@
 
 Execute the Fish function `gh-finish` to automatically merge PR, close issue, delete branch, and return to main.
 
+## Function Location
+`~/dotfiles/.config/fish/functions/git/workflow.fish`
+
 ## Usage
 
 ```
-/gh-finish
+gh-finish
 ```
 
-## What it does (via Fish gh-finish function)
+## What it does
 
 1. ✅ Push branch to remote with upstream tracking
 2. ✅ Create PR from branch → main (auto-fills title, closes issue)
