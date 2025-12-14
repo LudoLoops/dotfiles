@@ -2,6 +2,8 @@
 
 Fish functions are organized in `~/dotfiles/.config/fish/functions/` (symlinked via Stow to `~/.config/fish/functions/`).
 
+⚠️ **IMPORTANT:** When you add, modify, or remove functions, **UPDATE THIS FILE** to keep it in sync with actual functions. See "How to Add/Modify Functions" section below.
+
 ## Git Functions (git/)
 
 Located in: `~/dotfiles/.config/fish/functions/git/`
@@ -50,13 +52,11 @@ See individual files in `~/dotfiles/.config/fish/functions/`:
 - `system.fish` - System utilities
 - `utils.fish` - General utilities
 
-## How to Add Functions
+## How to Add/Modify Functions
 
-1. Create file in appropriate subdirectory (or create new one)
-2. Define function (auto-loaded by index.fish)
-3. Available immediately on next shell session
+### Step 1: Create or Edit Function File
 
-Example:
+Create file in appropriate subdirectory:
 ```bash
 # Create new git function
 touch ~/dotfiles/.config/fish/functions/git/new-function.fish
@@ -66,6 +66,22 @@ function new-git-function --description 'What it does'
     # implementation
 end
 ```
+
+### Step 2: Update FISH_FUNCTIONS.md (THIS FILE!)
+
+When you add or modify a function:
+1. Add/update function in the **Git Functions** section (or appropriate section)
+2. Include the function name, description, and location
+3. Update the table or list
+
+Example:
+```markdown
+- `new-git-function` - What it does
+```
+
+### Step 3: Available Immediately
+
+Functions are auto-loaded by `index.fish` on next shell session.
 
 ## Last Updated
 December 14, 2024
