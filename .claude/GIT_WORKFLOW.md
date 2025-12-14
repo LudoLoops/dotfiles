@@ -99,116 +99,90 @@ The project uses **Semantic Versioning** (MAJOR.MINOR.PATCH):
 - `1.0.0` → `1.1.0` (minor - new features)
 - `1.0.0` → `2.0.0` (major - breaking changes)
 
-### Version Bumping Strategy
+### Version Bumping Strategy (via `standard-version`)
 
-**Beta deployment:**
-- Auto-bumps patch version (`1.0.0` → `1.0.1`)
-- Lets you see progress in beta testing
-- Version bump happens automatically with `ship` command
+Version is **auto-bumped on production deployment** based on commit types:
 
-**Production deployment:**
-- Uses the already-bumped beta version
-- No additional version bump
-- You know the exact version that was tested
+**Commit types → Version bump:**
+- `feat:` commits → Minor bump (0.X.0)
+- `fix:` or `chore:` commits → Patch bump (0.0.X)
+- `BREAKING CHANGE:` → Major bump (X.0.0)
 
 **Example:**
 ```
-Day 1: main 1.0.0 → ship → beta 1.0.1
-Day 2: main 1.0.1 → ship → beta 1.0.2
-Day 3: main 1.0.2 → ship prod → prod 1.0.2 (same as beta)
+Current: 1.0.0
+Commits since last release: 2 × fix:, 1 × feat:
+Deploy: ship
+Result: Version bumped to 1.1.0 (minor, due to feat)
 ```
 
-### Manual Version Bump (if needed)
-
-```bash
-pnpm version:patch     # 1.0.0 → 1.0.1
-pnpm version:minor     # 1.0.0 → 1.1.0
-pnpm version:major     # 1.0.0 → 2.0.0
-```
+Version bumping happens automatically during `ship` deployment - no manual version management needed.
 
 ---
 
 ## 🚀 Deployment (Using `ship`)
 
-The `ship` function automates all deployments. See: `~/.claude/commands/ship.md`
-
-### Deploy to Beta (Staging)
-
-```bash
-git checkout main
-ship
-# ✓ Version auto-bumped (patch)
-# ✓ Merged to beta
-# ✓ Auto-deployed to staging environment
-```
+The `ship` function automates deployment to production. See: `~/.claude/commands/git/ship.md`
 
 ### Deploy to Production
 
-**Option 1 - From beta (after testing):**
-```bash
-git checkout beta
-ship prod
-# ✓ Merged to prod
-# ✓ Auto-deployed to production
-```
-
-**Option 2 - Full pipeline from main:**
 ```bash
 git checkout main
-ship prod
-# ✓ Version bumped
-# ✓ Merged to beta
+ship
+# ✓ Version auto-bumped (via standard-version)
+# ✓ CHANGELOG generated
 # ✓ Merged to prod
-# ✓ Both auto-deployed
+# ✓ Auto-deployed to production environment
 ```
+
+**Requirements:**
+- Must be on `main` branch
+- Working directory must be clean (no uncommitted changes)
+- All changes should be tested before deployment
 
 ---
 
-## ⚡ Quick Workflow
+## ⚡ Quick Workflow (Using Fish Functions)
 
-### 1. Develop Feature
+### 1. Start Feature (Simplified!)
 
 ```bash
-git checkout main
-git pull origin main
-git checkout -b feat/my-feature
-
-# ... make changes ...
-
-git add .
-git commit -m "feat: add my feature"
-git push -u origin feat/my-feature
+gh-start 42              # Create branch from issue #42 (auto-infers type)
+# Result: feat/42-branch-name created and checked out
 ```
 
-### 2. Create Pull Request
-
-On GitHub:
-1. Open PR: `feat/my-feature` → `main`
-2. Wait for approval
-3. Merge with "Squash and Merge"
-
-### 3. Deploy to Beta
+### 2. Make Changes & Commit
 
 ```bash
-git checkout main
-git pull origin main
+# ... make your changes ...
+
+commit feat: add my feature    # Conventional commit with validation
+```
+
+### 3. Finish & Merge (Fully Automated!)
+
+```bash
+gh-finish
+# Automatically:
+# ✓ Pushes branch to remote
+# ✓ Creates PR (closes issue #42)
+# ✓ Squash merges to main
+# ✓ Deletes branch
+# ✓ Returns to main
+```
+
+### 4. Deploy to Production
+
+```bash
 ship
-# Wait for auto-deploy to complete
+# Automatically:
+# ✓ Bumps version (via standard-version)
+# ✓ Generates CHANGELOG
+# ✓ Merges to prod
+# ✓ Triggers auto-deploy
 ```
 
-### 4. Test in Staging
-
-- Visit staging URL
-- Verify changes work
-- Test edge cases
-
-### 5. Deploy to Production
-
-```bash
-git checkout main
-ship prod
-# Or from beta: git checkout beta && ship prod
-```
+**That's it!** Full workflow from issue to production with 4 commands.
 
 ---
 
@@ -264,20 +238,20 @@ Before pushing or creating PR:
 | Mistake | Problem | Solution |
 |---------|---------|----------|
 | Commit directly to `main` | Bypasses PR review | Use feature branch + PR |
+| Forgetting to create feature branch | Commits on main | Always create branch FIRST |
 | Long-lived branches (2+ weeks) | Merge conflicts | Smaller PRs, frequent rebases |
 | Unclear commit messages | Hard to track changes | Use conventional commits |
-| Forgetting to pull before push | Rejected pushes | Always `git pull` before work |
-| Merging `beta` to `main` | Wrong direction | Only `main` → `beta` |
+| Not using `gh-start` | Manual branch creation | Use `gh-start <issue-#>` |
+| Not using `gh-finish` | Manual PR/merge steps | Use `gh-finish` (fully automated) |
 
 ---
 
 ## 📚 Related Documentation
 
-- **Deployment automation:** `~/.claude/commands/ship.md`
-- **Smart branch creation:** `~/.claude/commands/branch.md`
+- **Fish functions reference:** `~/.claude/FISH_FUNCTIONS.md`
 - **Global conventions:** `~/.claude/CLAUDE.md`
 
 ---
 
-**Last Updated:** December 2025
-**Applies to:** All web development projects with `main` → `beta` → `prod` deployment
+**Last Updated:** December 14, 2025
+**Applies to:** All web development projects with `main` → `prod` deployment pipeline
