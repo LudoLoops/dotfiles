@@ -91,35 +91,17 @@ gh-labels-init
 
 This creates all 8 standard labels with consistent colors: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`
 
-### GitHub Fish Commands
+### Recommended Git Workflow
 
-Use these Fish shell commands for GitHub workflows - they're simpler than using `gh` directly:
-
-| Command | Purpose |
-|---------|---------|
-| `gh-workflow` | Show complete GitHub workflow guide (issue → branch → commit → PR → merge) |
-| `gh-start <issue-#> [type]` | Create feature branch from issue number (auto-fetches title, converts to slug) |
-| `gh-branch <issue-#> <slug>` | Quick branch creation: `gh-branch 42 add-auth` → creates `feat/42-add-auth` |
-| `gh-pr` | Create PR from current branch (auto-closes associated issue) |
-| `gh-finish` | Merge PR, delete branch, return to main |
-| `gh-labels-init` | Initialize all 8 standard commit type labels |
-| `commit <type>: <subject>` | Conventional commit: `commit feat: add user auth` |
-| `compush <type>: <subject>` | Commit + push in one command |
-
-**Example workflow:**
 ```fish
 gh-start 42              # Create branch from issue #42
 commit feat: add login   # Make changes and commit
-gh-pr                    # Create PR (auto-closes #42)
-gh-finish                # Merge and cleanup
+gh-finish                # Push → PR → merge → cleanup (FULLY AUTOMATED!)
+ship                     # Deploy to production
 ```
 
-**For detailed documentation on all available Fish functions**, see `.claude/docs/fish-dev-functions.md` which covers:
-- Git & GitHub workflows (8 functions)
-- Package management with pnpm
-- SvelteKit development tools
-- Editor integrations (Cursor, Neovide, Zeditor)
-- Quick utilities and pro tips
+**Available Fish functions:** See `~/.claude/FISH_FUNCTIONS.md`
+**Available commands:** See `~/.claude/commands/git/`
 
 ## 📍 Documentation Structure
 
@@ -143,19 +125,18 @@ This directory contains instructions and context that Claude Code uses across al
 ~/.claude/
 ├── README.md                    ← START HERE (quick overview)
 ├── CLAUDE.md                    ← Global instructions (you are reading this)
+├── FISH_FUNCTIONS.md            ← Reference of all Fish shell functions
 │
-├── claude/                      ← Context for Claude (auto-read)
-│   ├── fish-dev-functions.md    # All available Fish shell functions
-│   └── commands-optimization.md # Token optimization strategy
-│
-├── commands/                    ← Slash commands
-│   ├── branch.md                # /branch command
-│   ├── optimize.md              # /optimize command
-│   └── review.md                # /review command
+├── commands/                    ← Slash commands (auto-discovered)
+│   ├── optimize.md              # Code performance optimization
+│   ├── review.md                # Code quality & bug review
+│   └── git/                     # Git workflow commands
+│       ├── gh-start.md          # Create branch from issue
+│       ├── gh-finish.md         # Automated PR workflow
+│       ├── ship.md              # Deploy to production
+│       └── gh-issues.md         # GitHub issues utilities
 │
 └── docs/                        ← Detailed human guides
-    ├── STRUCTURE.md             # Explanation of this structure
-    ├── CLAUDE-CONTEXT.md        # What's in claude/ folder
     └── [future guides]
 ```
 
@@ -187,15 +168,14 @@ When Claude Code starts, it automatically:
 
 ### Key Rules
 
-- **Global context** goes in `~/.claude/claude/`
-  - Fish functions reference
-  - Optimization strategies
-  - Shared workflows
-
-- **Global instructions** stay in `~/.claude/CLAUDE.md`
+- **Global instructions** in `~/.claude/CLAUDE.md`
   - Principles, conventions
   - Git workflow
   - Code quality standards
+
+- **Documentation references** in `~/.claude/`
+  - `FISH_FUNCTIONS.md` - All available Fish functions
+  - `commands/` - Slash commands (auto-discovered by Claude)
 
 - **Project-specific** stays in `project-root/.claude/`
   - Architecture details
@@ -204,15 +184,13 @@ When Claude Code starts, it automatically:
 
 - **Human guides** go in `~/.claude/docs/`
   - For you to understand the structure
-  - Guides on how things work
-  - Documentation about documentation
 
 **Important:** Runtime & generated files (`.credentials.json`, `debug/`, `history.jsonl`, `todos/`, `projects/`, etc.) are ignored in `.gitignore` and NOT symlinked. Only configuration and documentation files are managed by Stow.
 
 **Always update documentation when you:**
 - Change a process → update `CLAUDE.md`
-- Add a Fish function → update `claude/fish-dev-functions.md`
-- Change structure → update `docs/STRUCTURE.md`
+- Add a Fish function → update `.config/fish/functions/git/` and reference in `FISH_FUNCTIONS.md`
+- Add a slash command → place in `commands/` subdirectory (auto-discovered)
 
 ## ✅ Before Coding
 
