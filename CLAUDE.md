@@ -118,15 +118,18 @@ Standard branch format: `<type>/<issue-#>-<slug>`
 - Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`
 - Examples: `feat/42-add-auth`, `fix/15-button-alignment`
 
-**Always use slash commands for git operations:**
+**⚠️ CRITICAL: Always use slash commands for git operations. NEVER commit directly on main/beta/prod.**
 
 ```fish
-/git:branch feat new-feature              # Create branch with type
-/git:branch new-feature                   # Create branch, choose type from list
+# 1. Create a branch FIRST
 /git:start 42                             # Create branch from GitHub issue
-/git:commit "add user authentication"     # Create commit
+/git:branch feat new-feature              # Create branch with type (no issue)
+
+# 2. Make changes and use /git:commit (NOT git commit)
+/git:commit "add user authentication"     # Create commit on feature branch
+
+# 3. Finish the workflow
 /git:finish                               # Push, PR, and squash merge
-/git:ship                                 # Deploy to production
 ```
 
 See `.claude/commands/git/` for all available slash commands.
