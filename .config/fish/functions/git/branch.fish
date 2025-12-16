@@ -1,4 +1,4 @@
-function gh-start --description 'Create branch from GitHub issue'
+function ghstart --description 'Create branch from GitHub issue'
     set issue_num $argv[1]
 
     # If no issue number provided, ask interactively
@@ -99,36 +99,44 @@ function gh-start --description 'Create branch from GitHub issue'
     end
 end
 
-# Alias for backwards compatibility
-alias ghstart='gh-start'
-
-function gh-branch --description 'Create a feature branch from issue number: gh-branch <issue-number> <slug>'
-    if test (count $argv) -lt 2
-        echo "Usage: gh-branch <issue-number> <slug>"
-        echo "Example: gh-branch 42 add-auth-method"
+function ghbranch --description 'Create a branch with type: ghbranch <type> <issue-number> <slug>'
+    if test (count $argv) -lt 3
+        echo "Usage: ghbranch <type> <issue-number> <slug>"
+        echo "Example: ghbranch feat 42 add-auth"
         echo ""
-        echo "Creates branches like: feat/42-add-auth-method"
+        echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
+        echo "Creates branches like: feat/42-add-auth"
         return 1
     end
 
-    set issue_num $argv[1]
-    set slug $argv[2]
+    set branch_type $argv[1]
+    set issue_num $argv[2]
+    set slug $argv[3]
 
     if not string match -qr '^[0-9]+$' "$issue_num"
         echo "❌ Issue number must be numeric"
         return 1
     end
 
-    # Determine type from gh CLI if possible, default to feat
-    set branch_type "feat"
+    # Validate type
+    if not string match -q -r '^(feat|fix|refactor|docs|test|chore|perf|style)$' "$branch_type"
+        echo "❌ Invalid type. Use: feat, fix, refactor, docs, test, chore, perf, style"
+        return 1
+    end
 
     set branch_name "$branch_type/$issue_num-$slug"
 
-    if git rev-parse --git-dir >/dev/null 2>&1
-        git checkout -b "$branch_name"
+    if not git rev-parse --git-dir >/dev/null 2>&1
+        echo "❌ Not a git repository"
+        return 1
+    end
+
+    git checkout -b "$branch_name"
+
+    if test $status -eq 0
         echo "✅ Created and checked out branch: $branch_name"
     else
-        echo "❌ Not a git repository"
+        echo "❌ Failed to create branch"
         return 1
     end
 end
