@@ -1,27 +1,35 @@
 # /git:branch
 
-Create a feature branch with type prefix.
+Create a feature branch with interactive type selection from a label list.
 
 ## What to do
 
-Execute using Fish: `ghbranch <type> <issue-number> <slug>`
+Execute using Fish: `ghbranch <slug>`
 
-Where:
-- `<type>` is the commit type: feat, fix, refactor, docs, test, chore, perf, style
-- `<issue-number>` is the GitHub issue number
-- `<slug>` is a short description (lowercase, hyphens)
+This will:
+1. Ask you to select the branch type from a list
+2. Create the branch: `<type>/<slug>`
 
-## Examples
+No issue number needed - just provide the slug and choose the type.
+
+## Example
 
 ```fish
-ghbranch feat 42 add-auth
-# Creates: feat/42-add-auth
+ghbranch add-auth
 
-ghbranch fix 15 button-alignment
-# Creates: fix/15-button-alignment
+# Prompts:
+# Select branch type:
+#   1) feat      - New feature
+#   2) fix       - Bug fix
+#   3) refactor  - Code refactoring
+#   4) docs      - Documentation
+#   5) test      - Tests
+#   6) chore     - Chore
+#   7) perf      - Performance
+#   8) style     - Style
+# Choice (1-8): 1
 
-ghbranch docs 8 update-readme
-# Creates: docs/8-update-readme
+# Creates: feat/add-auth
 ```
 
 ## Related commands
