@@ -2,38 +2,40 @@
 
 ## Task
 
-Create a new GitHub issue with the best title, appropriate prefix, and corresponding label.
+Create a new GitHub issue with the best title and appropriate label. If labels don't exist, propose to create them.
 
 ## What to do
 
 1. Get the description from the user
 2. Analyze the description to determine the best type:
-   - `feat:` - New feature or enhancement
-   - `fix:` - Bug fix
-   - `refactor:` - Code refactoring
-   - `docs:` - Documentation updates
-   - `test:` - Test additions/updates
-   - `chore:` - Maintenance tasks
-   - `perf:` - Performance improvements
-   - `style:` - Code style/formatting
-3. Generate a concise, clear issue title
-4. Execute using Fish: `gh issue create --title "TYPE: title" --label "TYPE"`
-
-**Note:** Labels must be created first using `gh-labels-init` if they don't exist.
+   - `feat` - New feature or enhancement
+   - `fix` - Bug fix
+   - `refactor` - Code refactoring
+   - `docs` - Documentation updates
+   - `test` - Test additions/updates
+   - `chore` - Maintenance tasks
+   - `perf` - Performance improvements
+   - `style` - Code style/formatting
+3. Generate a concise, clear issue title (without prefix)
+4. Check if the label exists:
+   - If yes: Execute `gh issue create --title "title" --label "TYPE"`
+   - If no: Propose to create labels with `setup-labels`, then create the issue
+5. The label will be used by `ghstart` and `ghfinish` to determine branch type and commit prefix
 
 ## Examples
 
 User input: `/git:issue add user authentication`
-→ Analyze: This is a new feature
-→ Title: "feat: add user authentication"
-→ Execute: `gh issue create --title "feat: add user authentication" --label "feat"`
+→ Analyze: This is a new feature (feat)
+→ Execute: `gh issue create --title "add user authentication" --label "feat"`
 
 User input: `/git:issue button not aligned properly`
 → Analyze: This is a bug fix
-→ Title: "fix: button not aligned properly"
-→ Execute: `gh issue create --title "fix: button not aligned properly" --label "fix"`
+→ Execute: `gh issue create --title "button not aligned properly" --label "fix"`
 
 User input: `/git:issue update contributing guide`
 → Analyze: This is documentation
-→ Title: "docs: update contributing guide"
-→ Execute: `gh issue create --title "docs: update contributing guide" --label "docs"`
+→ Execute: `gh issue create --title "update contributing guide" --label "docs"`
+
+If labels don't exist:
+→ Prompt: "Create standard labels? (y/n)"
+→ If yes: Execute `setup-labels` first, then create the issue with label
