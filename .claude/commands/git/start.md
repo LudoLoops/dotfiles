@@ -1,28 +1,41 @@
 # /git:start
 
-## Task
-
-Create a feature branch from a GitHub issue, using the issue's label as the branch type.
+Create a feature branch from a GitHub issue, using the issue's label as the type.
 
 ## What to do
 
-1. Get the issue number from the user (or ask if missing)
-2. Execute using Fish: `ghstart <issue-number>`
+Execute using Fish: `ghstart <issue-number>`
 
 The function will:
 - Fetch the issue's first label (e.g., "feat", "fix", "docs")
-- Create a branch: `<label>/<issue-#>-<slug>`
+- Create a branch: `<issue-#>-<slug>` (without type prefix)
+- Store the type in the GitHub label
 - Automatically determine the slug from the issue title
 
 ## Examples
 
-User input: `/git:start 42`
-→ Execute: `ghstart 42`
-→ If issue has label "feat": creates `feat/42-add-user-auth`
-→ If issue has no label: asks you to add one
+```fish
+ghstart 42
+→ If issue #42 has label "feat": creates branch 42-add-user-auth
+→ Type is stored in GitHub label: feat
+```
 
-User input (shell): Just type `ghstart` (no args)
-→ Function asks: "Issue number: "
-→ You type: 42
-→ Checks issue labels and creates branch
-→ If no label: proposes to add one interactively
+If issue has no label, it will ask you to add one interactively.
+
+## Workflow
+
+```
+Issue #42 with label "feat"
+         ↓
+ghstart 42
+         ↓
+Branche: 42-add-user-auth
+Type: feat (from GitHub label)
+         ↓
+When finishing: /git:finish reads type from label
+```
+
+## Related commands
+
+- `/git:branch` - Create branch without issue (for quick changes)
+- `/git:finish` - Push, create PR, and squash merge
