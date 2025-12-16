@@ -118,13 +118,18 @@ Standard branch format: `<type>/<issue-#>-<slug>`
 - Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`
 - Examples: `feat/42-add-auth`, `fix/15-button-alignment`
 
-Conventional commits:
+**Always use slash commands for git operations:**
+
 ```fish
-commit feat: add user authentication
-compush fix: resolve login timeout
+/git:branch feat new-feature              # Create branch with type
+/git:branch new-feature                   # Create branch, choose type from list
+/git:start 42                             # Create branch from GitHub issue
+/git:commit "add user authentication"     # Create commit
+/git:finish                               # Push, PR, and squash merge
+/git:ship                                 # Deploy to production
 ```
 
-See `git.fish` for all available commands (`gh-start`, `gh-branch`, `gh-pr`, `gh-finish`).
+See `.claude/commands/git/` for all available slash commands.
 
 ### Adding New Functions
 
