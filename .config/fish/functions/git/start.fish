@@ -22,71 +22,62 @@ function ghstart --description 'Create branch from GitHub issue'
 
     # Fetch issue data from GitHub
     set issue_title (gh issue view $issue_num --json title --jq '.title' 2>/dev/null)
-    set issue_labels (gh issue view $issue_num --json labels --jq '.labels[].name' 2>/dev/null | string split '\n')
 
     if test -z "$issue_title"
         echo "❌ Could not fetch issue #$issue_num. Check if it exists."
         return 1
     end
 
-    # Get type from labels (first label is the type)
-    set issue_type ""
-    if test (count $issue_labels) -gt 0 -a -n "$issue_labels[1]"
-        set issue_type "$issue_labels[1]"
-    else
-        # No label found - propose to add one
-        echo "⚠️  Issue #$issue_num has no labels"
-        echo ""
-        echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
-        read -l -P "Add label: " issue_type
+    # Ask for the branch type
+    echo "Select branch type:"
+    echo "  1) feat      - New feature"
+    echo "  2) fix       - Bug fix"
+    echo "  3) refactor  - Code refactoring"
+    echo "  4) docs      - Documentation"
+    echo "  5) test      - Tests"
+    echo "  6) chore     - Chore"
+    echo "  7) perf      - Performance"
+    echo "  8) style     - Style"
+    read -l -P "Choice (1-8): " choice
 
-        if test -z "$issue_type"
-            echo "❌ Label required"
+    set branch_type ""
+    switch $choice
+        case 1
+            set branch_type feat
+        case 2
+            set branch_type fix
+        case 3
+            set branch_type refactor
+        case 4
+            set branch_type docs
+        case 5
+            set branch_type test
+        case 6
+            set branch_type chore
+        case 7
+            set branch_type perf
+        case 8
+            set branch_type style
+        case '*'
+            echo "❌ Invalid choice"
             return 1
-        end
-
-        # Try to add the label to the issue
-        if not gh issue edit $issue_num --add-label "$issue_type" 2>/dev/null
-            echo ""
-            echo "⚠️  Label '$issue_type' doesn't exist in the repo"
-            read -l -P "Create standard labels? (y/n) " create_labels
-
-            if string match -iq "y" "$create_labels"
-                echo ""
-                setup-labels
-                echo ""
-                # Try adding label again
-                gh issue edit $issue_num --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
-            else
-                echo "❌ Cannot proceed without labels"
-                return 1
-            end
-        else
-            echo "✅ Label added"
-        end
     end
 
     # Clean title (remove type prefix if present)
     set title_clean "$issue_title"
-    if string match -qi "$issue_type:*" "$issue_title"
-        set title_clean (string sub -s (math (string length $issue_type) + 3) "$issue_title" | string trim)
-    end
-
-    # Validate type
-    if not string match -q -r '^(feat|fix|refactor|docs|test|chore|perf|style)$' "$issue_type"
-        echo "❌ Invalid type. Use: feat, fix, refactor, docs, test, chore, perf, style"
-        return 1
+    if string match -qi "$branch_type:*" "$issue_title"
+        set title_clean (string sub -s (math (string length $branch_type) + 3) "$issue_title" | string trim)
     end
 
     # Convert title to slug (lowercase, replace spaces with dashes)
     set slug (string lower "$title_clean" | string replace -ra ' ' '-' | string replace -ra '[^a-z0-9-]' '')
 
-    # Create branch WITHOUT type prefix (type will be in GitHub label)
-    set branch_name "$issue_num-$slug"
+    # Create branch with type prefix
+    set branch_name "$branch_type/$issue_num-$slug"
 
     echo "🔀 Creating branch: $branch_name"
     echo "   Issue: #$issue_num"
-    echo "   Type: $issue_type (from label)"
+    echo "   Type: $branch_type"
     echo "   Title: $title_clean"
 
     git checkout -b "$branch_name"

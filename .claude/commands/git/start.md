@@ -1,38 +1,30 @@
 # /git:start
 
-Create a feature branch from a GitHub issue, using the issue's label as the type.
+Create a feature branch from a GitHub issue.
 
 ## What to do
 
 Execute using Fish: `ghstart <issue-number>`
 
 The function will:
-- Fetch the issue's first label (e.g., "feat", "fix", "docs")
-- Create a branch: `<issue-#>-<slug>` (without type prefix)
-- Store the type in the GitHub label
+- Fetch the issue title
+- Ask you to select the branch type (feat, fix, refactor, docs, test, chore, perf, style)
+- Create a branch: `<type>/<issue-#>-<slug>`
 - Automatically determine the slug from the issue title
 
-## Examples
+## Example
 
 ```fish
 ghstart 42
-→ If issue #42 has label "feat": creates branch 42-add-user-auth
-→ Type is stored in GitHub label: feat
-```
 
-If issue has no label, it will ask you to add one interactively.
+# Prompts:
+# Select branch type:
+#   1) feat      - New feature
+#   2) fix       - Bug fix
+#   ...
 
-## Workflow
-
-```
-Issue #42 with label "feat"
-         ↓
-ghstart 42
-         ↓
-Branche: 42-add-user-auth
-Type: feat (from GitHub label)
-         ↓
-When finishing: /git:finish reads type from label
+# You select: 1
+# Creates branch: feat/42-add-user-auth
 ```
 
 ## Related commands

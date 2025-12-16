@@ -121,9 +121,9 @@ Standard branch format: `<type>/<issue-#>-<slug>`
 **Always use slash commands for git operations:**
 
 ```fish
-/git:branch feat new-feature              # Create branch with type
-/git:branch new-feature                   # Create branch, choose type from list
 /git:start 42                             # Create branch from GitHub issue
+/git:branch feat new-feature              # Create branch with type (no issue)
+/git:branch new-feature                   # Create branch, choose type from list
 /git:commit "add user authentication"     # Create commit
 /git:finish                               # Push, PR, and squash merge
 /git:ship                                 # Deploy to production
