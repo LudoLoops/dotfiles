@@ -1,17 +1,14 @@
-function gh-start --description 'Create branch from GitHub issue: gh-start <issue-number> [type]'
-    if test (count $argv) -eq 0
-        echo "Usage: gh-start <issue-number> [type]"
-        echo "Example: gh-start 42"
-        echo "         gh-start 42 fix"
-        echo ""
-        echo "Types: feat, fix, refactor, docs, test, chore, perf, style"
-        echo ""
-        echo "Type is optional - it will be inferred from the issue title if not provided."
-        return 1
-    end
-
+function gh-start --description 'Create branch from GitHub issue'
     set issue_num $argv[1]
-    set issue_type $argv[2]
+
+    # If no issue number provided, ask interactively
+    if test -z "$issue_num"
+        read -l -P "Issue number: " issue_num
+        if test -z "$issue_num"
+            echo "❌ Issue number required"
+            return 1
+        end
+    end
 
     if not string match -qr '^[0-9]+$' "$issue_num"
         echo "❌ Issue number must be numeric"
@@ -23,65 +20,41 @@ function gh-start --description 'Create branch from GitHub issue: gh-start <issu
         return 1
     end
 
-    # Fetch issue title from GitHub
-    set issue_title (gh issue view $issue_num --json title --jq '.title' 2>/dev/null)
+    # Fetch issue data from GitHub
+    set issue_data (gh issue view $issue_num --json title,labels --jq '{title: .title, labels: .labels[].name}' 2>/dev/null)
 
-    if test -z "$issue_title"
+    if test -z "$issue_data"
         echo "❌ Could not fetch issue #$issue_num. Check if it exists."
         return 1
     end
 
-    # If type not provided, infer from issue title
-    set title_clean "$issue_title"
-    if test -z "$issue_type"
-        # Check if title starts with conventional commit format (type: description)
-        if string match -qi 'feat:*' "$issue_title"
-            set issue_type "feat"
-            set title_clean (string sub -s 6 "$issue_title" | string trim)
-        else if string match -qi 'fix:*' "$issue_title"
-            set issue_type "fix"
-            set title_clean (string sub -s 5 "$issue_title" | string trim)
-        else if string match -qi 'refactor:*' "$issue_title"
-            set issue_type "refactor"
-            set title_clean (string sub -s 10 "$issue_title" | string trim)
-        else if string match -qi 'docs:*' "$issue_title"
-            set issue_type "docs"
-            set title_clean (string sub -s 6 "$issue_title" | string trim)
-        else if string match -qi 'test:*' "$issue_title"
-            set issue_type "test"
-            set title_clean (string sub -s 6 "$issue_title" | string trim)
-        else if string match -qi 'perf:*' "$issue_title"
-            set issue_type "perf"
-            set title_clean (string sub -s 6 "$issue_title" | string trim)
-        else if string match -qi 'style:*' "$issue_title"
-            set issue_type "style"
-            set title_clean (string sub -s 7 "$issue_title" | string trim)
-        else if string match -qi 'chore:*' "$issue_title"
-            set issue_type "chore"
-            set title_clean (string sub -s 7 "$issue_title" | string trim)
-        else
-            # Fallback: check title for type keywords
-            set title_lower (string lower "$issue_title")
+    set issue_title (gh issue view $issue_num --json title --jq '.title' 2>/dev/null)
+    set issue_labels (gh issue view $issue_num --json labels --jq '.labels[].name' 2>/dev/null | string split '\n')
 
-            if string match -qi '*fix*' "$title_lower" || string match -qi '*bug*' "$title_lower" || string match -qi '*repair*' "$title_lower"
-                set issue_type "fix"
-            else if string match -qi '*refactor*' "$title_lower" || string match -qi '*cleanup*' "$title_lower" || string match -qi '*reorganize*' "$title_lower"
-                set issue_type "refactor"
-            else if string match -qi '*doc*' "$title_lower" || string match -qi '*readme*' "$title_lower"
-                set issue_type "docs"
-            else if string match -qi '*test*' "$title_lower" || string match -qi '*spec*' "$title_lower"
-                set issue_type "test"
-            else if string match -qi '*perf*' "$title_lower" || string match -qi '*optim*' "$title_lower" || string match -qi '*speed*' "$title_lower"
-                set issue_type "perf"
-            else if string match -qi '*style*' "$title_lower" || string match -qi '*format*' "$title_lower"
-                set issue_type "style"
-            else if string match -qi '*chore*' "$title_lower" || string match -qi '*update*' "$title_lower" || string match -qi '*upgrade*' "$title_lower"
-                set issue_type "chore"
-            else
-                # Default to feat for features/new functionality
-                set issue_type "feat"
-            end
+    # Get type from labels (first label is the type)
+    set issue_type ""
+    if test (count $issue_labels) -gt 0 -a -n "$issue_labels[1]"
+        set issue_type "$issue_labels[1]"
+    else
+        # No label found - propose to add one
+        echo "⚠️  Issue #$issue_num has no labels"
+        echo ""
+        echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
+        read -l -P "Add label: " issue_type
+
+        if test -z "$issue_type"
+            echo "❌ Label required"
+            return 1
         end
+
+        # Add the label to the issue
+        gh issue edit $issue_num --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
+    end
+
+    # Clean title (remove type prefix if present)
+    set title_clean "$issue_title"
+    if string match -qi "$issue_type:*" "$issue_title"
+        set title_clean (string sub -s (math (string length $issue_type) + 3) "$issue_title" | string trim)
     end
 
     # Validate type
@@ -96,7 +69,8 @@ function gh-start --description 'Create branch from GitHub issue: gh-start <issu
     set branch_name "$issue_type/$issue_num-$slug"
 
     echo "🔀 Creating branch: $branch_name"
-    echo "   Type: $issue_type (inferred from issue title)"
+    echo "   Type: $issue_type (from label)"
+    echo "   Title: $title_clean"
 
     git checkout -b "$branch_name"
 

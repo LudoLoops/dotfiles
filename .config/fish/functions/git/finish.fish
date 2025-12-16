@@ -13,8 +13,33 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
         return 1
     end
 
-    # Extract issue number from branch name (format: type/issue-slug) - optional
+    # Extract issue number from branch name (format: type/issue-slug)
     set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" | head -1)
+
+    # Extract type from branch name
+    set branch_type (string match -r '^([a-z]+)/' "$branch_name" | head -1)
+
+    # Get the issue type from labels (if available)
+    set issue_labels (gh issue view $issue_number --json labels --jq '.labels[].name' 2>/dev/null | string split '\n')
+    set issue_type ""
+    if test (count $issue_labels) -gt 0 -a -n "$issue_labels[1]"
+        set issue_type "$issue_labels[1]"
+    else
+        # No label found - propose to add one
+        echo "⚠️  Issue #$issue_number has no labels"
+        echo ""
+        echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
+        read -l -P "Add label: " issue_type
+
+        if test -z "$issue_type"
+            echo "❌ Label required for commit prefix"
+            return 1
+        end
+
+        # Add the label to the issue
+        gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
+        echo ""
+    end
 
     # Check for uncommitted changes (both staged and unstaged)
     set status_output (git status --porcelain)
@@ -40,7 +65,9 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
     echo ""
     if test -n "$issue_number"
         echo "📝 Step 2: Creating PR for issue #$issue_number..."
-        gh pr create --fill --body "Closes #$issue_number"
+        # Get issue title for PR message
+        set issue_title (gh issue view $issue_number --json title --jq '.title' 2>/dev/null)
+        gh pr create --fill --title "$issue_type: $issue_title" --body "Closes #$issue_number"
     else
         echo "📝 Step 2: Creating PR..."
         gh pr create --fill
