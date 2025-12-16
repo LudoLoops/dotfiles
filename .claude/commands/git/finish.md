@@ -4,9 +4,7 @@ Complete the PR workflow: push, create PR, and squash merge.
 
 ## What to do
 
-Execute the Fish function that automates the entire workflow:
-
-**Run:** `fish -c "ghfinish"`
+Execute using Fish: `ghfinish`
 
 This function automatically:
 1. Pushes the feature branch to remote
@@ -19,4 +17,3 @@ This function automatically:
 
 - Must be on a feature branch (not main, beta, or prod)
 - All changes must be committed
-- The function `ghfinish` must be available in Fish shell
