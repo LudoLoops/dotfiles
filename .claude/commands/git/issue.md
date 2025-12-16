@@ -2,7 +2,7 @@
 
 ## Task
 
-Create a new GitHub issue with the best title and appropriate prefix.
+Create a new GitHub issue with the best title, appropriate prefix, and corresponding label.
 
 ## What to do
 
@@ -17,21 +17,23 @@ Create a new GitHub issue with the best title and appropriate prefix.
    - `perf:` - Performance improvements
    - `style:` - Code style/formatting
 3. Generate a concise, clear issue title
-4. Execute using Fish: `gh issue create --title "TYPE: title"`
+4. Execute using Fish: `gh issue create --title "TYPE: title" --label "TYPE"`
+
+**Note:** Labels must be created first using `gh-labels-init` if they don't exist.
 
 ## Examples
 
 User input: `/git:issue add user authentication`
 → Analyze: This is a new feature
 → Title: "feat: add user authentication"
-→ Execute: `gh issue create --title "feat: add user authentication"`
+→ Execute: `gh issue create --title "feat: add user authentication" --label "feat"`
 
 User input: `/git:issue button not aligned properly`
 → Analyze: This is a bug fix
 → Title: "fix: button not aligned properly"
-→ Execute: `gh issue create --title "fix: button not aligned properly"`
+→ Execute: `gh issue create --title "fix: button not aligned properly" --label "fix"`
 
 User input: `/git:issue update contributing guide`
 → Analyze: This is documentation
 → Title: "docs: update contributing guide"
-→ Execute: `gh issue create --title "docs: update contributing guide"`
+→ Execute: `gh issue create --title "docs: update contributing guide" --label "docs"`
