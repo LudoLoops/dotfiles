@@ -149,8 +149,13 @@ function ship --description "Deploy to prod from main with automatic version bum
     echo "✓ Merging $main_branch into prod..."
     git merge "$main_branch" --ff-only >/dev/null 2>&1
     or begin
-        echo "❌ Merge failed"
-        echo "ℹ️  Try: git merge $main_branch --no-ff"
+        echo "❌ Merge failed - prod has diverged from main"
+        echo "⚠️  This means prod has commits that shouldn't exist"
+        echo ""
+        echo "Commits on prod not on main:"
+        git log --oneline "$main_branch"..prod 2>/dev/null || echo "  (none found)"
+        echo ""
+        echo "🔧 To fix this, contact the team. Do NOT force merge."
         return 1
     end
 
