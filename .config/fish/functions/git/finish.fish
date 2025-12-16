@@ -36,8 +36,25 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
             return 1
         end
 
-        # Add the label to the issue
-        gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
+        # Try to add the label to the issue
+        if not gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null
+            echo ""
+            echo "⚠️  Label '$issue_type' doesn't exist in the repo"
+            read -l -P "Create standard labels? (y/n) " create_labels
+
+            if string match -iq "y" "$create_labels"
+                echo ""
+                setup-labels
+                echo ""
+                # Try adding label again
+                gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
+            else
+                echo "❌ Cannot proceed without labels"
+                return 1
+            end
+        else
+            echo "✅ Label added"
+        end
         echo ""
     end
 

@@ -1,4 +1,4 @@
-function gh-labels-init --description 'Initialize GitHub labels with standard commit types'
+function setup-labels --description 'Create standard GitHub labels for commit types'
     if not git rev-parse --git-dir >/dev/null 2>&1
         echo "❌ Not a git repository"
         return 1
@@ -27,3 +27,6 @@ function gh-labels-init --description 'Initialize GitHub labels with standard co
 
     echo "✅ Labels initialized"
 end
+
+# Backward compatibility alias
+alias gh-labels-init='setup-labels'
