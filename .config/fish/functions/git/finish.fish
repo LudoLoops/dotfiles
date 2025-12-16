@@ -1,22 +1,4 @@
-function commit --description 'git add and commit with conventional commit format or auto-commit with timestamp'
-    set message "$argv"
-
-    # If no arguments, use auto-commit with timestamp
-    if test (count $argv) -eq 0
-        set timestamp (date '+%d-%b-%Y %H:%M')
-        set message "auto-commit: $timestamp"
-    else
-        # Validate conventional commit format (type: subject)
-        if not string match -q '*:*' "$message"
-            echo "❌ Invalid format. Use 'type: subject' (e.g., 'feat: add feature')"
-            return 1
-        end
-    end
-
-    git add -A && git commit -m "$message"
-end
-
-function gh-finish --description 'Complete PR workflow: push → create PR → squash merge → cleanup (requires uncommitted changes committed first)'
+function ghfinish --description 'Complete PR workflow: push → create PR → squash merge → cleanup'
     if not git rev-parse --git-dir >/dev/null 2>&1
         echo "❌ Not a git repository"
         return 1
@@ -31,14 +13,8 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
         return 1
     end
 
-    # Extract issue number from branch name (format: type/issue-slug)
+    # Extract issue number from branch name (format: type/issue-slug) - optional
     set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" | head -1)
-
-    if test -z "$issue_number"
-        echo "❌ Branch name doesn't match pattern: <type>/<issue-#>-<slug>"
-        echo "Current branch: $branch_name"
-        return 1
-    end
 
     # Check for uncommitted changes (both staged and unstaged)
     set status_output (git status --porcelain)
@@ -62,8 +38,13 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
     echo "✅ Branch pushed"
 
     echo ""
-    echo "📝 Step 2: Creating PR for issue #$issue_number..."
-    gh pr create --fill --body "Closes #$issue_number"
+    if test -n "$issue_number"
+        echo "📝 Step 2: Creating PR for issue #$issue_number..."
+        gh pr create --fill --body "Closes #$issue_number"
+    else
+        echo "📝 Step 2: Creating PR..."
+        gh pr create --fill
+    end
 
     if test $status -ne 0
         echo "❌ Failed to create PR"
@@ -88,12 +69,9 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
 
     echo ""
     echo "✅ ✅ ✅ Workflow complete!"
-    echo "   Issue #$issue_number closed"
+    if test -n "$issue_number"
+        echo "   Issue #$issue_number closed"
+    end
     echo "   PR merged with squash"
     echo "   Branch cleaned up"
-end
-
-# Alias for backward compatibility
-function ghfinish --description 'Alias for gh-finish'
-    gh-finish $argv
 end
