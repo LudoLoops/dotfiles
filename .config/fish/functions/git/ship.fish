@@ -1,22 +1,20 @@
 # =============================================================================
-# Unified Deployment Pipeline (Prod Only)
+# Deployment Pipeline: Deploy main to prod via releases branch
 # =============================================================================
-# Automated deployment to prod with version bumping and auto-deploy
+# Deploy to prod with automatic version bumping via releases branch
+#
+# Workflow:
+#   1. On main: run 'ship'
+#   2. Creates releases/X.Y.Z branch
+#   3. Runs standard-version to bump version
+#   4. Merges releases/X.Y.Z → main → prod
+#   5. Returns to main
 #
 # Usage:
-#   ship              # From main: Deploy to prod (bumps version via standard-version)
-#   ship prod         # Explicit prod deployment (bumps version via standard-version)
-#
-# Versioning (handled by standard-version):
-#   feat:       → Minor bump (0.X.0)
-#   fix:        → Patch bump (0.0.X)
-#   chore:      → Patch bump (0.0.X)
-#   BREAKING:   → Major bump (X.0.0)
+#   ship              # Deploy from main to prod with automatic version bumping
 
-function ship --description "Deploy to prod from main: ship [prod]"
-    set target $argv[1]
-
-    # Check if we're in a git repository first
+function ship --description "Deploy to prod from main with automatic version bumping"
+    # Check if we're in a git repository
     if not git rev-parse --git-dir >/dev/null 2>&1
         echo "❌ Not a git repository"
         return 1
@@ -28,27 +26,22 @@ function ship --description "Deploy to prod from main: ship [prod]"
         return 1
     end
 
-    # Get current branch
+    # Get current branch and main branch
     set current_branch (git rev-parse --abbrev-ref HEAD)
     set main_branch (git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||' || echo "main")
 
-    # Default target is prod
-    if test -z "$target"
-        set target prod
-    end
-
-    # Validate target argument
-    if not test "$target" = prod
-        echo "❌ Invalid target: $target"
-        echo "ℹ️  Use: ship  or  ship prod"
+    # Must be on main to deploy
+    if test "$current_branch" != "$main_branch"
+        echo "❌ Must be on $main_branch branch to deploy"
+        echo "ℹ️  You are on: $current_branch"
+        echo "ℹ️  Run: git checkout $main_branch"
         return 1
     end
 
-    # Must be on main to deploy
-    if test "$current_branch" != "$main_branch"
-        echo "❌ Must be on $main_branch branch to deploy to prod"
-        echo "ℹ️  You are on: $current_branch"
-        echo "ℹ️  Run: git checkout $main_branch"
+    # Check for uncommitted changes
+    if not git diff-index --quiet HEAD --
+        echo "❌ Working directory has uncommitted changes"
+        echo "ℹ️  Please commit or stash changes first"
         return 1
     end
 
@@ -56,19 +49,10 @@ function ship --description "Deploy to prod from main: ship [prod]"
     echo "⚠️  Deploying to PRODUCTION"
     echo "ℹ️  Make sure all tests pass before deploying"
     echo ""
-
     echo "🚀 Starting deployment to prod..."
     echo ""
 
-    # Step 1: Verify working directory is clean
-    echo "✓ Checking git status..."
-    if not git diff-index --quiet HEAD --
-        echo "❌ Working directory has uncommitted changes"
-        echo "ℹ️  Please commit or stash changes first"
-        return 1
-    end
-
-    # Step 2: Fetch latest from remote
+    # Step 1: Fetch latest
     echo "✓ Fetching latest from remote..."
     git fetch origin >/dev/null 2>&1
     or begin
@@ -76,7 +60,7 @@ function ship --description "Deploy to prod from main: ship [prod]"
         return 1
     end
 
-    # Step 3: Pull latest changes from main
+    # Step 2: Pull latest main
     echo "✓ Pulling latest changes from $main_branch..."
     git pull origin "$main_branch" >/dev/null 2>&1
     or begin
@@ -84,48 +68,70 @@ function ship --description "Deploy to prod from main: ship [prod]"
         return 1
     end
 
-    # Step 4: Bump version and generate CHANGELOG
+    # Step 3: Run standard-version to bump version (will create commit and tag)
     echo "✓ Bumping version and generating CHANGELOG..."
-    pnpm exec standard-version 2>&1 >/dev/null
+    standard-version 2>&1 >/dev/null
     or begin
         echo "❌ Failed to bump version"
         git checkout "$main_branch" >/dev/null 2>&1
         return 1
     end
 
-    # Get the new version from package.json
+    # Step 4: Get new version from package.json
     set new_version (grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\).*/\1/')
-    set tag_name "v$new_version"
-    echo "   Version bumped to: $new_version"
-    echo "   ✓ CHANGELOG generated automatically"
-
-    # Copy CHANGELOG.md to static/ for public access
-    if test -f CHANGELOG.md
-        cp CHANGELOG.md static/CHANGELOG.md
-        echo "   ✓ CHANGELOG copied to static/"
-    else
-        echo "   ⚠️  CHANGELOG.md not found after generation"
-    end
-
-    # Stage the static/CHANGELOG.md copy
-    echo "✓ Staging static/CHANGELOG.md..."
-    git add static/CHANGELOG.md >/dev/null 2>&1
-
-    # Amend the commit to include static/CHANGELOG.md
-    git commit --amend --no-edit >/dev/null 2>&1
-    or begin
-        echo "⚠️  Could not amend commit, but version bump is done"
-    end
-
-    # Step 5: Push changes and tag to main
-    echo "✓ Pushing changes and tag to $main_branch..."
-    git push origin "$main_branch" "$tag_name" >/dev/null 2>&1
-    or begin
-        echo "❌ Failed to push to $main_branch"
+    if test -z "$new_version"
+        echo "❌ Could not determine new version"
+        git reset --hard HEAD~1 >/dev/null 2>&1
         return 1
     end
 
-    # Step 6: Switch to prod and merge
+    # Step 5: Create releases branch with version number
+    echo "✓ Creating releases/$new_version branch..."
+    git checkout -b "releases/$new_version" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to create branch: releases/$new_version"
+        git reset --hard HEAD~1 >/dev/null 2>&1
+        return 1
+    end
+
+    echo "   Version bumped to: $new_version"
+    echo "   ✓ CHANGELOG generated automatically"
+
+    # Step 7: Copy CHANGELOG to static/
+    if test -d static
+        and test -f CHANGELOG.md
+        cp CHANGELOG.md static/CHANGELOG.md
+        git add static/CHANGELOG.md >/dev/null 2>&1
+        echo "   ✓ CHANGELOG copied to static/"
+    end
+
+    # Step 8: Push releases branch
+    echo "✓ Pushing releases/$new_version branch..."
+    git push -u origin "releases/$new_version" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to push branch"
+        return 1
+    end
+
+    # Step 9: Merge releases → main
+    echo "✓ Merging releases/$new_version into $main_branch..."
+    git checkout "$main_branch" >/dev/null 2>&1
+    git pull origin "$main_branch" >/dev/null 2>&1
+    git merge "releases/$new_version" --ff-only >/dev/null 2>&1
+    or begin
+        echo "❌ Merge failed"
+        return 1
+    end
+
+    # Step 10: Push main
+    echo "✓ Pushing $main_branch..."
+    git push origin "$main_branch" >/dev/null 2>&1
+    or begin
+        echo "❌ Failed to push $main_branch"
+        return 1
+    end
+
+    # Step 11: Merge main → prod
     echo "✓ Switching to prod branch..."
     git checkout prod >/dev/null 2>&1
     or begin
@@ -140,16 +146,20 @@ function ship --description "Deploy to prod from main: ship [prod]"
         return 1
     end
 
-    echo "✓ Merging main into prod..."
-    set merge_message "merge: release v$new_version to production"
-    git merge "$main_branch" -m "$merge_message" >/dev/null 2>&1
+    echo "✓ Merging $main_branch into prod..."
+    git merge "$main_branch" --ff-only >/dev/null 2>&1
     or begin
-        echo "❌ Merge conflict detected. Please resolve manually."
-        echo "ℹ️  Run: git merge --abort  and try again"
+        echo "❌ Merge failed - prod has diverged from main"
+        echo "⚠️  This means prod has commits that shouldn't exist"
+        echo ""
+        echo "Commits on prod not on main:"
+        git log --oneline "$main_branch"..prod 2>/dev/null || echo "  (none found)"
+        echo ""
+        echo "🔧 To fix this, contact the team. Do NOT force merge."
         return 1
     end
 
-    # Step 7: Push to prod (triggers auto-deploy)
+    # Step 12: Push to prod (triggers auto-deploy)
     echo "✓ Pushing to prod (auto-deploy triggered)..."
     git push origin prod >/dev/null 2>&1
     or begin
@@ -157,9 +167,10 @@ function ship --description "Deploy to prod from main: ship [prod]"
         return 1
     end
 
-    # Step 8: Return to main
+    # Step 13: Return to main
     echo "✓ Returning to $main_branch..."
     git checkout "$main_branch" >/dev/null 2>&1
+    git pull origin "$main_branch" >/dev/null 2>&1
 
     # Success!
     echo ""
@@ -177,6 +188,6 @@ function ship --description "Deploy to prod from main: ship [prod]"
 end
 
 # Alias for explicit prod deployment
-function ship-prod --description "Deploy to prod: ship prod"
-    ship prod $argv
+function ship-prod --description "Deploy to prod: explicit command"
+    ship $argv
 end

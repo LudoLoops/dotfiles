@@ -94,10 +94,10 @@ This creates all 8 standard labels with consistent colors: `feat`, `fix`, `refac
 ### Recommended Git Workflow
 
 ```fish
-gh-start 42              # Create branch from issue #42
+start 42                 # Create branch from issue #42 (slash command: /start)
 commit feat: add login   # Make changes and commit
-gh-finish                # Push → PR → merge → cleanup (FULLY AUTOMATED!)
-ship                     # Deploy to production
+finish                   # Push → PR → merge → cleanup (slash command: /finish)
+ship                     # Deploy to production (slash command: /ship)
 ```
 
 **Available Fish functions:** See `~/.claude/FISH_FUNCTIONS.md`
@@ -131,10 +131,10 @@ This directory contains instructions and context that Claude Code uses across al
 │   ├── optimize.md              # Code performance optimization
 │   ├── review.md                # Code quality & bug review
 │   └── git/                     # Git workflow commands
-│       ├── gh-start.md          # Create branch from issue
-│       ├── gh-finish.md         # Automated PR workflow
+│       ├── start.md             # Create branch from issue
+│       ├── finish.md            # Automated PR workflow
 │       ├── ship.md              # Deploy to production
-│       └── gh-issues.md         # GitHub issues utilities
+│       └── issues.md            # GitHub issues utilities
 │
 └── docs/                        ← Detailed human guides
     └── [future guides]
@@ -152,6 +152,37 @@ project-root/
 ├── architecture.md        # System design, patterns
 ├── database.md            # Schema, queries, migrations
 └── api.md                 # API routes, authentication
+```
+
+## 🐟 Fish Functions & Configuration Paths
+
+**⚠️ IMPORTANT: Use `~/dotfiles/` for edits, NOT `~/.config/`**
+
+All Fish functions and configuration files are **managed in `~/dotfiles/`** and automatically symlinked to `~/.config/` via GNU Stow.
+
+- **Source (edit here):** `~/dotfiles/.config/`
+- **Symlinks (read-only):** `~/.config/`
+- **Never edit files in `~/.config/`** - Changes won't persist. Always edit in `~/dotfiles/`
+
+### Git Workflow Functions
+
+**Source Location:** `~/dotfiles/.config/fish/functions/git/`
+**Symlinked to:** `~/.config/fish/functions/git/`
+
+| Function | File | Purpose |
+|----------|------|---------|
+| `ship` | `ship.fish` | Deploy main → prod with version bumping |
+| `commit` | `workflow.fish` | Git add + commit with conventional format |
+| `gh-finish` | `workflow.fish` | Complete PR: push → PR → merge → cleanup |
+| `ghfinish` | `workflow.fish` | Alias for `gh-finish` (backward compatibility) |
+
+### How to Use
+
+```fish
+ship              # Deploy to production
+commit feat: ...  # Commit with conventional format
+gh-finish         # Finish PR workflow
+ghfinish          # Same as gh-finish
 ```
 
 ### How Claude Uses This

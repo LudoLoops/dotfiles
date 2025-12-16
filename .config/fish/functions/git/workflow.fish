@@ -92,3 +92,8 @@ function gh-finish --description 'Complete PR workflow: push → create PR → s
     echo "   PR merged with squash"
     echo "   Branch cleaned up"
 end
+
+# Alias for backward compatibility
+function ghfinish --description 'Alias for gh-finish'
+    gh-finish $argv
+end
