@@ -205,7 +205,7 @@ When Claude Code starts, it automatically:
   - Code quality standards
 
 - **Documentation references** in `~/.claude/`
-  - `FISH_FUNCTIONS.md` - All available Fish functions
+  - `GIT_WORKFLOW.md` - Git workflow strategy and commands
   - `commands/` - Slash commands (auto-discovered by Claude)
 
 - **Project-specific** stays in `project-root/.claude/`
@@ -220,7 +220,9 @@ When Claude Code starts, it automatically:
 
 **Always update documentation when you:**
 - Change a process → update `CLAUDE.md`
-- Add a Fish function → update `.config/fish/functions/git/` and reference in `FISH_FUNCTIONS.md`
+- Modify **git workflow** (functions or commands) → **ALWAYS update `GIT_WORKFLOW.md`**
+  - When you modify `~/dotfiles/.config/fish/functions/git/*` → Update `GIT_WORKFLOW.md`
+  - When you modify `~/dotfiles/.claude/commands/git/*` → Update `GIT_WORKFLOW.md`
 - Add a slash command → place in `commands/` subdirectory (auto-discovered)
 
 ## ✅ Before Coding

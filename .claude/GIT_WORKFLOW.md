@@ -144,45 +144,65 @@ ship
 
 ## ⚡ Quick Workflow (Using Fish Functions)
 
-### 1. Start Feature (Simplified!)
+### 1. Create Issue with Label
 
 ```bash
-gh-start 42              # Create branch from issue #42 (auto-infers type)
-# Result: feat/42-branch-name created and checked out
+/git:issue "add user authentication"
+# Automatically:
+# ✓ Determines type (feat, fix, docs, etc.)
+# ✓ Creates issue without title prefix
+# ✓ Adds corresponding label
+# ✓ Proposes setup-labels if labels don't exist
 ```
 
-### 2. Make Changes & Commit
+### 2. Start Feature (Type from Label!)
+
+```bash
+ghstart 42              # Create branch from issue #42
+# Automatically:
+# ✓ Reads issue label (e.g., "feat")
+# ✓ Creates branch: feat/42-add-user-authentication
+# ✓ Proposes to add label if issue has none
+```
+
+### 3. Make Changes & Commit (No Prefix!)
 
 ```bash
 # ... make your changes ...
 
-commit feat: add my feature    # Conventional commit with validation
+/git:commit "add user authentication"    # Simple message, no prefix needed
+# OR just type: commit "your message"    # Even simpler in shell
 ```
 
-### 3. Finish & Merge (Fully Automated!)
+**Note:** Commits during development don't need prefixes - they'll be squashed anyway!
+
+### 4. Finish & Merge (Type Added at Merge!)
 
 ```bash
-gh-finish
+ghfinish
 # Automatically:
+# ✓ Reads issue label
 # ✓ Pushes branch to remote
-# ✓ Creates PR (closes issue #42)
-# ✓ Squash merges to main
+# ✓ Creates PR with typed title: "feat: add user authentication"
+# ✓ Squash merges (commit gets the type prefix)
+# ✓ Closes issue
 # ✓ Deletes branch
 # ✓ Returns to main
 ```
 
-### 4. Deploy to Production
+### 5. Deploy to Production
 
 ```bash
-ship
+/git:ship
 # Automatically:
+# ✓ Reads commit prefix from recent merges
 # ✓ Bumps version (via standard-version)
 # ✓ Generates CHANGELOG
 # ✓ Merges to prod
 # ✓ Triggers auto-deploy
 ```
 
-**That's it!** Full workflow from issue to production with 4 commands.
+**That's it!** Full workflow from issue to production with 5 commands. Type-free development, automated typing at merge!
 
 ---
 
@@ -233,6 +253,22 @@ Before pushing or creating PR:
 
 ---
 
+## 🏷️ Label-Based Type System
+
+Instead of typing everything manually, we use **GitHub issue labels** as the source of truth:
+
+1. **Issue created** → Add label (feat, fix, docs, etc.)
+2. **Branch created** → Reads label → `feat/42-...`
+3. **Branch finished** → Reads label → Creates PR `feat: ...`
+4. **Squash merge** → Uses PR title → Commit gets prefix
+5. **Deployment** → `standard-version` reads prefix
+
+**Labels available:** `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`
+
+Use `setup-labels` to initialize them in your repo.
+
+---
+
 ## 🚫 Common Mistakes
 
 | Mistake | Problem | Solution |
@@ -240,16 +276,17 @@ Before pushing or creating PR:
 | Commit directly to `main` | Bypasses PR review | Use feature branch + PR |
 | Forgetting to create feature branch | Commits on main | Always create branch FIRST |
 | Long-lived branches (2+ weeks) | Merge conflicts | Smaller PRs, frequent rebases |
-| Unclear commit messages | Hard to track changes | Use conventional commits |
-| Not using `gh-start` | Manual branch creation | Use `gh-start <issue-#>` |
-| Not using `gh-finish` | Manual PR/merge steps | Use `gh-finish` (fully automated) |
+| Issue without label | ghstart/ghfinish will prompt | Add label first or let them create it |
+| Prefixing intermediate commits | Overkill, they're squashed | Only prefix matters at merge |
+| Not using slash commands | Manual steps needed | Use `/git:issue`, `/git:start`, `/git:finish` |
 
 ---
 
 ## 📚 Related Documentation
 
-- **Fish functions reference:** `~/.claude/FISH_FUNCTIONS.md`
+- **Slash commands:** `~/dotfiles/.claude/commands/git/` (auto-discovered by Claude)
 - **Global conventions:** `~/.claude/CLAUDE.md`
+- **Fish functions:** `~/dotfiles/.config/fish/functions/git/` (auto-loaded)
 
 ---
 
