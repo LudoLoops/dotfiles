@@ -6,11 +6,16 @@ Create a commit using the Fish `commit` function.
 
 ## What to do
 
-1. If the user provided a message, use it as-is
-2. If no message provided:
+1. **FIRST: Verify the current git branch**
+   - Run: `git branch --show-current`
+   - If the result is `main`, `beta`, or `prod` → STOP and refuse to commit
+   - Show error message: "❌ Cannot commit to protected branch (main/beta/prod). Create a feature branch first using `/git:branch <type> <slug>`"
+
+2. If the user provided a message, use it as-is
+3. If no message provided:
    - Analyze the changed files using `git diff`
    - Generate a pertinent, concise commit message
-3. Execute the commit using Bash: `commit "your message"`
+4. Execute the commit using Bash: `commit "your message"`
 
 ## Examples
 
