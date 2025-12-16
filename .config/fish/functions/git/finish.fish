@@ -13,48 +13,60 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
         return 1
     end
 
-    # Extract issue number from branch name (format: type/issue-slug)
+    # Extract issue number from branch name (format: type/issue-slug or type-slug)
     set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" | head -1)
 
     # Extract type from branch name
-    set branch_type (string match -r '^([a-z]+)/' "$branch_name" | head -1)
+    set branch_type (string match -r '^([a-z]+)' "$branch_name" | head -1)
 
-    # Get the issue type from labels (if available)
-    set issue_labels (gh issue view $issue_number --json labels --jq '.labels[].name' 2>/dev/null | string split '\n')
     set issue_type ""
-    if test (count $issue_labels) -gt 0 -a -n "$issue_labels[1]"
-        set issue_type "$issue_labels[1]"
-    else
-        # No label found - propose to add one
-        echo "⚠️  Issue #$issue_number has no labels"
-        echo ""
-        echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
-        read -l -P "Add label: " issue_type
 
-        if test -z "$issue_type"
-            echo "❌ Label required for commit prefix"
-            return 1
-        end
-
-        # Try to add the label to the issue
-        if not gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null
+    if test -n "$issue_number"
+        # Issue-based branch: get type from issue labels
+        set issue_labels (gh issue view $issue_number --json labels --jq '.labels[].name' 2>/dev/null | string split '\n')
+        if test (count $issue_labels) -gt 0 -a -n "$issue_labels[1]"
+            set issue_type "$issue_labels[1]"
+        else
+            # No label found - propose to add one
+            echo "⚠️  Issue #$issue_number has no labels"
             echo ""
-            echo "⚠️  Label '$issue_type' doesn't exist in the repo"
-            read -l -P "Create standard labels? (y/n) " create_labels
+            echo "Available types: feat, fix, refactor, docs, test, chore, perf, style"
+            read -l -P "Add label: " issue_type
 
-            if string match -iq "y" "$create_labels"
-                echo ""
-                setup-labels
-                echo ""
-                # Try adding label again
-                gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
-            else
-                echo "❌ Cannot proceed without labels"
+            if test -z "$issue_type"
+                echo "❌ Label required for commit prefix"
                 return 1
             end
-        else
-            echo "✅ Label added"
+
+            # Try to add the label to the issue
+            if not gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null
+                echo ""
+                echo "⚠️  Label '$issue_type' doesn't exist in the repo"
+                read -l -P "Create standard labels? (y/n) " create_labels
+
+                if string match -iq "y" "$create_labels"
+                    echo ""
+                    setup-labels
+                    echo ""
+                    # Try adding label again
+                    gh issue edit $issue_number --add-label "$issue_type" 2>/dev/null && echo "✅ Label added"
+                else
+                    echo "❌ Cannot proceed without labels"
+                    return 1
+                end
+            else
+                echo "✅ Label added"
+            end
+            echo ""
         end
+    else
+        # No issue: use type from branch name
+        if not string match -q -r '^(feat|fix|refactor|docs|test|chore|perf|style)' "$branch_type"
+            echo "❌ Branch name must start with valid type: feat, fix, refactor, docs, test, chore, perf, style"
+            return 1
+        end
+        set issue_type "$branch_type"
+        echo "✅ Using type from branch: $issue_type"
         echo ""
     end
 
