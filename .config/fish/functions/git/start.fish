@@ -1,5 +1,9 @@
-function ghstart --description 'Create branch from GitHub issue'
+function ghstart --description 'Create branch from GitHub issue [type]'
     set issue_num $argv[1]
+    set explicit_type $argv[2]
+
+    # Valid branch types
+    set valid_types feat fix refactor docs test chore perf style
 
     # If no issue number provided, ask interactively
     if test -z "$issue_num"
@@ -28,39 +32,81 @@ function ghstart --description 'Create branch from GitHub issue'
         return 1
     end
 
-    # Ask for the branch type
-    echo "Select branch type:"
-    echo "  1) feat      - New feature"
-    echo "  2) fix       - Bug fix"
-    echo "  3) refactor  - Code refactoring"
-    echo "  4) docs      - Documentation"
-    echo "  5) test      - Tests"
-    echo "  6) chore     - Chore"
-    echo "  7) perf      - Performance"
-    echo "  8) style     - Style"
-    read -l -P "Choice (1-8): " choice
+    # Try to extract type from issue title (before first colon)
+    set extracted_type ""
+    if string match -q '*:*' "$issue_title"
+        set extracted_type (string split ':' "$issue_title")[1] | string trim | string lower
+    end
 
+    # Map common aliases to valid types
+    if test -n "$extracted_type"
+        switch "$extracted_type"
+            case bug
+                set extracted_type fix
+            case improvement
+                set extracted_type feat
+        end
+    end
+
+    # Determine which type to use
     set branch_type ""
-    switch $choice
-        case 1
-            set branch_type feat
-        case 2
-            set branch_type fix
-        case 3
-            set branch_type refactor
-        case 4
-            set branch_type docs
-        case 5
-            set branch_type test
-        case 6
-            set branch_type chore
-        case 7
-            set branch_type perf
-        case 8
-            set branch_type style
-        case '*'
-            echo "❌ Invalid choice"
+
+    # 1. Use explicit type if provided
+    if test -n "$explicit_type"
+        set branch_type (string lower "$explicit_type")
+        # Map aliases in explicit type too
+        switch "$branch_type"
+            case bug
+                set branch_type fix
+            case improvement
+                set branch_type feat
+        end
+        if not contains "$branch_type" $valid_types
+            echo "❌ Invalid type: '$explicit_type'"
+            echo "Valid types: feat, fix, refactor, docs, test, chore, perf, style"
             return 1
+        end
+    # 2. Use extracted type if valid
+    else if test -n "$extracted_type" && contains "$extracted_type" $valid_types
+        set branch_type "$extracted_type"
+        echo "✓ Using type from issue: '$branch_type'"
+    # 3. Ask user to choose
+    else
+        if test -n "$extracted_type"
+            echo "⚠️  Issue type '$extracted_type' not recognized"
+        end
+        echo "Select branch type:"
+        echo "  1) feat      - New feature"
+        echo "  2) fix       - Bug fix"
+        echo "  3) refactor  - Code refactoring"
+        echo "  4) docs      - Documentation"
+        echo "  5) test      - Tests"
+        echo "  6) chore     - Chore"
+        echo "  7) perf      - Performance"
+        echo "  8) style     - Style"
+        read -l -P "Choice (1-8): " choice
+
+        switch $choice
+            case 1
+                set branch_type feat
+            case 2
+                set branch_type fix
+            case 3
+                set branch_type refactor
+            case 4
+                set branch_type docs
+            case 5
+                set branch_type test
+            case 6
+                set branch_type chore
+            case 7
+                set branch_type perf
+            case 8
+                set branch_type style
+            case '*'
+                echo "❌ Invalid choice"
+                return 1
+        end
     end
 
     # Clean title (remove type prefix if present)
