@@ -3,3 +3,13 @@
 -- Add any additional keymaps here
 
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
+-- Completion trigger with Space+.
+vim.keymap.set("i", "<Space>.", function()
+  local cmp = require("cmp")
+  if cmp.visible() then
+    cmp.close()
+  else
+    cmp.complete()
+  end
+end, { desc = "Toggle completion" })
