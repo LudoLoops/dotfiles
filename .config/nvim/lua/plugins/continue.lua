@@ -1,6 +1,5 @@
 return {
   "continuedev/continue",
-  build = "cd continue-ui && npm install && npm run build",
   dependencies = {
     "rcarriga/nvim-notify",
   },
