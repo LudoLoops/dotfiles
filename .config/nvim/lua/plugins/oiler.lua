@@ -20,8 +20,8 @@ return {
   -- Optional dependencies
   dependencies = { { "nvim-mini/mini.icons", opts = {} } },
   -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
-  -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-  lazy = false,
+  lazy = true,
+  cmd = "Oil",
   config = function(_, opts)
     require("oil").setup(opts)
 
@@ -34,14 +34,17 @@ return {
         vim.keymap.set("n", "<C-k>", function() require("kitty-navigator").navigateUp() end, { buffer = true, noremap = true })
         vim.keymap.set("n", "<C-l>", function() require("kitty-navigator").navigateRight() end, { buffer = true, noremap = true })
 
-        -- Afficher le preview automatiquement quand Oil s'ouvre
-        vim.defer_fn(function()
-          local util = require("oil.util")
-          -- Vérifier que le preview n'existe pas déjà
-          if not util.get_preview_win() then
-            require("oil.actions").preview.callback()
-          end
-        end, 100)
+        -- Open preview automatically when oil opens
+        vim.schedule(function()
+          vim.defer_fn(function()
+            local util = require("oil.util")
+            if not util.get_preview_win() then
+              pcall(function()
+                require("oil.actions").preview.callback()
+              end)
+            end
+          end, 50)
+        end)
       end,
     })
   end,
