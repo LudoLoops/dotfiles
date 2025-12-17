@@ -1,16 +1,22 @@
-# /git:list
+---
+allowed-tools: Bash(gh:*)
+description: List all open GitHub issues
+---
 
-## Task
+# List open issues
 
-List all open issues in the repository.
+!`gh issue list --state open`
 
-## What to do
+---
 
-Execute using Fish: `gh issue list`
+## Display includes
 
-This displays:
-- Issue number
+- Issue number (#)
 - Issue title
-- State
-- Labels
-- Last update
+- State (Open/Closed)
+- Labels (feat, fix, docs, etc.)
+- Last update time
+
+## Tip
+
+Use issue numbers with `/git:start` to create branches from these issues
