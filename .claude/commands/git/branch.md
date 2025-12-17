@@ -1,47 +1,31 @@
-# /git:branch
+---
+allowed-tools: Bash(fish:*), AskUserQuestion
+description: Create feature branch manually
+argument-hint: "[type] <slug>"
+---
 
-Create a feature branch with optional type and slug.
+# Create feature branch
 
-## What to do
+Execute: `gh-branch $ARGUMENTS`
 
-Execute using Fish: `ghbranch [type] <slug>`
+!`fish -c "gh-branch $ARGUMENTS"`
 
-Two usage modes:
+---
 
-### Mode 1: Direct with type
-`ghbranch <type> <slug>`
+## What happens
 
-If you know the type, provide it directly:
-```fish
-ghbranch feat nouvelle-feature
-# Creates: feat/nouvelle-feature
-```
+Creates a feature branch with format: `<type>/<slug>`
 
-Available types: feat, fix, refactor, docs, test, chore, perf, style
+**Two modes:**
 
-### Mode 2: Interactive (without type)
-`ghbranch <slug>`
+**Mode 1:** With type - `/git:branch feat my-feature` → `feat/my-feature`
 
-If you don't provide a type, it prompts you to choose from a label list:
-```fish
-ghbranch nouvelle-feature
+**Mode 2:** Interactive - `/git:branch my-feature` → prompts for type selection
 
-# Prompts:
-# Select branch type:
-#   1) feat      - New feature
-#   2) fix       - Bug fix
-#   3) refactor  - Code refactoring
-#   4) docs      - Documentation
-#   5) test      - Tests
-#   6) chore     - Chore
-#   7) perf      - Performance
-#   8) style     - Style
-# Choice (1-8): 1
+**Available types:** feat, fix, refactor, docs, test, chore, perf, style
 
-# Creates: feat/nouvelle-feature
-```
+## Example
 
-## Related commands
+Input: `/git:branch fix button-alignment`
 
-- `/git:start` - Create branch from GitHub issue (auto-detects type from label)
-- `/git:finish` - Push, create PR, and squash merge
+Output: Creates branch `fix/button-alignment`

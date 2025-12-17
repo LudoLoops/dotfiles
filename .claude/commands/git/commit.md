@@ -1,28 +1,74 @@
-# /git:commit
+---
+allowed-tools: Bash(git:*), Bash(fish:*), AskUserQuestion, Read
+description: Create a commit with intelligent message generation
+argument-hint: "[message]"
+---
 
-## Task
+# Create commit with intelligent message
 
-Create a commit using the Fish `commit` function.
+## Step 1: Verify branch
 
-## What to do
+Current branch: !`git branch --show-current`
 
-1. **FIRST: Verify the current git branch**
-   - Run: `git branch --show-current`
-   - If the result is `main`, `beta`, or `prod` → STOP and refuse to commit
-   - Show error message: "❌ Cannot commit to protected branch (main/beta/prod). Create a feature branch first using `/git:branch <type> <slug>`"
+**🚫 STOP HERE if branch is main, beta, or prod**
 
-2. If the user provided a message, use it as-is
-3. If no message provided:
-   - Analyze the changed files using `git diff`
-   - Generate a pertinent, concise commit message
-4. Execute the commit using Bash: `commit "your message"`
+If on a protected branch:
+```
+❌ Cannot commit to main/beta/prod
+
+✅ Create a feature branch first:
+   /git:branch <type> <slug>
+
+Examples:
+   /git:branch fix button-alignment
+   /git:branch feat user-auth
+   /git:branch docs readme-update
+```
+
+Only continue if on a feature branch (e.g., `fix/123-slug`, `feat/my-feature`)
+
+## Step 2: Analyze changes
+
+!`git diff --cached --stat`
+!`git diff HEAD --stat`
+
+## Step 3: Generate or use provided message
+
+If you provided a message, use it as-is.
+
+If not provided, analyze the diffs above and:
+- Generate a concise, descriptive commit message
+- Plain text describing what changed (no "type:" prefix)
+- Ask user if they want to modify or confirm it
+
+## Step 4: Execute commit
+
+**Case 1: Message was provided**
+
+If you provided a message argument, execute the commit:
+
+!`fish -c "commit \"$ARGUMENTS\""`
+
+---
+
+**Case 2: No message provided**
+
+If no message was provided (empty), generate and confirm one:
+
+1. Based on the changes shown in Step 2, generate a descriptive message
+2. Ask user to confirm or modify:
+
+What commit message should be used?
+
+(User will select from: Use suggested message, Modify the message, Cancel)
+
+3. If user confirms/modifies, execute with the chosen message:
+
+!`fish -c "commit \"<user-confirmed-message>\""`
+
+---
 
 ## Examples
 
-User input: `/git:commit "add login form validation"`
-→ Execute: `commit "add login form validation"`
-
-User input: `/git:commit` (empty)
-→ Analyze changes
-→ Generate message (e.g., "add user authentication")
-→ Execute: `commit "add user authentication"`
+- `/git:commit "update button alignment"` → Creates commit with that message
+- `/git:commit` → Analyzes changes, generates descriptive message, asks for confirmation
