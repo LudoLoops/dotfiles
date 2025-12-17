@@ -14,7 +14,11 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
     end
 
     # Extract issue number from branch name (format: type/issue-slug)
-    set issue_number (string match -r '^[a-z]+/([0-9]+)' "$branch_name" | head -1)
+    # Split by "/" and extract only the numeric part
+    set parts (string split '/' "$branch_name")
+    if test (count $parts) -ge 2
+        set issue_number (string match -r '[0-9]+' $parts[2])
+    end
 
     # Extract type from branch name
     set branch_type (string match -r '^([a-z]+)' "$branch_name" | head -1)
@@ -55,10 +59,32 @@ function ghfinish --description 'Complete PR workflow: push → create PR → sq
         echo "📝 Step 2: Creating PR for issue #$issue_number..."
         # Get issue title for PR message
         set issue_title (gh issue view $issue_number --json title --jq '.title' 2>/dev/null)
-        gh pr create --fill --title "$issue_type: $issue_title" --body "Closes #$issue_number"
+
+        # Get commit list from main to current branch
+        set commits (git log main..HEAD --pretty=format:"%s")
+        set pr_body "## Changes\n"
+
+        if test -n "$commits"
+            for commit in $commits
+                set pr_body "$pr_body- $commit\n"
+            end
+        end
+
+        set pr_body "$pr_body\nCloses #$issue_number"
+        gh pr create --fill --title "$issue_type: $issue_title" --body "$pr_body"
     else
         echo "📝 Step 2: Creating PR..."
-        gh pr create --fill
+        # Get commit list from main to current branch
+        set commits (git log main..HEAD --pretty=format:"%s")
+        set pr_body "## Changes\n"
+
+        if test -n "$commits"
+            for commit in $commits
+                set pr_body "$pr_body- $commit\n"
+            end
+        end
+
+        gh pr create --fill --body "$pr_body"
     end
 
     if test $status -ne 0
