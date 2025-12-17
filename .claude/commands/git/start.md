@@ -6,9 +6,9 @@ argument-hint: [issue-number]
 
 # Create feature branch from GitHub issue
 
-Execute: `gh-start $1`
+Execute: `fish -c "ghstart <issue-number>"`
 
-!`fish -c "gh-start $1"`
+!`fish -c 'ghstart '"$1"''`
 
 ---
 
