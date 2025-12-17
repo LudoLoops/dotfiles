@@ -24,10 +24,17 @@ return {
   lazy = false,
   config = function(_, opts)
     require("oil").setup(opts)
-    -- Afficher le preview automatiquement quand Oil s'ouvre
+
+    -- Remap Ctrl+hjkl in Oil buffer for kitty-navigator
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "oil",
       callback = function()
+        vim.keymap.set("n", "<C-h>", function() require("kitty-navigator").navigateLeft() end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-j>", function() require("kitty-navigator").navigateDown() end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-k>", function() require("kitty-navigator").navigateUp() end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-l>", function() require("kitty-navigator").navigateRight() end, { buffer = true, noremap = true })
+
+        -- Afficher le preview automatiquement quand Oil s'ouvre
         vim.defer_fn(function()
           local util = require("oil.util")
           -- Vérifier que le preview n'existe pas déjà
