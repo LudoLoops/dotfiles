@@ -1,8 +1,8 @@
 # overwrite greeting
 # potentially disabling fastfetch
-#function fish_greeting
-#    # smth smth
-#end
+function fish_greeting
+    #    # smth smth
+end
 
 source ~/.config/fish/functions/index.fish
 set -Ux fish_user_paths ~/.npm-global/bin $fish_user_paths $HOME/.local/bin $HOME/Applications
