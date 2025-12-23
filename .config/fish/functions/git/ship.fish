@@ -70,9 +70,20 @@ function ship --description "Deploy to prod from main with automatic version bum
 
     # Step 3: Run standard-version to bump version (will create commit and tag)
     echo "✓ Bumping version and generating CHANGELOG..."
-    standard-version 2>&1 >/dev/null
-    or begin
+    set version_output (standard-version 2>&1)
+    set version_status $status
+
+    if test $version_status -ne 0
         echo "❌ Failed to bump version"
+        echo ""
+        echo "Error details:"
+        echo "$version_output" | sed 's/^/   /'
+        echo ""
+        echo "💡 Common fixes:"
+        echo "   • Check if a tag already exists: git tag | grep v"
+        echo "   • Delete conflicting tag: git tag -d <tag> && git push origin --delete <tag>"
+        echo "   • Ensure all commits are pulled: git pull origin $main_branch"
+        echo ""
         git checkout "$main_branch" >/dev/null 2>&1
         return 1
     end
@@ -117,9 +128,14 @@ function ship --description "Deploy to prod from main with automatic version bum
     echo "✓ Merging releases/$new_version into $main_branch..."
     git checkout "$main_branch" >/dev/null 2>&1
     git pull origin "$main_branch" >/dev/null 2>&1
-    git merge "releases/$new_version" --ff-only >/dev/null 2>&1
-    or begin
+    set merge_output (git merge "releases/$new_version" --ff-only 2>&1)
+    set merge_status $status
+
+    if test $merge_status -ne 0
         echo "❌ Merge failed"
+        echo ""
+        echo "Output:"
+        echo "$merge_output" | sed 's/^/   /'
         return 1
     end
 
@@ -147,10 +163,15 @@ function ship --description "Deploy to prod from main with automatic version bum
     end
 
     echo "✓ Merging $main_branch into prod..."
-    git merge "$main_branch" --ff-only >/dev/null 2>&1
-    or begin
+    set merge_prod_output (git merge "$main_branch" --ff-only 2>&1)
+    set merge_prod_status $status
+
+    if test $merge_prod_status -ne 0
         echo "❌ Merge failed - prod has diverged from main"
         echo "⚠️  This means prod has commits that shouldn't exist"
+        echo ""
+        echo "Merge error:"
+        echo "$merge_prod_output" | sed 's/^/   /'
         echo ""
         echo "Commits on prod not on main:"
         git log --oneline "$main_branch"..prod 2>/dev/null || echo "  (none found)"

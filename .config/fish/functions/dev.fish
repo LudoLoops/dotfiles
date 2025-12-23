@@ -34,7 +34,6 @@ function sv-create --argument path
         echo "Error: Could not enter directory '$path'." >&2
         return 1
     end
-
     # Add dependencies via sv add
     command bunx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install bun
     or begin
@@ -50,7 +49,7 @@ function sv-create --argument path
     end
 
     # Create or update layout.css with Tailwind and Skeleton imports
-    set css_file src/routes/+layout.css
+    set css_file src/routes/layout.css
     if test ! -f "$css_file"
         command touch "$css_file"
     end

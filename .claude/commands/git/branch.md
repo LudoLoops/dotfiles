@@ -6,9 +6,9 @@ argument-hint: "[type] <slug>"
 
 # Create feature branch
 
-Execute: `gh-branch $ARGUMENTS`
+Execute: `ghbranch $ARGUMENTS`
 
-!`fish -c "gh-branch $ARGUMENTS"`
+!`fish -c "ghbranch $ARGUMENTS"`
 
 ---
 

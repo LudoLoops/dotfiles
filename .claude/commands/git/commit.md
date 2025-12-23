@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(git:*), Bash(fish:*), AskUserQuestion, Read
+allowed-tools: Bash(git:*), AskUserQuestion, Read
 description: Create a commit with intelligent message generation
 argument-hint: "[message]"
 ---
@@ -33,7 +33,7 @@ Only continue if on a feature branch (e.g., `fix/123-slug`, `feat/my-feature`)
 
 ## Step 3: Create commit
 
-!`if [ -z "$1" ]; then echo "❌ Message required. Usage: /git:commit 'your message here'"; exit 1; else fish -c "commit '$1'"; fi`
+If argument provided, use that message. Otherwise, Claude generates an intelligent message based on your branch and staged changes, then asks for confirmation before creating the commit.
 
 ---
 
