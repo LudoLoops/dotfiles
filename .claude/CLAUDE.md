@@ -225,6 +225,33 @@ When Claude Code starts, it automatically:
   - When you modify `~/dotfiles/.claude/commands/git/*` → Update `GIT_WORKFLOW.md`
 - Add a slash command → place in `commands/` subdirectory (auto-discovered)
 
+## 🎨 Svelte Conventions
+
+**For component-specific styles:**
+- ✅ Use `<style>` block in component for specific values (gradients, animations, custom layouts)
+- ❌ Never use inline `style=` attributes
+- ❌ Don't add non-global values to `layout.css` or global stylesheets
+
+**Example:**
+```svelte
+<div class="my-component">
+  Content here
+</div>
+
+<style>
+  .my-component {
+    background: linear-gradient(to bottom, #020202, #0f0505);
+    /* component-specific styles only */
+  }
+</style>
+```
+
+**Reserve global CSS for:**
+- Reset styles and fonts
+- Reusable CSS variables
+- Framework imports (Skeleton, Tailwind, etc.)
+- Truly global styles (scrollbars, base elements)
+
 ## ✅ Before Coding
 
 1. Read project `CLAUDE.md`
