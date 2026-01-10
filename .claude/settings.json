@@ -8,7 +8,6 @@
       "Task"
     ]
   },
-  "model": "haiku",
   "enableAllProjectMcpServers": false,
   "disabledMcpjsonServers": [
     "*"
@@ -19,5 +18,6 @@
   },
   "enabledPlugins": {
     "edmunds-claude-code@edmunds-claude-code": false
-  }
+  },
+  "model": "haiku"
 }

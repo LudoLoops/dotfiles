@@ -6,6 +6,9 @@ fish_variables
 .config/kxkbrc
 .config/plasmarc
 
+# fish config folder
+.config/fish/conf.d/
+
 # Claude Code runtime & generated files (not config)
 .claude/.credentials.json
 .claude/history.jsonl
