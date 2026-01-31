@@ -16,6 +16,11 @@ _k_friendly_name=Keyboard Layout Switcher
 CF348E3BED6D429236B8CB61B4BBE230-=none,none,Electron shortcut\s
 _k_friendly_name=Bruno
 
+[discord-screenaudio]
+_k_friendly_name=discord-screenaudio
+toggleDeafen=none,none,Toggle Deafen
+toggleMute=none,none,Toggle Mute
+
 [kaccess]
 Toggle Screen Reader On and Off=none,Meta+Alt+S,Toggle Screen Reader On and Off
 _k_friendly_name=Accessibility
@@ -290,6 +295,8 @@ activate task manager entry 8=none,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=none,Meta+9,Activate Task Manager Entry 9
 activate widget 31=none,none,Activate Application Dashboard Widget
 activate widget 36=none,none,Activate Memory Usage Widget
+activate widget 57=none,none,Activate KWeather_1x4 Widget
+activate widget 59=Control,none,Activate Chaac Weather Widget
 clear-history=none,,Clear Clipboard History
 clipboard_action=Meta+Ctrl+X,Meta+Ctrl+X,Automatic Action Popup Menu
 cycle-panels=Meta+Alt+P,Meta+Alt+P,Move keyboard focus between panels
@@ -342,7 +349,3 @@ Toggle screen map selection=Meta+Ctrl+M,Meta+Ctrl+M,Toggle between all screens
 Toggle stylus mode=Meta+Ctrl+S,Meta+Ctrl+S,Toggle the Stylus Tool Relative/Absolute
 Toggle touch tool=Meta+Ctrl+T,Meta+Ctrl+T,Enable/Disable the Touch Tool
 _k_friendly_name=Wacom Tablet
-
-[yakuake]
-_k_friendly_name=Yakuake
-toggle-window-state=F12,F12,Open/Retract Yakuake

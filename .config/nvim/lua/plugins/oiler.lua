@@ -29,22 +29,18 @@ return {
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "oil",
       callback = function()
-        vim.keymap.set("n", "<C-h>", function() require("kitty-navigator").navigateLeft() end, { buffer = true, noremap = true })
-        vim.keymap.set("n", "<C-j>", function() require("kitty-navigator").navigateDown() end, { buffer = true, noremap = true })
-        vim.keymap.set("n", "<C-k>", function() require("kitty-navigator").navigateUp() end, { buffer = true, noremap = true })
-        vim.keymap.set("n", "<C-l>", function() require("kitty-navigator").navigateRight() end, { buffer = true, noremap = true })
-
-        -- Open preview automatically when oil opens
-        vim.schedule(function()
-          vim.defer_fn(function()
-            local util = require("oil.util")
-            if not util.get_preview_win() then
-              pcall(function()
-                require("oil.actions").preview.callback()
-              end)
-            end
-          end, 50)
-        end)
+        vim.keymap.set("n", "<C-h>", function()
+          require("kitty-navigator").navigateLeft()
+        end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-j>", function()
+          require("kitty-navigator").navigateDown()
+        end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-k>", function()
+          require("kitty-navigator").navigateUp()
+        end, { buffer = true, noremap = true })
+        vim.keymap.set("n", "<C-l>", function()
+          require("kitty-navigator").navigateRight()
+        end, { buffer = true, noremap = true })
       end,
     })
   end,
