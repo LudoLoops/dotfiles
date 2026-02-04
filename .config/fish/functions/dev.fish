@@ -22,7 +22,7 @@ function sv-create --argument path
     end
 
     # Create SvelteKit project with options
-    command bunx sv create --types ts --install bun --template minimal --no-add-ons "$path"
+    command bun x sv create --template minimal --types ts --add prettier eslint playwright tailwindcss="plugins:typography,forms" devtools-json mdsvex mcp="ide:opencode+setup:remote" --install bun "$path"
     or begin
         echo "Error: Failed to create SvelteKit project." >&2
         return 1
@@ -32,12 +32,6 @@ function sv-create --argument path
     cd "$path"
     or begin
         echo "Error: Could not enter directory '$path'." >&2
-        return 1
-    end
-    # Add dependencies via sv add
-    command bunx sv add vitest tailwindcss sveltekit-adapter mcp eslint prettier playwright devtools-json --install bun
-    or begin
-        echo "Error: Failed to add dependencies." >&2
         return 1
     end
 
