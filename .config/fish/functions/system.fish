@@ -70,25 +70,65 @@ end
 # System Update
 # Updates Arch Linux packages, clears cache, and updates Flatpak
 function update
-    paru -Syu --noconfirm
-    sudo paccache -r
-    if type -q flatpak
-        flatpak update -y
+    echo "📦 Updating Arch packages..."
+    paru -Syu --noconfirm || begin
+        echo "❌ Failed to update Arch packages"
+        return 1
     end
+
+    echo "🧹 Cleaning package cache..."
+    sudo paccache -r || begin
+        echo "⚠️  Warning: Failed to clean package cache"
+    end
+
+    if type -q flatpak
+        echo "📦 Updating Flatpaks..."
+        flatpak update -y || begin
+            echo "⚠️  Warning: Failed to update Flatpaks"
+        end
+    end
+
+    echo "✅ System update complete"
 end
 
 # File Backup Creator
 # Creates a backup file by copying original with .bak extension
 # Usage: backup file.txt → creates file.txt.bak
 function backup --argument filename
-    cp $filename $filename.bak
+    if test -z "$filename"
+        echo "❌ Error: filename required"
+        echo "Usage: backup <filename>"
+        return 1
+    end
+
+    if not test -f "$filename"
+        echo "❌ Error: file not found: $filename"
+        return 1
+    end
+
+    cp "$filename" "$filename.bak" || begin
+        echo "❌ Error: failed to create backup for $filename"
+        return 1
+    end
+
+    echo "✅ Backup created: $filename.bak"
 end
 
 # Yazi File Manager Integration
 # Opens Yazi file manager and changes shell directory to selected path
 function y
+    if not command -v yazi >/dev/null 2>&1
+        echo "❌ Error: yazi is not installed"
+        return 1
+    end
+
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
-    yazi $argv --cwd-file="$tmp"
+    yazi $argv --cwd-file="$tmp" || begin
+        echo "⚠️  Warning: yazi exited with error"
+        rm -f -- "$tmp"
+        return 1
+    end
+
     if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
         builtin cd -- "$cwd"
     end

@@ -118,9 +118,9 @@ function ship --description "Deploy to prod from main with automatic version bum
 
     # Step 8: Push releases branch
     echo "✓ Pushing releases/$new_version branch..."
-    git push -u origin "releases/$new_version" >/dev/null 2>&1
-    or begin
-        echo "❌ Failed to push branch"
+    git push -u origin "releases/$new_version" >/dev/null 2>&1 || begin
+        echo "❌ Failed to push branch: releases/$new_version"
+        git checkout "$main_branch" >/dev/null 2>&1
         return 1
     end
 

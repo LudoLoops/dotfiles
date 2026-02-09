@@ -127,6 +127,7 @@ function toWebp
     # Check if cwebp is installed
     if not command -v cwebp > /dev/null 2>&1
         echo "❌ Error: 'cwebp' is not installed."
+        echo "Install with: sudo pacman -S webp"
         return 1
     end
 
@@ -148,6 +149,9 @@ function toWebp
 
     echo "🔧 Converting to WebP (quality $quality)..."
 
+    set converted_count 0
+    set failed_count 0
+
     for f in $valid_files
         # Replace extension with .webp (case-insensitive)
         set out (string replace -r '\.(jpe?g|png|JPE?G|PNG)$' '.webp' -- $f)
@@ -158,16 +162,20 @@ function toWebp
         end
 
         # Perform conversion
-        cwebp -q $quality "$f" -o "$out"
-
-        if test $status -eq 0
-            set src_size (stat -f%z "$f" | awk '{print int($1/1024)}')k 2>/dev/null || echo "?k"
-            set dst_size (stat -f%z "$out" | awk '{print int($1/1024)}')k 2>/dev/null || echo "?k"
-            echo "✅ $f ($src_size) → $out ($dst_size)"
-        else
+        cwebp -q $quality "$f" -o "$out" || begin
             echo "❌ Failed: $f"
+            set failed_count (math $failed_count + 1)
+            continue
         end
+
+        set src_size (stat -f%z "$f" | awk '{print int($1/1024)}')k 2>/dev/null || echo "?k"
+        set dst_size (stat -f%z "$out" | awk '{print int($1/1024)}')k 2>/dev/null || echo "?k"
+        echo "✅ $f ($src_size) → $out ($dst_size)"
+        set converted_count (math $converted_count + 1)
     end
+
+    echo ""
+    echo "✅ Conversion complete: $converted_count converted, $failed_count failed"
 end
 
 # Video Conversion to DaVinci Resolve Format
