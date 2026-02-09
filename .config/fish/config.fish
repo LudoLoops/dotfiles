@@ -5,7 +5,6 @@ function fish_greeting
 end
 
 source ~/.config/fish/functions/index.fish
-set -Ux fish_user_paths ~/.npm-global/bin $fish_user_paths $HOME/.local/bin $HOME/Applications
 
 systemctl --user import-environment EDITOR VISUAL
 
@@ -15,27 +14,27 @@ end
 
 zoxide init fish | source
 
-# Add ~/.local/bin to PATH
-if test -d ~/.local/bin
-    if not contains -- ~/.local/bin $PATH
-        set -p PATH ~/.local/bin
-    end
-end
-
-# Add depot_tools to PATH
-if test -d ~/Applications/depot_tools
-    if not contains -- ~/Applications/depot_tools $PATH
-        set -p PATH ~/Applications/depot_tools
-    end
-end
-
-### EXPORT ###
+### EXPORT & PATH ###
 set -gx EDITOR nvim
 set -gx VISUAL nvim
+set -gx TERM xterm-kitty
 
-set -x TERM xterm-kitty # Sets the terminal type
+# Consolidated PATH setup
+set -gx BUN_INSTALL "$HOME/.bun"
+set -gx VOLTA_HOME "$HOME/.volta"
 
-### fzf option
+# Set PATH with all additions in one place
+set -gx PATH \
+    ~/.npm-global/bin \
+    ~/.local/bin \
+    ~/Applications \
+    ~/Applications/depot_tools \
+    "$BUN_INSTALL/bin" \
+    "$VOLTA_HOME/bin" \
+    /home/loops/.lmstudio/bin \
+    $PATH
+
+### fzf options
 set fzf_preview_dir_cmd eza --all --color=always
 set fzf_fd_opts --hidden --ignore node_modules --max-depth 5
 
@@ -102,16 +101,6 @@ alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
 
 # exegol
 alias exegol='sudo -E $(which exegol)'
-
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
-#
-
-# Added by LM Studio CLI (lms)
-set -gx PATH $PATH /home/loops/.lmstudio/bin
-set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
 
 alias claude="/home/loops/.claude/local/claude"
 
