@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/hypr"
+FLAG="$STATE/edp_disabled"
+mkdir -p "$STATE"
+
+HDMI='HDMI-A-1,1920x1080@60,0x0,1'
+EDP='eDP-1,1920x1080@60,1920x0,1'
+
+if [[ -f "$FLAG" ]]; then
+  # -> on rallume: réapplique toujours le layout complet
+  hyprctl keyword monitor "$HDMI"
+  hyprctl keyword monitor "$EDP"
+  hyprctl reload
+  rm -f "$FLAG"
+else
+  # -> on éteint le laptop
+  hyprctl keyword monitor "eDP-1, disable"
+  touch "$FLAG"
+fi
