@@ -22,7 +22,7 @@ function sv-create --argument path
     end
 
     # Create SvelteKit project with options
-    command bun x sv create --template minimal --types ts --add prettier eslint playwright tailwindcss="plugins:typography,forms" devtools-json mdsvex mcp="ide:opencode+setup:remote" --install bun "$path"
+    command bunx sv create --template minimal --types ts --add prettier eslint playwright tailwindcss="plugins:typography,forms" devtools-json mdsvex mcp="ide:opencode+setup:remote" --install bun "$path"
     or begin
         echo "Error: Failed to create SvelteKit project." >&2
         return 1
@@ -211,23 +211,23 @@ function cursor-rules --description "Select and symlink .mdc Cursor rules into .
         set selected (seq 1 (count $all_files))
     end
 
-        for index in $selected
-            if test $index -gt 0 -a $index -le (count $all_files)
-                set src $all_files[$index]
-                set dest $target_dir/(basename $src)
-                if not test -e $dest
-                    ln -s $src $dest || begin
-                        echo "❌ Failed to link: "(basename $src)
-                        continue
-                    end
-                    echo "🔗 Linked "(basename $src)" → $dest"
-                else
-                    echo "⚠️ Skipped "(basename $src)" (already exists)"
+    for index in $selected
+        if test $index -gt 0 -a $index -le (count $all_files)
+            set src $all_files[$index]
+            set dest $target_dir/(basename $src)
+            if not test -e $dest
+                ln -s $src $dest || begin
+                    echo "❌ Failed to link: "(basename $src)
+                    continue
                 end
+                echo "🔗 Linked "(basename $src)" → $dest"
             else
-                echo "⚠️ Invalid index: $index"
+                echo "⚠️ Skipped "(basename $src)" (already exists)"
             end
+        else
+            echo "⚠️ Invalid index: $index"
         end
+    end
 
     echo
     echo "✅ Done. Selected rules are now linked in $target_dir/"
