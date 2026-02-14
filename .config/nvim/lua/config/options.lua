@@ -27,3 +27,6 @@ vim.opt.clipboard = "unnamedplus"
 -- Rendering and performance
 vim.opt.termguicolors = true
 vim.opt.lazyredraw = false
+
+vim.opt.wrap = true
+vim.opt.linebreak = true
