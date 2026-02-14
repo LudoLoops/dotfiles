@@ -2,69 +2,65 @@
 
 ## Project Overview
 
-This is a personal **dotfiles repository** that manages your home directory's **.config** directory using GNU Stow for symlink-based configuration distribution.
+Personal dotfiles repository using GNU Stow for symlink-based configuration. All configs in `~/dotfiles/.config/` are symlinked to home directory.
 
-**How it works:**
-- All your dotfiles are in `~/dotfiles/.config/`
-- Stow creates symlinks from your home directory to this location
-- Your `.config/` folder is a symlink to `~/dotfiles/.config/`
-
-**Core technologies:**
-- Fish shell 3.6+ with custom functions and aliases (in your ~/.config/fish/)
-- Neovim text editor configuration
-- Kitty terminal emulator
-- Arch Linux package management (paru, pacman, Flatpak)
+**Core technologies:** Fish shell 3.6+, Hyprland (Wayland WM), Neovim, Kitty, Arch Linux (paru/pacman/Flatpak)
 
 ## Build, Lint, Test Commands
 
-### Fish Configuration Validation
+### Fish Function Testing
 ```fish
-# Syntax check without restarting shell
-fish -n ~/.config/fish/functions/index.fish
+# Syntax check (no shell restart)
+fish -n ~/.config/fish/functions/new-function.fish
 
-# Reload all functions (no shell restart needed)
+# Reload all functions without restart
 source ~/.config/fish/functions/index.fish
 
 # Test specific function
 function-name --help
 ```
 
-### Dotfiles Installation & Updates
+### Run Single Test
 ```bash
-# Initial installation
-cd ~/dotfiles && ./install.sh
+# pnpm (primary for Node.js)
+pnpm test <file-or-folder>
+pnpm test --filter <package-name>
+pnpm test <path> --run
 
-# Update and apply changes
-cd ~/dotfiles && git pull && stow .config .claude
+# bun (alternative)
+bun test <path> --filter <name>
 
-# Force re-symlink (use with caution)
-stow --adopt .config .claude
+# npm (fallback)
+npm test -- <path>
 ```
 
-### Package Management (Arch Linux)
+### Install & Updates
 ```bash
-# Install packages
-paru -Syu              # Update all packages
-paru -S <package>      # Install package
-flatpak update -y      # Update Flatpaks
+cd ~/dotfiles
+./install.sh                    # Initial install
+git pull && stow .config .claude # Update
+stow --adopt .config .claude     # Force re-symlink (cautious)
+```
+
+### Package Management
+```bash
+paru -Syu              # Update all
+paru -S <package>      # Install
+flatpak update -y      # Flatpaks
 ```
 
 ## Code Style Guidelines
 
 ### Fish Functions
 
-**Naming conventions:**
-- Use kebab-case: `my-feature.fish`, `dev.fish`
-- Descriptive names: `sv-create`, `gh-finish`, `dockcontrol`
-- Group by purpose: `git/`, `dev.fish`, `system.fish`
+**Naming:** kebab-case, descriptive (e.g., `sv-create`, `gh-finish`)
 
-**Function structure:**
+**Structure:**
 ```fish
 # =============================================================================
 # Section header with description
 # =============================================================================
 
-# Individual function description
 function function-name --description 'Brief description'
     # Validate arguments
     if test (count $argv) -eq 0
@@ -74,7 +70,7 @@ function function-name --description 'Brief description'
 
     # Error handling with or pattern
     command tool arg || begin
-        echo "Error: Failed to do X"
+        echo "❌ Error description"
         return 1
     end
 
@@ -83,56 +79,49 @@ function function-name --description 'Brief description'
 end
 ```
 
-**Error handling patterns:**
-- Validate inputs with explicit checks
+**Error handling:**
+- Validate inputs explicitly before processing
 - Use `or begin ... return 1 ... end` for command chaining
-- Provide clear error messages with `echo "❌ Error description"`
-- Exit with `return 1` on errors
-- Use `command` prefix for external tools to avoid function shadowing
+- Use `command` prefix for external tools (avoid shadowing)
 - Check `$status` after commands: `if test $status -ne 0`
+- Return 1 on failure (never silent failure)
+- Provide clear error messages with emoji indicators
 
-**Documentation in comments:**
+**Documentation:**
 - Section headers with `# ===` separators
 - Multi-line description comments
-- Usage examples inline with `# Usage: function-name arg`
-- Maintain consistent formatting with 2-space indentation
+- Usage examples inline: `# Usage: function-name arg`
+- 2-space indentation throughout
 
 ### Bash Scripts
 
-**Structure:**
-- Shebang with strict mode: `#!/bin/bash` + `set -e`
-- Self-reference: `DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"`
-- Error messages: `echo "Error: description" >&2`
-- Exit codes: `return 1` or `exit 1`
+```bash
+#!/bin/bash
+set -e
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "Error: description" >&2
+exit 1
+```
 
 ### Configuration Files
 
 **Stow symlinks:**
-- All configs must exist in dotfiles directory
-- Symlink target: `~/.config/` → `dotfiles/.config/`
-- Critical files (never delete): `functions/index.fish`, `config.fish`, `conf.d/nvm.fish`, `fish_plugins`
+- All configs (fish, nvim, kitty, hypr, waybar, etc.) in `~/dotfiles/.config/` → `~/.config/`
+- Critical files: `functions/index.fish`, `config.fish`, `conf.d/nvm.fish`, `fish_plugins`, `hypr/hyprland.conf`
+- Hyprland: reload avec `Hyprctl reload` ou `super+r`
 
 **Environment variables:**
-- Use `set -gx` for global exports in `conf.d/env.fish`
-- Use `set -Ux` for user-universal variables
-- Format: `set -Ux VAR_NAME value`
+- Global exports: `set -gx VAR_NAME value` in `conf.d/env.fish`
+- User-universal: `set -Ux VAR_NAME value`
 
-## Git Workflow (CRITICAL)
+### Naming Conventions
 
-**Branch format:** `<type>/<issue-#>-<slug>`
-- Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `style`
+**Functions:** kebab-case (`feature-name.fish`, `git.fish`)
+**Branches:** `<type>/<issue-#>-<slug>` (e.g., `feat/42-add-alias`)
+**Types:** feat, fix, refactor, docs, test, chore, perf, style
 
-**Never commit to main/beta/prod** - always create feature branch first
-
-**Git operations must use slash commands:**
-```fish
-/git:start 42              # Create branch from issue
-/git:branch feat new-thing # Create branch with type
-/git:commit "message"      # Stage and commit
-/git:finish                # Push, PR, merge, cleanup
-```
-
-See `.claude/commands/git/` for available commands.
+**Aliases:** Single-letter shortcuts (`g`, `p`, `z`) or descriptive (`zc`, `ghfinish`)
 
 ## Common Function Patterns
 
@@ -149,7 +138,7 @@ if not test -d "$path"
 end
 ```
 
-**Command chaining with error handling:**
+**Command chaining:**
 ```fish
 command tool arg || begin
     echo "❌ Failed to run tool"
@@ -159,14 +148,14 @@ end
 
 **Interactive prompts:**
 ```fish
-read -l -P "Prompt text: " answer
+read -l -P "Prompt: " answer
 if test -z "$answer"
     echo "❌ Input required"
     return 1
 end
 ```
 
-**Loop patterns:**
+**Loops & Switches:**
 ```fish
 for item in $argv
     # Process item
@@ -175,10 +164,7 @@ end
 for line in (cat file.txt)
     # Process each line
 end
-```
 
-**Switch statements:**
-```fish
 switch $arg
     case pattern1
         # Action 1
@@ -192,48 +178,35 @@ end
 
 ## Testing & Verification
 
-**Fish syntax check:**
 ```bash
+# Syntax check
 fish -n ~/.config/fish/functions/new-function.fish
-```
 
-**Function testing:**
-```fish
-# Source functions
+# Test function
 source ~/.config/fish/functions/index.fish
-
-# Test help
 my-function --help
 
-# Test with dummy data
-my-function test-value
-```
-
-**Install validation:**
-```bash
-# Check symlinks
+# Install validation
 ls -la ~/.config/fish
-
-# Reload shell
 exec fish
 ```
 
-## Important Files NOT to Delete
+## Critical Files (Never Delete)
 
 | File | Reason |
 |------|--------|
-| `functions/index.fish` | Critical function auto-loader - system breaks without it |
-| `config.fish` | Main Fish shell configuration entry point |
-| `conf.d/nvm.fish` | Node Version Manager initialization |
+| `functions/index.fish` | Critical auto-loader - system breaks without it |
+| `config.fish` | Main Fish configuration entry point |
+| `conf.d/nvm.fish` | NVM initialization for Node.js |
 | `fish_plugins` | Plugin declarations for Fish shell |
-| `AGENTS.md` | Project instructions for AI agents |
+| `AGENTS.md` | AI agent instructions |
 
 ## Function Organization
 
-Files are organized by domain in `functions/` directory:
-- **git/** - Git/GitHub workflows (start, branch, finish, ship, commit)
-- **dev.fish** - Web dev (SvelteKit, Go, Cursor, deployment)
-- **system.fish** - System admin (Docker, updates, backups, SSH)
+Files in `functions/` organized by domain:
+- **git/** - Git workflows (start, branch, finish, ship, commit)
+- **dev.fish** - Web dev (SvelteKit, Go, deployment)
+- **system.fish** - System admin (Docker, updates, SSH)
 - **media.fish** - Image/video processing (ImageMagick, FFmpeg)
 - **ai.fish** - AI tools (n8n, Ollama)
 - **editor.fish** - Editor launchers (Neovide, Cursor, Zeditor)
@@ -242,37 +215,18 @@ Files are organized by domain in `functions/` directory:
 - **utils.fish** - Generic utilities
 - **general_shortcut.fish** - Navigation shortcuts
 
-## Package Manager Preferences
+## Package Managers
 
-- **Primary:** `pnpm` (for Node.js packages)
-- **Alternative:** `bun` (for quick installs)
-- **System:** `paru` (Arch package manager, uses pacman under the hood)
-
-Use `p` alias for pnpm: `p install`, `p run`, `p test`
-
-## Import and Formatting Rules
-
-**Fish functions:**
-- No explicit imports needed - auto-loaded by `index.fish`
-- Import commands manually if needed: `source /path/to/file.fish`
-- Use relative paths for files in dotfiles
-
-**Bash scripts:**
-- No module imports
-- Shebang must be first line
-- Use `set -e` for error propagation
-
-**Configuration files:**
-- No imports required
-- Keep files minimal and focused
-- Use environment variables for configuration values
+- **Primary:** pnpm (use `p` alias: `p install`, `p run`, `p test`)
+- **Alternative:** bun (for quick installs)
+- **System:** paru (Arch, uses pacman under the hood)
 
 ## Error Handling Standards
 
-1. **Always validate inputs** before processing
-2. **Use explicit error messages** with emoji indicators (✅, ❌, ⚠️)
-3. **Return 1 on failure** (never silently fail)
-4. **Provide actionable feedback** on errors
-5. **Check command status** with `$status` after every command
-6. **Use `or begin ... end`** for command chaining
-7. **Check critical paths** exist before processing (files, directories, git repos)
+1. Always validate inputs before processing
+2. Use explicit error messages with emoji (✅, ❌, ⚠️)
+3. Return 1 on failure (never silent failure)
+4. Provide actionable feedback
+5. Check `$status` after every command
+6. Use `or begin ... end` for command chaining
+7. Check critical paths exist before processing
