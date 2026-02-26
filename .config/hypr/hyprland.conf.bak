@@ -1,0 +1,28 @@
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                 CachyOS Hyprland Configuration              ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+# Variables
+$browser = /usr/bin/zen-browser
+$applauncher = hyprlauncher
+# rofi -show drun
+$mainMod = SUPER
+$mod = SUPER
+$term = kitty
+$filemanager= dolphin
+
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃                         Source Files                        ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+source = ~/.config/hypr/config/defaults.conf
+source = ~/.config/hypr/config/general.conf
+source = ~/.config/hypr/config/animations.conf
+source = ~/.config/hypr/config/autostart.conf
+source = ~/.config/hypr/config/decorations.conf
+source = ~/.config/hypr/config/environment.conf
+source = ~/.config/hypr/config/keybinds.conf
+source = ~/.config/hypr/config/monitor.conf
+source = ~/.config/hypr/config/variables.conf
+# source = ~/.config/hypr/config/windowrules.conf
+source =./userprefs.conf

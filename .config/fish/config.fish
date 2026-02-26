@@ -6,10 +6,12 @@ end
 
 source ~/.config/fish/functions/index.fish
 
-systemctl --user import-environment EDITOR VISUAL
+# systemctl --user import-environment EDITOR VISUAL
 
 if status is-interactive
+    export STARSHIP_CONFIG=$HOME/.config/starship.toml
     starship init fish | source
+
 end
 
 zoxide init fish | source
