@@ -1,0 +1,24 @@
+#!/bin/bash
+# Cycle between audio outputs
+
+current=$(pactl get-default-sink)
+sinks=($(pactl list short sinks | awk '{print $2}'))
+num_sinks=${#sinks[@]}
+
+if [ $num_sinks -le 1 ]; then
+    notify-send "Audio" "Une seule sortie disponible"
+    exit 0
+fi
+
+for i in "${!sinks[@]}"; do
+    if [ "${sinks[$i]}" = "$current" ]; then
+        next=$(( (i + 1) % num_sinks ))
+        pactl set-default-sink "${sinks[$next]}"
+        pactl list short sink-inputs | while read id _; do
+            pactl move-sink-input "$id" "${sinks[$next]}"
+        done
+        name=$(pactl list sinks | grep -A1 "${sinks[$next]}" | grep Description | sed 's/.*= //')
+        notify-send "Audio Output" "$name"
+        exit 0
+    fi
+done
