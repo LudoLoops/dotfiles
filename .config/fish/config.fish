@@ -104,6 +104,5 @@ alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
 # exegol
 alias exegol='sudo -E $(which exegol)'
 
-alias claude="/home/loops/.claude/local/claude"
 
 alias ssh="kitty +kitten ssh"

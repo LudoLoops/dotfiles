@@ -51,13 +51,6 @@ function dockcontrol
     end
 end
 
-# Zoxide + Cursor integration
-# Navigate to directory and open in Cursor editor
-function zc
-    z $argv && cursor . >/dev/null 2>&1 &
-    disown
-end
-
 # Zoxide + Zeditor integration
 # Navigate to directory and open in Zeditor
 function zz --argument path
