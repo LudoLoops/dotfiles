@@ -70,7 +70,7 @@ function update
     end
 
     echo "🧹 Cleaning package cache..."
-    sudo paccache -r || begin
+    sudo paccache -rk1 || begin
         echo "⚠️  Warning: Failed to clean package cache"
     end
 
