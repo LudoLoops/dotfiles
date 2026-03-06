@@ -1,4 +1,4 @@
-# System Update - Arch/Paru
+# System Update - Arch Linux
 # Updates Arch Linux packages, clears cache, and updates Flatpak
 
 function update

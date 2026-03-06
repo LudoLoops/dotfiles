@@ -1,6 +1,8 @@
 ## python venv
 
 function venv --description "Create and activate a new virtual environment"
+    require python3 python
+
     echo "Creating virtual environment in "(pwd)"/.venv"
     python3 -m venv .venv --upgrade-deps
     source .venv/bin/activate.fish

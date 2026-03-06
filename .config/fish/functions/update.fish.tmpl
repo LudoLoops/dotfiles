@@ -1,0 +1,14 @@
+# System Update - Multi-OS
+# Template that includes the appropriate OS-specific update script
+
+{{ if eq .chezmoi.osRelease.id "arch" }}
+{{- include "os_specific/update_arch.fish" }}
+{{ else if eq .chezmoi.osRelease.id "debian" }}
+{{- include "os_specific/update_debian.fish" }}
+{{ else }}
+# Unsupported OS
+function update
+    echo "❌ Unsupported OS: {{ .chezmoi.osRelease.id }}"
+    return 1
+end
+{{ end }}

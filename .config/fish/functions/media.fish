@@ -7,18 +7,14 @@
 # Resizes images to specified width (default 1280px)
 # Usage: imgResize [width]
 function imgResize
+    require magick imagemagick
+
     # Default width: 1280 if no argument is provided
     set width (if test (count $argv) -ge 1; echo $argv[1]; else; echo 1280; end)
 
     # Current working directory
     set dir (pwd)
     set outdir "$dir/resized"
-
-    # Check if ImageMagick is installed
-    if not type -q magick
-        echo "Error: ImageMagick (magick) is not installed."
-        return 1
-    end
 
     # Create output directory
     mkdir -p $outdir

@@ -22,6 +22,10 @@ end
 
 # Docker & Docker Compose Control
 function dockcontrol
+    # Check dependencies
+    require docker docker docker.io
+    require docker-compose
+
     switch $argv[1]
         case start
             if not systemctl is-active docker >/dev/null
@@ -55,8 +59,11 @@ end
 # Navigate to directory and open in Zeditor
 function zz --argument path
     if test -n "$path"
+        require zoxide
         z "$path"
     end
+
+    require zeditor
     command zeditor .
 end
 
@@ -86,10 +93,7 @@ end
 # Yazi File Manager Integration
 # Opens Yazi file manager and changes shell directory to selected path
 function y
-    if not command -v yazi >/dev/null 2>&1
-        echo "❌ Error: yazi is not installed"
-        return 1
-    end
+    require yazi
 
     set tmp (mktemp -t "yazi-cwd.XXXXXX")
     yazi $argv --cwd-file="$tmp" || begin
