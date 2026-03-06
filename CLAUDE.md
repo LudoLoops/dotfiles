@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-This repository contains my personal dotfiles managed by [Chezmoi](https://www.chezmoi.io/).
+This repository contains my personal dotfiles.
+
+**Setup:** GNU Stow for symlinks + Chezmoi for OS-specific templates only.
 
 ## Quick Start
 
@@ -12,7 +14,12 @@ cd ~/dotfiles
 
 **Updates:**
 ```bash
-git pull && chezmoi apply
+cd ~/dotfiles && git pull
+```
+
+Chezmoi templates (OS-specific):
+```bash
+chezmoi apply  # Regenerate templates after OS change
 ```
 
 ## System Overview
@@ -111,7 +118,27 @@ function-name --help
 
 ## Important Notes
 
-- **Templates:** `chezmoi_tmpl/` excluded from home, used to generate OS-specific configs
-- **Symlinks:** All configs symlinked (except generated files from templates)
+- **Templates:** `chezmoi_tmpl/` contains OS-specific templates managed by chezmoi
+- **Symlinks:** All configs are managed by GNU Stow (`~/.config/X → ~/dotfiles/.config/X`)
+- **Chezmoi:** Only used for templates, NOT for symlinks
 - **Multi-OS:** Works on Arch/CachyOS and Debian with appropriate package managers
 - **Hyprland:** Keybindings in `bind_M_n_history.fish` (Alt+1..9 for history)
+
+## Workflow
+
+1. Edit files directly (they're symlinks managed by stow):
+   ```fish
+   nvim ~/.config/fish/config.fish  # Actually edits ~/dotfiles/.config/fish/config.fish
+   ```
+
+2. Commit changes when ready:
+   ```fish
+   cd ~/dotfiles
+   git add -A && git commit -m "update"
+   ```
+
+3. On new machine:
+   ```fish
+   git clone https://github.com/LudoLoops/dotfiles.git ~/dotfiles
+   cd ~/dotfiles && ./install.sh  # Runs stow + chezmoi apply
+   ```

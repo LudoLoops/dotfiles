@@ -1,47 +1,61 @@
 # My Dotfiles
 
-This repository contains my system configuration files (dotfiles) and Claude Code global configurations,
-organized to be used with [Chezmoi](https://www.chezmoi.io/).
+This repository contains my system configuration files (dotfiles) and Claude Code global configurations.
+
+**Setup:** GNU Stow for symlinks + Chezmoi for OS-specific templates.
 
 ## 🛠 Requirements
 
-Make sure you have the following installed:
-
-### Git
-
+**Git:**
 ```bash
-sudo pacman -S git
+sudo pacman -S git  # Arch/Debian
 ```
 
-Chezmoi
-
+**GNU Stow** (for symlinks):
 ```bash
-sudo pacman -S chezmoi
+sudo pacman -S stow  # Arch
+sudo apt install stow  # Debian
 ```
 
-🚀 Installation
+**Chezmoi** (for OS-specific templates only):
+```bash
+sudo pacman -S chezmoi  # Arch
+sudo apt install chezmoi  # Debian
+```
+
+## 🚀 Installation
 
 Clone the repository into your $HOME:
 
 ```bash
 git clone https://github.com/LudoLoops/dotfiles.git
 cd dotfiles
+./install.sh
 ```
 
-## 🔗 Symlink your configuration
+## 🔗 How it works
 
-To apply all configurations using Chezmoi:
-
+**1. GNU Stow** creates symlinks:
 ```bash
-chezmoi apply
+cd ~/dotfiles
+stow .config  # Creates all .config symlinks
 ```
 
-This will create symlinks like:
-- `~/.config/fish → ~/dotfiles/.config/fish`
-- `~/.config/nvim → ~/dotfiles/.config/nvim`
-- `~/.config/kitty → ~/dotfiles/.config/kitty`
+Result:
+```bash
+~/.config/fish → ~/dotfiles/.config/fish
+~/.config/nvim → ~/dotfiles/.config/nvim
+~/.config/yazi → ~/dotfiles/.config/yazi
+~/.config/rofi → ~/dotfiles/.config/rofi
+~/.config/dunst → ~/dotfiles/.config/dunst
+~/.config/wlogout → ~/dotfiles/.config/wlogout
+~/.config/waypaper → ~/dotfiles/.config/waypaper
+```
 
-Chezmoi also handles OS-specific templates for multi-machine configs (Arch/CachyOS vs Debian).
+**2. Chezmoi templates** (OS-specific configs):
+```bash
+chezmoi apply  # Generates OS-specific files (e.g., update.fish for Arch vs Debian)
+```
 
 ---
 
@@ -67,34 +81,32 @@ These are safe to reuse across machines, even between distros.
 
 ## 📁 Structure
 
-Typical directory structure:
-
 ```
 dotfiles/
-├── .config/
+├── .config/                    # Stowed by GNU Stow
 │   ├── fish/
 │   │   ├── functions/
-│   │   │   ├── chezmoi_tmpl/       # Chezmoi templates (OS-specific)
+│   │   │   ├── chezmoi_tmpl/   # Chezmoi templates (OS-specific)
 │   │   │   ├── system.fish
 │   │   │   ├── keybindings.fish
 │   │   │   └── ...
 │   ├── nvim/
-│   ├── kitty/
-│   ├── hypr/
+│   ├── yazi/
+│   ├── rofi/
+│   ├── dunst/
+│   ├── wlogout/
+│   ├── waypaper/
 │   └── ...
+├── .chezmoi/
+│   └── chezmoi.toml           # Chezmoi config (sourceDir = ~/dotfiles)
 ├── .claude/
-│   ├── commands/          # Claude Code commands
-│   ├── docs/              # Documentation and guides
-│   ├── claude/            # Context files
-│   └── CLAUDE.md          # Global Claude Code instructions
-├── .chezmoiignore         # Exclude templates from home
-├── CLAUDE.md              # Project-specific instructions
-├── install.sh             # Installation script
-├── README.md              # This file
-└── .gitignore             # Git ignore (excludes sensitive Claude files)
+│   ├── commands/              # Claude Code commands
+│   ├── docs/                  # Documentation
+│   └── CLAUDE.md              # Global Claude Code instructions
+├── CLAUDE.md                  # Project-specific instructions
+├── install.sh                 # Installation script (runs stow + chezmoi)
+└── README.md                  # This file
 ```
-
----
 
 ## ✅ Restore config safely
 
@@ -102,20 +114,35 @@ If files already exist, remove them first:
 
 ```bash
 rm ~/.config/kwinrc ~/.config/kglobalshortcutsrc ~/.config/plasmarc
-chezmoi apply
-```
-
-Or use the provided install script:
-
-```bash
 ./install.sh
 ```
 
-This will:
-- Install Chezmoi if needed
-- Create symlinks for `.config/` directory
-- Generate OS-specific configs (Arch vs Debian)
-- Reload Fish shell configuration
+The `install.sh` script:
+- Runs `stow .config` to create symlinks
+- Runs chezmoi to generate OS-specific configs
+- Reloads Fish shell configuration
+
+## 🔄 Update workflow
+
+Edit configs directly (they're symlinks managed by stow):
+```bash
+nvim ~/.config/fish/config.fish  # Edits ~/dotfiles/.config/fish/config.fish
+```
+
+Commit and push when ready:
+```bash
+cd ~/dotfiles
+git add -A
+git commit -m "update"
+git push
+```
+
+On another machine:
+```bash
+cd ~/dotfiles
+git pull
+./install.sh  # Runs stow + chezmoi apply
+```
 
 ---
 
