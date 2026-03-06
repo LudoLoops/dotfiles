@@ -2,9 +2,9 @@
 # Template that includes the appropriate OS-specific update script
 
 {{- if or (eq .chezmoi.osRelease.id "arch") (eq .chezmoi.osRelease.id "cachyos") (eq .chezmoi.osRelease.id "manjaro") }}
-{{- include ".config/fish/functions/os_specific/update_arch.fish" }}
+{{- include ".config/fish/functions/chezmoi_tmpl/update_arch.fish" }}
 {{- else if eq .chezmoi.osRelease.id "debian" }}
-{{- include ".config/fish/functions/os_specific/update_debian.fish" }}
+{{- include ".config/fish/functions/chezmoi_tmpl/update_debian.fish" }}
 {{- else }}
 # Unsupported OS
 function update

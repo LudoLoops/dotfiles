@@ -1,0 +1,2 @@
+# Chezmoi templates (keep in dotfiles, don't copy to home)
+.config/fish/functions/chezmoi_tmpl/
