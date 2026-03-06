@@ -1,7 +1,7 @@
 # My Dotfiles
 
 This repository contains my system configuration files (dotfiles) and Claude Code global configurations,
-organized to be used with [GNU Stow](https://www.gnu.org/software/stow/).
+organized to be used with [Chezmoi](https://www.chezmoi.io/).
 
 ## 🛠 Requirements
 
@@ -13,10 +13,10 @@ Make sure you have the following installed:
 sudo pacman -S git
 ```
 
-GNU Stow
+Chezmoi
 
 ```bash
-sudo pacman -S stow
+sudo pacman -S chezmoi
 ```
 
 🚀 Installation
@@ -30,16 +30,18 @@ cd dotfiles
 
 ## 🔗 Symlink your configuration
 
-To apply all configurations using Stow:
+To apply all configurations using Chezmoi:
 
 ```bash
-stow .config .claude
+chezmoi apply
 ```
 
 This will create symlinks like:
 - `~/.config/fish → ~/dotfiles/.config/fish`
-- `~/.claude/commands → ~/dotfiles/.claude/commands`
-- `~/.claude/docs → ~/dotfiles/.claude/docs`
+- `~/.config/nvim → ~/dotfiles/.config/nvim`
+- `~/.config/kitty → ~/dotfiles/.config/kitty`
+
+Chezmoi also handles OS-specific templates for multi-machine configs (Arch/CachyOS vs Debian).
 
 ---
 
@@ -71,16 +73,21 @@ Typical directory structure:
 dotfiles/
 ├── .config/
 │   ├── fish/
+│   │   ├── functions/
+│   │   │   ├── chezmoi_tmpl/       # Chezmoi templates (OS-specific)
+│   │   │   ├── system.fish
+│   │   │   ├── keybindings.fish
+│   │   │   └── ...
 │   ├── nvim/
 │   ├── kitty/
-│   ├── kwinrc
-│   ├── kglobalshortcutsrc
-│   └── plasmarc
+│   ├── hypr/
+│   └── ...
 ├── .claude/
 │   ├── commands/          # Claude Code commands
 │   ├── docs/              # Documentation and guides
 │   ├── claude/            # Context files
 │   └── CLAUDE.md          # Global Claude Code instructions
+├── .chezmoiignore         # Exclude templates from home
 ├── CLAUDE.md              # Project-specific instructions
 ├── install.sh             # Installation script
 ├── README.md              # This file
@@ -95,7 +102,7 @@ If files already exist, remove them first:
 
 ```bash
 rm ~/.config/kwinrc ~/.config/kglobalshortcutsrc ~/.config/plasmarc
-stow .config .claude
+chezmoi apply
 ```
 
 Or use the provided install script:
@@ -105,8 +112,9 @@ Or use the provided install script:
 ```
 
 This will:
-- Install GNU Stow if needed
-- Create symlinks for `.config/` and `.claude/` directories
+- Install Chezmoi if needed
+- Create symlinks for `.config/` directory
+- Generate OS-specific configs (Arch vs Debian)
 - Reload Fish shell configuration
 
 ---

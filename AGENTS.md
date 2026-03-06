@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-Personal dotfiles repository using GNU Stow for symlink-based configuration. All configs in `~/dotfiles/.config/` are symlinked to home directory.
+Personal dotfiles repository using [Chezmoi](https://www.chezmoi.io/) for dotfile management. Most configs are symlinked, with OS-specific templates for multi-machine support.
 
-**Core technologies:** Fish shell 3.6+, Hyprland (Wayland WM), Neovim, Kitty, Arch Linux (paru/pacman/Flatpak)
+**Core technologies:** Fish shell 3.6+, Hyprland (Wayland WM), Neovim, Kitty, Arch Linux/CachyOS (paru/pacman/Flatpak)
 
 ## Build, Lint, Test Commands
 
@@ -38,8 +38,8 @@ npm test -- <path>
 ```bash
 cd ~/dotfiles
 ./install.sh                    # Initial install
-git pull && stow .config .claude # Update
-stow --adopt .config .claude     # Force re-symlink (cautious)
+git pull && chezmoi apply       # Update
+chezmoi apply                   # Apply dotfiles
 ```
 
 ### Package Management
@@ -206,14 +206,16 @@ exec fish
 Files in `functions/` organized by domain:
 - **git/** - Git workflows (start, branch, finish, ship, commit)
 - **dev.fish** - Web dev (SvelteKit, Go, deployment)
-- **system.fish** - System admin (Docker, updates, SSH)
+- **system.fish** - System admin (Docker, zoxide, yazi, SSH)
 - **media.fish** - Image/video processing (ImageMagick, FFmpeg)
 - **ai.fish** - AI tools (n8n, Ollama)
-- **editor.fish** - Editor launchers (Neovide, Cursor, Zeditor)
+- **shortcuts.fish** - Editor & navigation shortcuts
+- **keybindings.fish** - Keybindings, history (!!, !$, M+N)
 - **python.fish** - Python venv management
-- **pnpm.fish** - pnpm aliases
-- **utils.fish** - Generic utilities
-- **general_shortcut.fish** - Navigation shortcuts
+- **pnpm.fish** - pnpm configuration
+- **ensure_installed.fish** - Dependency helper (require function)
+- **bind_M_n_history.fish** - Alt+Number history navigation
+- **chezmoi_tmpl/** - Chezmoi templates (excluded from home, used to generate OS-specific configs)
 
 ## Package Managers
 
