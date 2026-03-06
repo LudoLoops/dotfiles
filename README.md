@@ -59,26 +59,6 @@ chezmoi apply  # Generates OS-specific files (e.g., update.fish for Arch vs Debi
 
 ---
 
-## 💡 KDE Plasma Notes
-
-This repo includes a minimal KDE configuration to restore shortcuts and
-window behaviors without copying the full desktop layout.
-
-KDE Files Included
-
-File Purpose
-
-`kglobalshortcutsrc` Global shortcuts (e.g. Meta+T for terminal)
-`kwinrc` Window manager behavior and tiling
-`plasmarc` General Plasma preferences (animations, etc.)
-
-These are safe to reuse across machines, even between distros.
-
-> ❗️Note: Files like plasma-org.kde.plasma.desktop-appletsrc (taskbar, widgets, etc.)
-> are intentionally excluded to avoid screen-specific issues.
-
----
-
 ## 📁 Structure
 
 ```
@@ -113,7 +93,7 @@ dotfiles/
 If files already exist, remove them first:
 
 ```bash
-rm ~/.config/kwinrc ~/.config/kglobalshortcutsrc ~/.config/plasmarc
+rm ~/.config/<conflicting_file>
 ./install.sh
 ```
 
