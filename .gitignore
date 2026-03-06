@@ -26,4 +26,4 @@ fish_variables
 .claude/.claude/
 .claude/.json
 .claude/.json.backup
-./config/waybar/layouts/backup
+.config/waybar/layouts/backup
