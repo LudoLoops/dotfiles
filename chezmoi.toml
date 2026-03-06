@@ -1,0 +1,30 @@
+# Utiliser le dossier dotfiles existant
+sourceDir = "/home/loops/dotfiles"
+
+# Répertoire de destination (votre home)
+destDir = "/home/loops"
+
+# Tout en symlink (comme stow, mais en mieux)
+[merge]
+    # Symlink par défaut
+    [[merge."*"]]
+        pattern = "symlink"
+
+    # Templates chezmoi (tout ce qui est dans chezmoi_tmpl/)
+    [[merge."**/chezmoi_tmpl/**"]]
+        pattern = "template"
+        # Optionnel: ajouter ".tmpl" automatiquement aux noms de fichiers générés
+        # remove ".tmpl" from target filename when generating
+
+[git]
+    autoCommit = false
+    autoPush = false
+
+# Éditeur
+[editor]
+    command = "nvim"
+    args = []
+
+# Shell
+[shell]
+    name = "fish"
