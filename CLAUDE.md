@@ -2,7 +2,7 @@
 
 This repository contains my personal dotfiles.
 
-**Setup:** GNU Stow for symlinks + Chezmoi for OS-specific templates only.
+**Setup:** GNU Stow for symlinks only (no chezmoi needed).
 
 ## Quick Start
 
@@ -15,11 +15,6 @@ cd ~/dotfiles
 **Updates:**
 ```bash
 cd ~/dotfiles && git pull
-```
-
-Chezmoi templates (OS-specific):
-```bash
-chezmoi apply  # Regenerate templates after OS change
 ```
 
 ## System Overview
@@ -50,15 +45,12 @@ z <dir>         # zoxide (smart cd)
 
 ```
 .config/fish/functions/
-├── chezmoi_tmpl/          # OS-specific templates
-│   ├── update.fish.tmpl    # Multi-OS update function
-│   ├── update_arch.fish    # Arch-specific (paru, paccache)
-│   └── update_debian.fish  # Debian-specific (apt)
 ├── keybindings.fish        # History (!!, !$, M+N bindings)
 ├── shortcuts.fish          # Editor launchers
 ├── system.fish             # Docker, zoxide, yazi, SSH
 ├── dev.fish                # SvelteKit, deployment
 ├── ensure_installed.fish   # Dependency helper
+├── update.fish             # Multi-OS system update (auto-detects OS)
 └── bind_M_n_history.fish   # Alt+Number history (for Hyprland)
 ```
 
@@ -118,10 +110,9 @@ function-name --help
 
 ## Important Notes
 
-- **Templates:** `chezmoi_tmpl/` contains OS-specific templates managed by chezmoi
 - **Symlinks:** All configs are managed by GNU Stow (`~/.config/X → ~/dotfiles/.config/X`)
-- **Chezmoi:** Only used for templates, NOT for symlinks
 - **Multi-OS:** Works on Arch/CachyOS and Debian with appropriate package managers
+- **OS Detection:** Functions like `update` auto-detect OS from `/etc/os-release`
 - **Hyprland:** Keybindings in `bind_M_n_history.fish` (Alt+1..9 for history)
 
 ## Workflow
@@ -140,5 +131,5 @@ function-name --help
 3. On new machine:
    ```fish
    git clone https://github.com/LudoLoops/dotfiles.git ~/dotfiles
-   cd ~/dotfiles && ./install.sh  # Runs stow + chezmoi apply
+   cd ~/dotfiles && ./install.sh  # Runs stow to create symlinks
    ```

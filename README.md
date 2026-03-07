@@ -2,7 +2,7 @@
 
 This repository contains my system configuration files (dotfiles) and Claude Code global configurations.
 
-**Setup:** GNU Stow for symlinks + Chezmoi for OS-specific templates.
+**Setup:** GNU Stow for symlinks only.
 
 ## 🛠 Requirements
 
@@ -15,12 +15,6 @@ sudo pacman -S git  # Arch/Debian
 ```bash
 sudo pacman -S stow  # Arch
 sudo apt install stow  # Debian
-```
-
-**Chezmoi** (for OS-specific templates only):
-```bash
-sudo pacman -S chezmoi  # Arch
-sudo apt install chezmoi  # Debian
 ```
 
 ## 🚀 Installation
@@ -52,11 +46,6 @@ Result:
 ~/.config/waypaper → ~/dotfiles/.config/waypaper
 ```
 
-**2. Chezmoi templates** (OS-specific configs):
-```bash
-chezmoi apply  # Generates OS-specific files (e.g., update.fish for Arch vs Debian)
-```
-
 ---
 
 ## 📁 Structure
@@ -66,9 +55,9 @@ dotfiles/
 ├── .config/                    # Stowed by GNU Stow
 │   ├── fish/
 │   │   ├── functions/
-│   │   │   ├── chezmoi_tmpl/   # Chezmoi templates (OS-specific)
-│   │   │   ├── system.fish
+│   │   │   ├── system.fish     # System utilities (auto-detects OS)
 │   │   │   ├── keybindings.fish
+│   │   │   ├── update.fish     # Multi-OS system update
 │   │   │   └── ...
 │   ├── nvim/
 │   ├── yazi/
@@ -77,14 +66,12 @@ dotfiles/
 │   ├── wlogout/
 │   ├── waypaper/
 │   └── ...
-├── .chezmoi/
-│   └── chezmoi.toml           # Chezmoi config (sourceDir = ~/dotfiles)
 ├── .claude/
 │   ├── commands/              # Claude Code commands
 │   ├── docs/                  # Documentation
 │   └── CLAUDE.md              # Global Claude Code instructions
 ├── CLAUDE.md                  # Project-specific instructions
-├── install.sh                 # Installation script (runs stow + chezmoi)
+├── install.sh                 # Installation script (runs stow)
 └── README.md                  # This file
 ```
 
@@ -99,7 +86,6 @@ rm ~/.config/<conflicting_file>
 
 The `install.sh` script:
 - Runs `stow .config` to create symlinks
-- Runs chezmoi to generate OS-specific configs
 - Reloads Fish shell configuration
 
 ## 🔄 Update workflow
@@ -121,7 +107,7 @@ On another machine:
 ```bash
 cd ~/dotfiles
 git pull
-./install.sh  # Runs stow + chezmoi apply
+./install.sh  # Runs stow to create symlinks
 ```
 
 ---
