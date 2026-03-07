@@ -1,1 +1,19 @@
 /* User custom styles */
+
+/* User custom styles */
+
+/* Dictée module */
+#custom-dictate {
+    margin: 0 4px;
+    padding: 0 8px;
+}
+
+#custom-dictate.active {
+    color: #a6e3a1;
+}
+
+#custom-dictate.inactive {
+    color: #45475a;
+}
+
+

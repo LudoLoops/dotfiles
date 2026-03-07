@@ -57,6 +57,7 @@
             "network",
             "pulseaudio",
             "pulseaudio#microphone",
+            "custom/dictate",
             "custom/updates"
         ]
     },
