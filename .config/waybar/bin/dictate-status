@@ -1,0 +1,19 @@
+#!/usr/bin/env fish
+# Script pour Waybar - vérifie si dictate-live tourne
+
+set PID_FILE "/tmp/dictate-live.pid"
+
+if test -f "$PID_FILE"
+    set PID (cat "$PID_FILE")
+    if ps -p $PID >/dev/null 2>&1
+        # Actif
+        echo '{"text": "ON", "class": "active", "tooltip": "Dictée en cours - Clic pour arrêter"}'
+    else
+        # Fichier PID existe mais processus mort
+        rm -f "$PID_FILE"
+        echo '{"text": "OFF", "class": "inactive", "tooltip": "Dictée inactive - Clic pour démarrer"}'
+    end
+else
+    # Inactif
+    echo '{"text": "OFF", "class": "inactive", "tooltip": "Dictée inactive - Clic pour démarrer"}'
+end

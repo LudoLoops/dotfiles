@@ -1,0 +1,6 @@
+[opener]
+# Associe les extensions vidéo à VLC
+play = [
+    { run = 'nohup vlc "$0"  > /dev/null 2>&1 &', desc = "Open with VLC", block = false, for ="unix" }
+]
+
