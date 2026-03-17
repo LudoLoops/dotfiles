@@ -2,9 +2,8 @@
 # potentially disabling fastfetch
 function fish_greeting
     if not set -q TMUX
-        exec tmux
-        # Optionnel : décommentez pour lancer tmux automatiquement au démarrage de Kitty
-        # tmux attach-session -t default; or tmux new-session -s default
+        # Attach to existing session or create new one
+        tmux attach-session -t default; or tmux new-session -s default
     end
 end
 
