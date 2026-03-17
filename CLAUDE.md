@@ -4,21 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Architecture
 
-This is a **GNU Stow-based dotfiles repository** for Arch Linux/CachyOS + Hyprland. The key architectural detail is that **the git root is inside `.config/`**, not at the repository root.
+This is a **GNU Stow-based dotfiles repository** for Arch Linux/CachyOS + Hyprland.
 
 ```
-~/dotfiles/                # Repository root (not a git dir)
-├── .config/               # Git root (.git lives here)
+~/dotfiles/                # Repository root (git root)
+├── .config/               # Config files to stow
 │   ├── fish/              # → ~/.config/fish
 │   ├── nvim/              # → ~/.config/nvim
 │   ├── hypr/              # → ~/.config/hypr
 │   ├── kitty/             # → ~/.config/kitty
+│   ├── tmux/              # → ~/.config/tmux
 │   ├── waybar/            # → ~/.config/waybar
 │   └── ...
-└── .local/                # → ~/.local
+├── .local/                # Local files to stow
+└── .stow-local-ignore     # Files to ignore when stowing
 ```
 
 **GNU Stow creates symlinks**: `~/.config/X → ~/dotfiles/.config/X`
+
+**Usage**: `cd ~/dotfiles && stow .` (stows all packages, ignoring files in `.stow-local-ignore`)
 
 Edit files directly via symlinks (e.g., `~/.config/fish/config.fish`) - changes affect the repo.
 
@@ -50,11 +54,11 @@ Hyprland configs integrate with **HyDE** (Hyprland Desktop Environment). The mar
 
 ```bash
 # Work from the git root
-cd ~/dotfiles/.config
+cd ~/dotfiles
 
 # Commit changes
-git add .
-git commit -m "description"
+git add -A
+git commit -m "type: description"
 git push
 ```
 
@@ -64,7 +68,7 @@ git push
 ```bash
 git clone https://github.com/LudoLoops/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow .config
+stow .
 ```
 
 ## Component-Specific Documentation
