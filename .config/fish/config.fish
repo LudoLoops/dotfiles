@@ -109,4 +109,4 @@ alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
 # exegol
 alias exegol='sudo -E $(which exegol)'
 
-alias ssh="kitty +kitten ssh"
+# Note: Kitty SSH integration disabled - use `kitty +kitten ssh host` explicitly if needed
