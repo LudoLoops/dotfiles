@@ -17,3 +17,8 @@ export PAGER=less
 if [[ $- != *i* ]] && command -v fish >/dev/null 2>&1; then
     export PATH=$(fish -c 'echo $PATH')
 fi
+
+# Zoxide (smart cd replacement)
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init bash)"
+fi
