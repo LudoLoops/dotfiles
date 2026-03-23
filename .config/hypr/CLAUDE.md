@@ -50,8 +50,6 @@ This is a Hyprland Wayland compositor configuration using the HyDE (Hyprland Des
 ```bash
 # Full config reload (works for most changes)
 hyprctl reload
-
-# Or keybind: Super+Shift+R
 ```
 
 ### Monitor Management
@@ -76,7 +74,7 @@ hyde-shell hyprlock --select   # Select lock screen style
 
 ### Testing Changes
 
-Monitor config changes require `hyprctl reload` or `Super+Shift+R`. Some changes (like keybinds) take effect immediately.
+Monitor config changes require `hyprctl reload`. Some changes (like keybinds) take effect immediately. Waybar reloads automatically when style changes.
 
 ## Key Patterns
 
