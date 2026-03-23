@@ -7,7 +7,6 @@ return {
     provider = "claude",
     providers = {
       claude = {
-        __inherited_from = "claude",
         endpoint = "https://api.z.ai/api/anthropic",
         model = "glm-4.7",
         api_key_name = "AVANTE_ANTHROPIC_API_KEY",
