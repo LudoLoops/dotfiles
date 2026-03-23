@@ -17,12 +17,6 @@
       "command": "npx",
       "args": ["-y", "@sveltejs/mcp"],
     },
-    "mcp-server-context7": {
-      "enabled": true,
-      "settings": {
-        "context7_api_key": "$CONTEXT7_API_KEY",
-      },
-    },
   },
   "agent": {
     "tool_permissions": {
@@ -120,7 +114,7 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Tokyo Night Storm",
+    "dark": "Catppuccin Frappé",
   },
   "indent_guides": {
     "enabled": true,
