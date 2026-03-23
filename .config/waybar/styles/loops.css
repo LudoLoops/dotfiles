@@ -1,3 +1,7 @@
-/* You  can also recycle the default.css file to create your own theme */
+/* Loops theme */
 
 @import "/home/loops/.local/share/waybar/styles/defaults.css";
+
+window#waybar {
+    background: transparent;
+}
