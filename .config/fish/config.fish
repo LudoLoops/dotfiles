@@ -22,7 +22,7 @@ zoxide init fish | source
 ### EXPORT & PATH ###
 set -gx EDITOR nvim
 set -gx VISUAL nvim
-set -gx TERM xterm-256color
+# TERM is set by Kitty automatically (xterm-kitty)
 
 # Consolidated PATH setup
 set -gx BUN_INSTALL "$HOME/.bun"
