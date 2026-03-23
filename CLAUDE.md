@@ -52,6 +52,8 @@ Hyprland configs integrate with **HyDE** (Hyprland Desktop Environment). The mar
 
 ## Git Workflow
 
+**CRITICAL:** You MUST commit and push before ending the session when modifying files in this repository.
+
 ```bash
 # Work from the git root
 cd ~/dotfiles
@@ -63,6 +65,8 @@ git push
 ```
 
 **Commit format**: Conventional commits `<type>: <subject>`
+
+**Never leave uncommitted changes.**
 
 **Install on new machine**:
 ```bash
