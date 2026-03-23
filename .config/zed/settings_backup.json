@@ -1,0 +1,223 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "edit_predictions": {
+    "provider": "copilot",
+    "disabled_globs": [],
+  },
+  "context_servers": {
+    "svelte": {
+      "enabled": true,
+      "command": "npx",
+      "args": ["-y", "@sveltejs/mcp"],
+    },
+    "mcp-server-context7": {
+      "enabled": true,
+      "settings": {
+        "context7_api_key": "ctx7sk-3c430181-41c5-4887-8d3b-79093487e093",
+      },
+    },
+  },
+  "agent": {
+    "always_allow_tool_actions": true,
+    "dock": "left",
+    "play_sound_when_agent_done": true,
+    "model_parameters": [],
+    "inline_assistant_model": {
+      "provider": "Z.ai",
+      "model": "glm-4.7-flash",
+    },
+    "default_model": {
+      "provider": "Z.ai",
+      "model": "glm-4.7-flash",
+    },
+  },
+  "language_models": {
+    "openai_compatible": {
+      "Z.ai": {
+        "api_url": "https://api.z.ai/api/coding/paas/v4",
+        "available_models": [
+          {
+            "name": "glm-4.7-flash",
+            "max_tokens": 200000,
+            "max_output_tokens": 32000,
+            "max_completion_tokens": 200000,
+            "capabilities": {
+              "tools": true,
+              "images": false,
+              "parallel_tool_calls": true,
+              "prompt_cache_key": false,
+              "chat_completions": true
+            }
+          }
+        ]
+      }
+    },
+    "open_router": {
+      "api_url": "https://openrouter.ai/api/v1",
+      "available_models": [
+        {
+          "name": "google/gemini-2.0-flash-thinking-exp",
+          "display_name": "Gemini 2.0 Flash (Thinking)",
+          "max_tokens": 200000,
+          "max_output_tokens": 8192,
+          "supports_tools": true,
+          "supports_images": true,
+          "mode": {
+            "type": "thinking",
+            "budget_tokens": 8000,
+          },
+        },
+        {
+          "name": "z-ai/glm-4.5-air:free",
+          "display_name": "GLM free",
+          "max_tokens": 64000,
+        },
+        {
+          "name": "qwen/qwen-2.5-coder-32b-instruct:free",
+          "display_name": "Qwen-2.5 coder",
+          "max_tokens": 64000,
+        },
+      ],
+    },
+  },
+  "agent_servers": {
+    "opencode": {
+      "type": "registry"
+    },
+    "OpenCode": {
+      "type": "custom",
+      "command": "opencode",
+      "args": ["acp"],
+    },
+  },
+  "relative_line_numbers": "enabled",
+  "format_on_save": "on",
+  "project_panel": {
+    "button": true,
+    "dock": "right",
+    "git_status": true,
+    "indent_size": 16,
+  },
+  "prettier": {
+    "tab_size": 2,
+    "trailingComma": "all",
+  },
+  "tab_size": 2,
+  "soft_wrap": "editor_width",
+  "icon_theme": "Bearded Icon Theme",
+  "vim_mode": true,
+  "ui_font_size": 15,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Tokyo Night Storm",
+  },
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware",
+  },
+  "tabs": {
+    "show_diagnostics": "errors",
+    "file_icons": true,
+    "git_status": true,
+  },
+
+  "experimental.theme_overrides": {
+    "syntax": {
+      "comment": {
+        "font_style": "italic",
+      },
+    },
+    "editor.indent_guide_active": "#bb9af7",
+  },
+  "collaboration_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "notification_panel": {
+    "dock": "left",
+    "button": false,
+  },
+  "max_tabs": 6,
+  "tab_bar": {
+    "show": true,
+    "show_nav_history_buttons": false,
+  },
+  "languages": {
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.organizeImports": true,
+        "source.fixAll.eslint": true,
+        "source.removeUnusedImports": true,
+      },
+      "formatter": "prettier",
+    },
+    "JavaScript": {
+      "language_servers": ["typescript-language-server", "eslint"],
+      "formatter": "prettier",
+      "code_actions_on_format": {
+        "source.fixAll.eslint": true,
+        "source.removeUnusedImports": true,
+      },
+    },
+    "Svelte": {
+      "code_actions_on_format": {
+        "source.organizeImports": true,
+        "source.fixAll.eslint": true,
+        "source.removeUnusedImports": true,
+      },
+      "formatter": "prettier",
+    },
+    "TSX": {
+      "code_actions_on_format": {
+        "source.organizeImports": true,
+        "source.fixAll.eslint": true,
+        "source.removeUnusedImports": true,
+      },
+      "formatter": "prettier",
+    },
+  },
+  "file_scan_exclusions": [
+    "**/.conductor",
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    // above is default from Zed
+    "**/out",
+    "**/dist",
+    "**/.husky",
+    "**/.turbo",
+    "**/.vscode-test",
+    "**/.vscode",
+    "**/.next",
+    "**/.storybook",
+    "**/.tap",
+    "**/.nyc_output",
+    "**/report",
+    "**/node_modules",
+  ],
+  "diagnostics": {
+    "button": true,
+    "include_warnings": true,
+    "inline": {
+      "enabled": true,
+      "update_debounce_ms": 150,
+      "padding": 4,
+      "min_column": 0,
+      "max_severity": null,
+    },
+  },
+}
