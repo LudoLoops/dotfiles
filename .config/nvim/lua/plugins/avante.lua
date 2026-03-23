@@ -1,5 +1,5 @@
 -- Configure avante.nvim to use GLM via Anthropic-compatible endpoint
--- Requires API key set in environment
+-- Requires AVANTE_ANTHROPIC_API_KEY set in environment
 
 return {
   "yetone/avante.nvim",
@@ -7,8 +7,10 @@ return {
     provider = "claude",
     providers = {
       claude = {
+        __inherited_from = "claude",
         endpoint = "https://api.z.ai/api/anthropic",
         model = "glm-4.7",
+        api_key_name = "AVANTE_ANTHROPIC_API_KEY",
         extra_request_body = {
           temperature = 0,
           max_tokens = 131072,
@@ -21,7 +23,7 @@ return {
         args = { "@zed-industries/claude-code-acp" },
         env = {
           NODE_NO_WARNINGS = "1",
-          ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY"),
+          ANTHROPIC_API_KEY = os.getenv("AVANTE_ANTHROPIC_API_KEY"),
         },
       },
     },
