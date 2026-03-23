@@ -5,7 +5,7 @@ return {
   "yetone/avante.nvim",
   opts = {
     provider = "claude",
-    vendors = {
+    providers = {
       claude = {
         endpoint = "https://api.z.ai/api/anthropic",
         model = "glm-4.7",
