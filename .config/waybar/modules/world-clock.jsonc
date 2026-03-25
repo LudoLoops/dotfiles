@@ -1,0 +1,8 @@
+{
+  "custom/world-clock": {
+    "exec": "~/.config/waybar/bin/world-clock.sh",
+    "on-click": "~/.config/waybar/bin/show-calendar.sh",
+    "interval": 60,
+    "tooltip": false
+  }
+}

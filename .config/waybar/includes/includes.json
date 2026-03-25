@@ -1,7 +1,9 @@
 {
     "include": [
         "/home/loops/.config/waybar/modules/pulseaudio.jsonc",
+        "/home/loops/.config/waybar/modules/clock.jsonc",
         "/home/loops/.config/waybar/modules/dictate.jsonc",
+        "/home/loops/.config/waybar/modules/world-clock.jsonc",
         "/home/loops/.local/share/waybar/modules/wlr-taskbar#windows.json",
         "/home/loops/.local/share/waybar/modules/tray.json",
         "/home/loops/.local/share/waybar/modules/wlr-taskbar.json",
@@ -22,7 +24,7 @@
         "/home/loops/.local/share/waybar/modules/hyprland-language.jsonc",
         "/home/loops/.local/share/waybar/modules/wlr-taskbar#windows.jsonc",
         "/home/loops/.local/share/waybar/modules/hyprland-window.jsonc",
-        // "/home/loops/.local/share/waybar/modules/clock.jsonc",  // Use local version in modules/
+        "/home/loops/.local/share/waybar/modules/clock.jsonc",
         "/home/loops/.local/share/waybar/modules/custom-wbar.jsonc",
         "/home/loops/.local/share/waybar/modules/group-hide-tray.jsonc",
         "/home/loops/.local/share/waybar/modules/custom-hyde-menu.jsonc",
