@@ -104,9 +104,6 @@ binds {
     Mod+Shift+K     { move-window-up; }
     Mod+Shift+L     { move-column-right; }
 
-    // === Mouse Bindings ===
-    Mod+MouseMiddle { toggle-window-floating; }
-    MouseBack       { move-floating-window x="+10"; }
 
     // === Column Navigation ===
     Mod+Home { focus-column-first; }

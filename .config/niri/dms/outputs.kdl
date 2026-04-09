@@ -11,4 +11,3 @@ output "eDP-1" {
     scale 1.25
     position x=1920 y=0
 }
-
