@@ -1,0 +1,14 @@
+bind=SUPER,T,spawn,kitty
+bind=SUPER,Q,spawn,kitty
+
+# switch window focus
+bind=SUPER,j,focusstack,next
+bind=SUPER,k,focusstack,prev
+
+
+# Layouts
+# bind=SUPER,t,setlayout,tile
+bind=SUPER,f,togglefloating # Sorry no floating layouts
+bind=SUPER,m,setlayout,monocle
+#bind=SUPER,v,setlayout,vertical_grid
+bind=SUPER,v,setlayout,vertical_scroller
