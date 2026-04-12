@@ -12,7 +12,7 @@ binds {
     Mod+Space hotkey-overlay-title="Application Launcher" { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
     Mod+V hotkey-overlay-title="Clipboard Manager" { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
     Mod+Y hotkey-overlay-title="Browse Wallpapers" { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
-    Super+X hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    Mod+S hotkey-overlay-title="Power Menu: Toggle" { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "decrement" "3"; }
     XF86AudioMicMute allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "micmute"; }
     XF86AudioMute allow-when-locked=true { spawn "dms" "ipc" "call" "audio" "mute"; }
@@ -82,10 +82,12 @@ binds {
     Mod+Equal { set-column-width "+10%"; }
     Mod+F { maximize-column; }
     Mod+H { focus-column-left; }
+    Mod+Z { focus-column-left; }
     Mod+Home { focus-column-first; }
     Mod+J { focus-window-down; }
     Mod+K { focus-window-up; }
     Mod+L { focus-column-right; }
+    Mod+X { focus-column-right; }
     Mod+Left { focus-column-left; }
     Mod+Minus { set-column-width "-10%"; }
     Mod+Period { expel-window-from-column; }
@@ -104,9 +106,11 @@ binds {
     Mod+Shift+Equal { set-window-height "+10%"; }
     Mod+Shift+F { fullscreen-window; }
     Mod+Shift+H { move-column-left; }
+    Mod+Shift+Z { move-column-left; }
     Mod+Shift+J { move-window-down; }
     Mod+Shift+K { move-window-up; }
     Mod+Shift+L { move-column-right; }
+    Mod+Shift+X { move-column-right; }
     Mod+Shift+Left { move-column-left; }
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+R { switch-preset-window-height; }
