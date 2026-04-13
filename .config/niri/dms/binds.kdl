@@ -136,9 +136,9 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Tab repeat=false { toggle-overview; }
 
-// Pour changer la taille (Resize)
-MouseForward { set-column-width "+10%"; }
+    // Pour changer la taille (Resize)
+    MouseForward { set-column-width "+10%"; }
 
-// Pour déplacer la fenêtre (Move)
-MouseBack { set-column-width "-10%"; }
+    // Pour déplacer la fenêtre (Move)
+    MouseBack { set-column-width "-10%"; }
   }
