@@ -23,7 +23,7 @@
       "default": "allow"
     },
     "dock": "left",
-    "play_sound_when_agent_done": true,
+    "play_sound_when_agent_done": "always",
     "model_parameters": [],
     "inline_assistant_model": {
       "provider": "Z.ai",
@@ -113,8 +113,8 @@
   "buffer_font_size": 15,
   "theme": {
     "mode": "system",
-    "light": "One Light",
-    "dark": "Catppuccin Frappé",
+    "light": "Kanagawa Lotus",
+    "dark": "Kanagawa",
   },
   "indent_guides": {
     "enabled": true,

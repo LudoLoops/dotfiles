@@ -17,15 +17,11 @@
       "command": "npx",
       "args": ["-y", "@sveltejs/mcp"],
     },
-    "mcp-server-context7": {
-      "enabled": true,
-      "settings": {
-        "context7_api_key": "ctx7sk-3c430181-41c5-4887-8d3b-79093487e093",
-      },
-    },
   },
   "agent": {
-    "always_allow_tool_actions": true,
+    "tool_permissions": {
+      "default": "allow"
+    },
     "dock": "left",
     "play_sound_when_agent_done": true,
     "model_parameters": [],
@@ -118,7 +114,7 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Tokyo Night Storm",
+    "dark": "Catppuccin Frappé",
   },
   "indent_guides": {
     "enabled": true,
