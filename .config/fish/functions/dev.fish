@@ -105,17 +105,15 @@ function mkroute
     end
 end
 
-# SvelteForge - Custom build tool for SvelteKit
-function svelteForge
-    if not test -f ~/1Dev/Projects/Lelab/SvelteForge/svelteForge/index.ts
-        echo "❌ Error: SvelteForge index.ts not found"
+# SvelteForge - Production-ready SvelteKit boilerplate generator
+function svelteforge --argument path
+    if test -z "$path"
+        echo "Usage: svelteforge <project-name> [--no-setup]"
+        echo "       bunx create-svelteforge <project-name>"
         return 1
     end
 
-    p dlx tsx ~/1Dev/Projects/Lelab/SvelteForge/svelteForge/index.ts || begin
-        echo "❌ Error: Failed to run SvelteForge"
-        return 1
-    end
+    command bunx github:lelabdev/svelteforge "$path" $argv[2..-1]
 end
 
 # Go Multi-Platform Build
