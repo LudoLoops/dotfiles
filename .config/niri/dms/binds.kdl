@@ -141,4 +141,6 @@ binds {
 
     // Pour déplacer la fenêtre (Move)
     MouseBack { set-column-width "-10%"; }
+    Mod+Ctrl+Shift+Z { set-column-width "-10%"; }
+    Mod+Ctrl+Shift+X { set-column-width "+10%"; }
   }
