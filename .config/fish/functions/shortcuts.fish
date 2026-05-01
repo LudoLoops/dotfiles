@@ -26,3 +26,9 @@ end
 # - zc: Cursor + zoxide navigation
 # - zz: Zeditor + zoxide navigation
 # - Other editor launchers
+
+function hermes-dash
+    ssh -L 9119:localhost:9119 aether -N &
+    sleep 1
+    hermes dashboard
+end

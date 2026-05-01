@@ -7,7 +7,7 @@ function ssh-new --argument name
     set key_only false
 
     # Parse flags
-    if test "$argv[1]" = "--key-only"
+    if test "$argv[1]" = --key-only
         set key_only true
         set name $argv[2]
     else
@@ -57,7 +57,7 @@ function ssh-new --argument name
     if test -f "$key_path"
         echo "⚠️  Key already exists: $key_path"
         read -l -n1 -p 'echo "Overwrite? [y/N]: "' overwrite
-        if not string match -qi 'y' $overwrite
+        if not string match -qi y $overwrite
             echo "Aborted."
             return 1
         end
@@ -119,7 +119,7 @@ Host $host_alias
     Hostname $hostname
     User $ssh_user
     IdentityFile $key_path
-    IdentitiesOnly yes" >> "$config_file"
+    IdentitiesOnly yes" >>"$config_file"
 
         echo
         echo "✅ SSH config updated!"
