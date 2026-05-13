@@ -143,4 +143,6 @@ binds {
     MouseBack { set-column-width "-10%"; }
     Mod+Ctrl+Shift+Z { set-column-width "-10%"; }
     Mod+Ctrl+Shift+X { set-column-width "+10%"; }
+    Mod+E repeat=false hotkey-overlay-title="File Manager" { spawn "dolphin"; }
+    Mod+Ctrl+X repeat=false hotkey-overlay-title="Switch Width" { switch-preset-column-width; }
   }

@@ -15,15 +15,6 @@ return {
         },
       },
     },
-    acp_providers = {
-      ["claude-code"] = {
-        command = "npx",
-        args = { "@zed-industries/claude-code-acp" },
-        env = {
-          NODE_NO_WARNINGS = "1",
-          ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY"),
-        },
-      },
-    },
+    acp_providers = {},
   },
 }
