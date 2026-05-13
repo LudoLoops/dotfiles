@@ -1,0 +1,12 @@
+[general]
+early-exit = true
+copy-command = "/usr/bin/wl-copy"
+initial-tool = "crop"
+output-filename = "~/Pictures/Screenshots/screenshot-%Y%m%d-%H%M%S.png"
+focus-toggles-toolbars = true
+
+[font]
+family = "Inter"
+
+[color-palette]
+palette = ["#c9b890", "#89aa61", "#b153a7", "#14a57c", "#ad401f", "#516c93"]
