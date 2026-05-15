@@ -1,5 +1,4 @@
-// Quad layout — 2x2 grid
-// Usage: zellij -l quad
+// Quad layout — 2x2 grid + compact bar
 layout {
     pane split_direction="vertical" {
         pane split_direction="horizontal" {
@@ -10,5 +9,8 @@ layout {
             pane
             pane
         }
+    }
+    pane size=1 borderless=true {
+        plugin location="zellij:compact-bar"
     }
 }

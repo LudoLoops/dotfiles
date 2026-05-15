@@ -1,5 +1,4 @@
-// Dev layout — main + sidebar
-// Usage: zellij -l dev
+// Dev layout — editor + sidebar + compact bar
 layout {
     pane split_direction="vertical" {
         pane
@@ -7,5 +6,8 @@ layout {
             pane name="terminal"
             pane name="logs"
         }
+    }
+    pane size=1 borderless=true {
+        plugin location="zellij:compact-bar"
     }
 }
