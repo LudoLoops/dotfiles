@@ -76,7 +76,6 @@ alias la='eza -lga --icons --color=always --group-directories-first' # long form
 alias lt='eza -T --icons --color=always --group-directories-first --ignore-glob="node_modules|cache|logs|"' # tree listing
 alias l.='eza -a --icons --color=always | grep -E "^\."'
 alias lla='eza -lag --icons --color=always --no-filesize --group-directories-first --git' # long format
-alias llg='gallery' # image gallery
 
 alias copy='rsync -ah --progress --info=progress2'
 
@@ -114,8 +113,10 @@ if type -q pacman
     alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
 end
 
-# exegol
-alias exegol='sudo -E $(which exegol)'
+# exegol — only if installed
+if type -q exegol
+    alias exegol='sudo -E $(which exegol)'
+end
 
 # Zed editor — only if installed
 if type -q zeditor
