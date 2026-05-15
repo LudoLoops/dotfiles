@@ -1,0 +1,11 @@
+// Dev layout — main + sidebar
+// Usage: zellij -l dev
+layout {
+    pane split_direction="vertical" {
+        pane
+        pane size=30 split_direction="horizontal" {
+            pane name="terminal"
+            pane name="logs"
+        }
+    }
+}
