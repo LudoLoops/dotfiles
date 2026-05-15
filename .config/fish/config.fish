@@ -9,7 +9,7 @@ end
 
 source ~/.config/fish/functions/index.fish
 
-# systemctl --user import-environment EDITOR VISUAL
+# systemctl --user import-envionment EDITOR VISUAL
 
 if status is-interactive
     export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml

@@ -1,7 +1,7 @@
 // Zellij config — TufTux (CachyOS / Hyprland / Kitty)
 // Managed via ~/dotfiles + GNU Stow
 
-theme "catppuccin-mocha"
+theme "kanagawa"
 pane_frames false
 simplified_ui false
 show_startup_tips false
