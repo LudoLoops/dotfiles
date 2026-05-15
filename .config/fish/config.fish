@@ -26,18 +26,14 @@ set -gx VISUAL nvim
 
 # Consolidated PATH setup
 set -gx BUN_INSTALL "$HOME/.bun"
-set -gx VOLTA_HOME "$HOME/.volta"
+test -d "$HOME/.volta"; and set -gx VOLTA_HOME "$HOME/.volta"
 
-# Set PATH with all additions in one place
-set -gx PATH \
-    ~/.npm-global/bin \
-    ~/.local/bin \
-    ~/Applications \
-    ~/Applications/depot_tools \
-    "$BUN_INSTALL/bin" \
-    "$VOLTA_HOME/bin" \
-    /home/loops/.lmstudio/bin \
-    $PATH
+# Set PATH — only add dirs that exist
+set -l _path_extra
+for dir in ~/.npm-global/bin ~/.local/bin ~/Applications ~/Applications/depot_tools "$BUN_INSTALL/bin" "$VOLTA_HOME/bin" ~/.lmstudio/bin
+    test -d "$dir"; and set -a _path_extra "$dir"
+end
+set -gx PATH $_path_extra $PATH
 
 ### fzf options
 set fzf_preview_dir_cmd eza --all --color=always
@@ -45,7 +41,11 @@ set fzf_fd_opts --hidden --ignore node_modules --max-depth 5
 
 ### "bat" as manpager
 set -x MANROFFOPT -c
-set -x MANPAGER "sh -c 'col -bx | bat -plman'"
+if type -q bat
+    set -x MANPAGER "sh -c 'col -bx | bat -plman'"
+else if type -q batcat
+    set -x MANPAGER "sh -c 'col -bx | batcat -plman'"
+end
 
 # This prevents me from installing packages with pip without being
 # in a virtualenv first.
@@ -57,9 +57,16 @@ set -g -x PIP_REQUIRE_VIRTUALENV true
 # update
 
 #
-# bat
-alias cat='bat --style=plain'
-alias icat='kitten icat'
+# bat — Debian uses batcat, Arch uses bat
+if type -q bat
+    alias cat='bat --style=plain'
+else if type -q batcat
+    alias cat='batcat --style=plain'
+end
+# Kitty icat — only if kitten is available
+if type -q kitten
+    alias icat='kitten icat'
+end
 
 # Replace ls with eza
 alias ls='eza --icons --color=always --group-directories-first' # my preferred listing
@@ -102,11 +109,16 @@ alias free='free -m' # show sizes in MB
 alias monIp='curl ifconfig.me'
 alias myIp='curl ifconfig.me'
 
-# Cleanup orphaned packages
-alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
+# Cleanup orphaned packages — Arch only
+if type -q pacman
+    alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
+end
 
 # exegol
 alias exegol='sudo -E $(which exegol)'
 
-alias zed='zeditor .'
+# Zed editor — only if installed
+if type -q zeditor
+    alias zed='zeditor .'
+end
 # Note: Kitty SSH integration disabled - use `kitty +kitten ssh host` explicitly if needed
