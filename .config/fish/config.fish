@@ -1,9 +1,9 @@
 # overwrite greeting
 # potentially disabling fastfetch
 function fish_greeting
-    if not set -q TMUX
+    if not set -q ZELLIJ
         # Attach to existing session or create new one
-        tmux attach-session -t default; or tmux new-session -s default
+        zellij attach -c default
     end
 end
 
