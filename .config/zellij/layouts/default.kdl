@@ -1,7 +1,7 @@
-// Default layout — minimal, compact bar
+// Default layout — compact bar on top
 layout {
-    pane
     pane size=1 borderless=true {
         plugin location="zellij:compact-bar"
     }
+    pane
 }

@@ -1,13 +1,13 @@
-// Dev layout — editor + sidebar + compact bar
+// Dev layout — editor + sidebar + compact bar on top
 layout {
+    pane size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+    }
     pane split_direction="vertical" {
         pane
         pane size=30 split_direction="horizontal" {
             pane name="terminal"
             pane name="logs"
         }
-    }
-    pane size=1 borderless=true {
-        plugin location="zellij:compact-bar"
     }
 }
