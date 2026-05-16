@@ -1,7 +1,10 @@
-# SSH into aether with Zellij — no nesting
+# SSH into aether and attach a screen session
+# Usage: aether [session_name]
+# Default session: hermes
 function aether
-    if set -q ZELLIJ
-        zellij action detach
+    set -l session hermes
+    if test (count $argv) -gt 0
+        set session $argv[1]
     end
-    ssh aether -t "zellij attach -c default"
+    ssh aether -t "screen -r $session"
 end
