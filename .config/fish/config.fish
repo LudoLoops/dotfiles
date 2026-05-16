@@ -3,7 +3,7 @@
 function fish_greeting
     if not set -q ZELLIJ
         # Attach to existing session or create new one
-        zellij attach -c default
+        zellij -l default attach -c default
     end
 end
 

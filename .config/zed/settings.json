@@ -118,9 +118,9 @@
   "ui_font_size": 15,
   "buffer_font_size": 15,
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "Kanagawa Lotus",
-    "dark": "Kanagawa",
+    "dark": "Kanagawa Wave",
   },
   "indent_guides": {
     "enabled": true,
