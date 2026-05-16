@@ -1,8 +1,7 @@
 # overwrite greeting
 # potentially disabling fastfetch
 function fish_greeting
-    if not set -q ZELLIJ
-        # Attach to existing session or create new one
+    if type -q zellij; and not set -q ZELLIJ; and not set -q SSH_CONNECTION
         zellij -l default attach -c default
     end
 end
