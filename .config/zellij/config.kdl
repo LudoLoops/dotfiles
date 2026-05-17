@@ -93,7 +93,7 @@ keybinds clear-defaults=true {
         bind "Ctrl o" { SwitchToMode "session"; }
     }
     shared_except "locked" "scroll" "search" {
-        bind "Ctrl s" { SwitchToMode "scroll"; }
+//         bind "Ctrl s" { SwitchToMode "scroll"; }
     }
     shared_except "locked" "scroll" "search" "tmux" {
         bind "Ctrl b" { SwitchToMode "tmux"; }
@@ -182,7 +182,7 @@ keybinds clear-defaults=true {
     }
 
     scroll {
-        bind "Ctrl s" { SwitchToMode "normal"; }
+//         bind "Ctrl s" { SwitchToMode "normal"; }
         bind "e" { EditScrollback; SwitchToMode "normal"; }
         bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
         bind "k" { ScrollUp; }
