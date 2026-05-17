@@ -25,11 +25,12 @@ set -gx VISUAL nvim
 
 # Consolidated PATH setup
 set -gx BUN_INSTALL "$HOME/.bun"
+set -gx CARGO_HOME "$HOME/.cargo"
 test -d "$HOME/.volta"; and set -gx VOLTA_HOME "$HOME/.volta"
 
 # Set PATH — only add dirs that exist
 set -l _path_extra
-for dir in ~/.npm-global/bin ~/.local/bin ~/Applications ~/Applications/depot_tools "$BUN_INSTALL/bin" "$VOLTA_HOME/bin" ~/.lmstudio/bin
+for dir in ~/.cargo/bin ~/.npm-global/bin ~/.local/bin ~/Applications ~/Applications/depot_tools "$BUN_INSTALL/bin" "$VOLTA_HOME/bin" ~/.lmstudio/bin
     test -d "$dir"; and set -a _path_extra "$dir"
 end
 set -gx PATH $_path_extra $PATH

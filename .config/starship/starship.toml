@@ -11,6 +11,7 @@ $shell\
 $env_var\
 $jobs\
 $sudo\
+$os\
 $username\
 $character"""
 
@@ -139,7 +140,7 @@ symbol = "[󰲒 ](blue italic)"
 [localip]
 ssh_only = true
 format = " 󰩟 [$localipv4](bold magenta)"
-disabled = false
+disabled = true
 
 [time]
 disabled = false
@@ -446,3 +447,7 @@ symbol = " "
 
 [zig]
 symbol = " "
+
+[os]
+disabled = false
+format = "[$symbol](bold bright-blue) "
