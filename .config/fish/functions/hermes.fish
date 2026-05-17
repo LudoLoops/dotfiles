@@ -1,5 +1,9 @@
 # SSH into aether and attach zellij hermes session
-# Usage: hermes (from TufTux)
+# Usage: hermes
 function hermes
-    ssh aether -t "zellij attach -c hermes"
+    if test "$hostname" = aether
+        zellij attach -c hermes
+    else
+        ssh aether -t "zellij attach -c hermes"
+    end
 end
