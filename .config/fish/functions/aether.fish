@@ -6,5 +6,5 @@ function aether
     if test (count $argv) -gt 0
         set session $argv[1]
     end
-    ssh aether -t "zellij attach -c $session"
+    ssh aether -t "zellij -l aether attach -c $session"
 end
