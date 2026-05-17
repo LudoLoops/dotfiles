@@ -1,12 +1,21 @@
-// Aether layout — default bars (no zjstatus)
+// Aether layout — zellij-cb compact bar (tokyo-night colors)
 layout {
     default_tab_template {
         pane size=1 borderless=true {
-            plugin location="zellij:compact-bar"
+            plugin location="file:/home/loops/.local/share/zellij/plugins/zellij-cb.wasm" {
+                DisplaySessionDirectory "false"
+                DefaultTabName "tab"
+                FgColor "169,177,214"
+                BgColor "26,27,38"
+                SessionDirectoryColor "122,162,247"
+                SessionNameColor "169,177,214"
+                TabColor "90,102,143"
+                ActiveTabColor "247,118,142"
+                NormalModeColor "247,118,142"
+                OtherModesColor "122,162,247"
+                OthersColor "122,162,247"
+            }
         }
         children
-        pane size=1 borderless=true {
-            plugin location="zellij:status-bar"
-        }
     }
 }
