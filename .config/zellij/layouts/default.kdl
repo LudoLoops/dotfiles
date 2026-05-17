@@ -1,7 +1,21 @@
-// Default layout — compact bar on top, no status bar
+// Default layout — compact bar top, zjstatus bottom
 layout {
-    pane size=1 borderless=true {
-        plugin location="zellij:compact-bar"
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                format_left   "{mode} #[fg=#7aa2f7,bold]{session}"
+                format_center "{tabs}"
+                format_right  ""
+                format_space  ""
+                border_enabled   "false"
+                mode_normal      "#[bg=#7aa2f7] "
+                tab_normal       "#[fg=#565f89] {name} "
+                tab_active       "#[fg=#c0caf5,bold,italic] {name} "
+            }
+        }
     }
-    pane
 }
