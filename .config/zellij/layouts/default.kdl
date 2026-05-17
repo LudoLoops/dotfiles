@@ -1,10 +1,7 @@
-// Default layout — compact bar on top
+// Default layout — compact bar on top, no status bar
 layout {
     pane size=1 borderless=true {
         plugin location="zellij:compact-bar"
     }
     pane
-    pane size=1 borderless=true {
-      plugin location="zellij:status-bar"
-    }
 }
