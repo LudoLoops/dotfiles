@@ -329,8 +329,6 @@ symbol = " "
 [fennel]
 symbol = " "
 
-[fortran]
-symbol = " "
 
 [fossil_branch]
 symbol = " "
@@ -366,9 +364,9 @@ symbol = "󰔷 "
 symbol = " "
 
 [os.symbols]
-Arch = ""
-CachyOS = ""
-Debian = ""
+Arch = "󰣇 "
+CachyOS = "󰣇 "
+Debian = "󰆆 "
 
 [php]
 symbol = " "
@@ -376,8 +374,6 @@ symbol = " "
 [pijul_channel]
 symbol = " "
 
-[pixi]
-symbol = "󰏗 "
 
 [rlang]
 symbol = "󰟔 "
@@ -388,8 +384,6 @@ symbol = " "
 [status]
 symbol = " "
 
-[xmake]
-symbol = " "
 
 [zig]
 symbol = " "
