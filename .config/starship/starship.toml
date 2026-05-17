@@ -330,8 +330,6 @@ symbol = " "
 [fennel]
 symbol = " "
 
-[fortran]
-symbol = " "
 
 [fossil_branch]
 symbol = " "
@@ -412,7 +410,6 @@ Ubuntu = " "
 Unknown = " "
 Void = " "
 Windows = "󰍲 "
-Zorin = " "
 
 [perl]
 symbol = " "
@@ -423,8 +420,6 @@ symbol = " "
 [pijul_channel]
 symbol = " "
 
-[pixi]
-symbol = "󰏗 "
 
 [rlang]
 symbol = "󰟔 "
@@ -434,9 +429,6 @@ symbol = " "
 
 [status]
 symbol = " "
-
-[xmake]
-symbol = " "
 
 [zig]
 symbol = " "
