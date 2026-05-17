@@ -2,7 +2,7 @@
 # potentially disabling fastfetch
 function fish_greeting
     if type -q zellij; and not set -q ZELLIJ; and not set -q SSH_CONNECTION
-        zellij -l default attach -c default
+        zellij -l tuftux attach -c TufTux
     end
 end
 

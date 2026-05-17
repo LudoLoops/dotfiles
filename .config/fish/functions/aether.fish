@@ -2,9 +2,11 @@
 # Usage: aether [session_name]
 # Default session: hermes
 function aether
-    set -l session hermes
+    set -l session Aether
     if test (count \$argv) -gt 0
         set session \$argv[1]
     end
-    ssh aether -t "zellij -l default attach -c \$session"
+    ssh aether -t "zellij -l aether attach -c \$session"
 end
+
+# ssh aether -t "zellij -l aether attach -c Aether"
