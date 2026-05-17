@@ -93,7 +93,7 @@ symbol = ' '
 
 [character]
 format = "$symbol "
-success_symbol = "[ ](bold  bright-blue)"
+success_symbol = "[❯ ](bold bright-blue)"
 error_symbol = "[󰅙](italic purple)"
 vimcmd_symbol = "[󰘳](italic dimmed green)"
 vimcmd_replace_one_symbol = "󰛓"
