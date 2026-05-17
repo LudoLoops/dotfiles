@@ -286,7 +286,7 @@ keybinds clear-defaults=true {
 }
 
 plugins {
-    zjstatus location="file:~/.local/share/zellij/plugins/zjstatus.wasm" {
+    zjstatus location="file:/home/loops/.local/share/zellij/plugins/zjstatus.wasm" {
         // Catppuccin Mocha
         color_rosewater "#f5e0dc"
         color_flamingo "#f2cdcd"
