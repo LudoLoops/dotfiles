@@ -23,7 +23,7 @@ layout {
     color_overlay1 "#3b4261"
     color_overlay0 "#292e42"
     color_surface2 "#292e42"
-    color_surface1 "#1a1b26"
+    color_surface1 "#45475a"
     color_surface0 "#1a1b26"
     color_base "#1a1b26"
     color_mantle "#16161e"
