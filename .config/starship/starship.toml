@@ -4,7 +4,6 @@ scan_timeout = 1000
 continuation_prompt = "[󰁔 ](dimmed white)"
 
 format = """($nix_shell$container$fill$git_metrics\n)\
-$hostname\
 $localip\
 $shlvl\
 $shell\
@@ -12,7 +11,6 @@ $env_var\
 $jobs\
 $sudo\
 $os\
-$username\
 $character"""
 
 right_format = """
