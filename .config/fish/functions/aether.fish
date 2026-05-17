@@ -6,5 +6,5 @@ function aether
     if test (count $argv) -gt 0
         set session $argv[1]
     end
-    ssh aether -t "screen -r $session"
+    ssh aether -t "screen -x $session"
 end
