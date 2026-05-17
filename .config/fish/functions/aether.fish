@@ -1,4 +1,4 @@
-# SSH into aether and attach a screen session
+# SSH into aether and attach zellij session
 # Usage: aether [session_name]
 # Default session: hermes
 function aether
@@ -6,5 +6,5 @@ function aether
     if test (count $argv) -gt 0
         set session $argv[1]
     end
-    ssh aether -t "screen -x $session"
+    ssh aether -t "zellij attach -c $session"
 end
