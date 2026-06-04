@@ -127,3 +127,11 @@ end
 
 # Added by Antigravity CLI installer
 set -gx PATH "/home/loops/.local/bin" $PATH
+
+
+# rag-ferrite — local on aether, SSH from anywhere else
+if test (hostname) = "aether"
+    alias rag-ferrite '~/services/rag-ferrite/rag-ferrite'
+else
+    alias rag-ferrite 'ssh -t aether ~/services/rag-ferrite/rag-ferrite'
+end
