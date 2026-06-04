@@ -3,7 +3,7 @@ alias g git
 alias addup='git add -u'
 alias addall='git add -A'
 alias branch='git branch'
-alias checkout='git checkout'
+# alias checkout='git checkout'
 alias clone='git clone'
 
 alias fetch='git fetch'
