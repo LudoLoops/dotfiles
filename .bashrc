@@ -23,3 +23,7 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 OLLAMA_HOST=0.0.0.0
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/loops/.local/bin:$PATH"

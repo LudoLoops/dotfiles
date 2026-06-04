@@ -123,3 +123,7 @@ if type -q zeditor
     alias zed='zeditor .'
 end
 # Note: Kitty SSH integration disabled - use `kitty +kitten ssh host` explicitly if needed
+
+
+# Added by Antigravity CLI installer
+set -gx PATH "/home/loops/.local/bin" $PATH

@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cli_default_open_behavior": "new_window",
   "outline_panel": {
     "dock": "left"
   },
@@ -118,8 +119,8 @@
   "ui_font_size": 15,
   "buffer_font_size": 15,
   "theme": {
-    "mode": "dark",
-    "light": "Kanagawa Lotus",
+    "mode": "system",
+    "light": "Catppuccin Latte",
     "dark": "Kanagawa Wave",
   },
   "indent_guides": {

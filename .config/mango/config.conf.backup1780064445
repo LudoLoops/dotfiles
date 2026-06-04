@@ -14,5 +14,3 @@ source=./dms/outputs.conf
 # Vertical scroll animation on workspace switch
 tag_animation_direction=0
 source = ./dms/binds.conf
-
-source=./dms/cursor.conf
