@@ -30,3 +30,9 @@ fish_variables
 .claude/.json
 .claude/.json.backup
 .config/waybar/layouts/backup
+
+# btop log (runtime, not config)
+.config/btop/btop.log
+
+# Zellij test layouts
+.config/zellij/layouts/aether-test.kdl

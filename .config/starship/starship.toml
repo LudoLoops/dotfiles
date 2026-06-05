@@ -1,6 +1,7 @@
 # version: 1.0.0
 add_newline = false
 scan_timeout = 1000
+command_timeout = 5000
 continuation_prompt = "[󰁔 ](dimmed white)"
 
 format = """($nix_shell$container$fill$git_metrics\n)\
@@ -106,7 +107,7 @@ style = 'green italic'
 format = "[$symbol]($style)"
 style = "bold italic bright-purple"
 symbol = "󱗒 "
-disabled = false
+disabled = true
 
 [username]
 style_user = "bright-yellow bold italic"
