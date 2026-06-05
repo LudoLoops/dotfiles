@@ -1,34 +1,36 @@
-function theme --description 'Switch Kitty + Zellij theme (mocha/frappe/latte)'
+function theme --description 'Switch Kitty + Zellij theme'
+    set -l themes mocha frappe latte tokyo-night rose-pine gruvbox nord
+
     if test (count $argv) -eq 0
-        echo "Usage: theme <mocha|frappe|latte>"
-        echo "Current: "(grep 'include.*\.conf' ~/.config/kitty/kitty.conf | grep -oE '(mocha|frappe|latte)')
+        echo "Usage: theme <name>"
+        echo ""
+        echo "Available themes:"
+        printf "  • %s\n" $themes
+        echo ""
+        set current (grep 'include.*\.conf' ~/.config/kitty/kitty.conf | grep -oE "(mocha|frappe|latte|tokyo-night|rose-pine|gruvbox|nord)")
+        echo "Current: $current"
         return
     end
 
     set -l theme $argv[1]
 
-    switch $theme
-        case mocha frappe latte
-        case '*'
-            echo "Invalid theme: $theme"
-            echo "Choose: mocha, frappe, latte"
-            return 1
+    if not contains $theme $themes
+        echo "Unknown theme: $theme"
+        echo "Available: "(string join ", " -- $themes)
+        return 1
     end
 
     # Kitty
-    sed -i "s/include \(mocha\|frappe\|latte\)\.conf/include $theme.conf/" ~/.config/kitty/kitty.conf
+    sed -i "s/include \(mocha\|frappe\|latte\|tokyo-night\|rose-pine\|gruvbox\|nord\)\.conf/include $theme.conf/" ~/.config/kitty/kitty.conf
 
-    # Zellij
+    # Zellij — same name except gruvbox (gruvbox-dark in zellij)
+    set -l zname $theme
     switch $theme
-        case mocha
-            set zellij_theme "catppuccin-mocha"
-        case frappe
-            set zellij_theme "catppuccin-frappe"
-        case latte
-            set zellij_theme "catppuccin-latte"
+        case gruvbox
+            set zname "gruvbox-dark"
     end
-    sed -i "s/theme \".*\"/theme \"$zellij_theme\"/" ~/.config/zellij/config.kdl
+    sed -i "s/theme \".*\"/theme \"$zname\"/" ~/.config/zellij/config.kdl
 
-    echo "Switched to $theme (Kitty + Zellij)"
-    echo "Restart Kitty and Zellij to see changes"
+    echo "✓ $theme — Kitty + Zellij"
+    echo "Restart Kitty (close & reopen) and Zellij (kill-all-sessions) to see changes"
 end
