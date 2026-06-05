@@ -1,4 +1,10 @@
 -- Image support for Neovim with Kitty terminal integration
+-- Only loaded on TufTux (hostname check)
+local hostname = vim.loop.os_gethostname()
+if hostname ~= "TufTux" then
+  return {}
+end
+
 return {
   {
     "3rd/image.nvim",
