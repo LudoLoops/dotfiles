@@ -1,46 +1,66 @@
-function theme --description 'Interactive theme switcher with live preview'
+function theme --description 'Switch theme — Kitty + Zellij'
     set -l themes mocha frappe latte tokyo-night rose-pine gruvbox nord
     set -l conf ~/.config/kitty/kitty.conf
-    set -l script ~/.config/fish/functions/_theme_apply.fish
+    set -l zconf ~/.config/zellij/config.kdl
 
-    # Sauvegarde le thème actuel
-    set -l original (grep -oE '(mocha|frappe|latte|tokyo-night|rose-pine|gruvbox|nord)' $conf | head -1)
-    if test -z "$original"
-        set original "frappe"
+    # Thème actuel
+    set -l current (grep -oE '(mocha|frappe|latte|tokyo-night|rose-pine|gruvbox|nord)' $conf | head -1)
+    if test -z "$current"
+        set current "?"
     end
 
     # Mode direct: theme frappe
     if test (count $argv) -gt 0
         if contains $argv[1] $themes
-            fish $script $argv[1]
-            echo "✓ $argv[1]"
+            _theme_switch $argv[1]
             return
-        else
-            echo "Available: "(string join ", " -- $themes)
-            return 1
         end
     end
 
-    # Mode interactif
-    if not type -q fzf
-        echo "Install fzf: paru -S fzf"
-        return 1
+    # Menu simple
+    echo ""
+    echo "  Current: $current"
+    echo ""
+    set i 1
+    for t in $themes
+        if test "$t" = "$current"
+            echo "  $i) $t  *"
+        else
+            echo "  $i) $t"
+        end
+        set i (math $i + 1)
     end
+    echo ""
+    read -P "Choice (1-7, Enter to cancel): " choice
 
-    set -l choice (printf "%s\n" $themes | fzf \
-        --prompt="Theme> " \
-        --header="↑↓ navigate  Enter confirm  Esc cancel (restore $original)" \
-        --preview-window="right:50%" \
-        --preview="grep -E 'background|foreground|color[0-9]' ~/.config/kitty/{}.conf 2>/dev/null | sed 's/^/  /'" \
-        --bind "focus:execute-silent(fish $script {})")
-
-    if test $status -ne 0
-        fish $script $original
-        echo "Cancelled — restored $original"
+    if test -z "$choice"
         return
     end
 
-    if test -n "$choice"
-        echo "✓ "(echo $choice | tr -d '[:space:]')" — restart Zellij to apply"
+    if string match -qr '^\d+$' -- $choice
+        if test $choice -ge 1 -a $choice -le (count $themes)
+            set -l picked $themes[$choice]
+            _theme_switch $picked
+            return
+        end
     end
+
+    echo "Invalid choice"
+end
+
+function _theme_switch
+    set -l theme $argv[1]
+    set -l conf ~/.config/kitty/kitty.conf
+    set -l zconf ~/.config/zellij/config.kdl
+
+    sed -i "s/include \(mocha\|frappe\|latte\|tokyo-night\|rose-pine\|gruvbox\|nord\)\.conf/include $theme.conf/" $conf
+
+    set -l zname $theme
+    switch $theme
+        case gruvbox
+            set zname "gruvbox-dark"
+    end
+    sed -i "s/theme \".*\"/theme \"$zname\"/" $zconf
+
+    echo "✓ $theme — restart Zellij to apply"
 end
