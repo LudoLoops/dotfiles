@@ -29,7 +29,7 @@ load_plugins {
     zellij:link
 }
 
-keybinds clear-defaults=true {
+keybinds {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
     }
