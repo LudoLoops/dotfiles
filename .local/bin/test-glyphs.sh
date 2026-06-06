@@ -29,6 +29,7 @@ echo '✓ ✗ ✔ ✕ ✖ ✅ ❌'
 echo
 echo '=== DIVERS ==='
 echo '◆ ◇ ● ○ ■ □ ★ ☆ ♠ ♥ ♦ ♣ ♡ ♪'
+echo '⟲ ℹ'
 echo
 echo '=== POWERLINE / ARROWS ==='
 echo '⬱ ⬰ ⬲ ⬳ ⬴ ⬵'
