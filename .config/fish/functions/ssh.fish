@@ -26,7 +26,7 @@ function ssh-new --argument name
         echo "  1) Key only      Generate SSH key only"
         echo "  2) Full setup    Key + SSH config entry"
         echo
-        read -l -P 'Select mode [1-2]: ' mode
+        read -P 'Select mode [1-2]: ' mode
 
         switch $mode
             case 1
@@ -44,7 +44,7 @@ function ssh-new --argument name
     # Get key name
     # ============================================================================
     if test -z "$name"
-        read -l -P 'Key name: ' name
+        read -P 'Key name: ' name
         if test -z "$name"
             echo "❌ Key name required"
             return 1
@@ -56,7 +56,7 @@ function ssh-new --argument name
     # Check if key already exists
     if test -f "$key_path"
         echo "⚠️  Key already exists: $key_path"
-        read -l -n1 -p 'echo "Overwrite? [y/N]: "' overwrite
+        read -n1 -p 'echo "Overwrite? [y/N]: "' overwrite
         if not string match -qi y $overwrite
             echo "Aborted."
             return 1
@@ -88,20 +88,20 @@ function ssh-new --argument name
         echo "─── SSH Config Entry ───"
 
         # Host alias (default: key name)
-        read -l -P "Host alias [$name]: " host_alias
+        read -P "Host alias [$name]: " host_alias
         if test -z "$host_alias"
             set host_alias $name
         end
 
         # Hostname
-        read -l -P 'Hostname: ' hostname
+        read -P 'Hostname: ' hostname
         if test -z "$hostname"
             echo "❌ Hostname required for config entry"
             return 1
         end
 
         # User (default: current user)
-        read -l -P "User [$USER]: " ssh_user
+        read -P "User [$USER]: " ssh_user
         if test -z "$ssh_user"
             set ssh_user $USER
         end

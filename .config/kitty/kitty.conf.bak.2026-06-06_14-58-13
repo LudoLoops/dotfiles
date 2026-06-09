@@ -1,0 +1,103 @@
+# Font Configuration
+font_size 12.0
+
+allow_remote_control yes
+
+# Window Configuration
+window_padding_width 12
+background_opacity 1.0
+background_blur 32
+hide_window_decorations yes
+
+# font_family CaskaydiaCove Nerd Font Mono
+# bold_font auto
+# italic_font auto
+# bold_italic_font auto
+# Cursor Configuration
+cursor_shape block
+cursor_blink_interval 1
+
+# Scrollback
+scrollback_lines 3000
+
+# Terminal features
+copy_on_select yes
+strip_trailing_spaces smart
+
+# Font size
+map ctrl+plus change_font_size all +1.0
+map ctrl+minus change_font_size all -1.0
+map ctrl+0 change_font_size all 0.0
+
+# Disable Kitty shortcuts that conflict with Tmux
+// map ctrl+t send_text all \x02c
+
+map ctrl+1 send_text all \x021
+map ctrl+2 send_text all \x022
+map ctrl+3 send_text all \x023
+map ctrl+4 send_text all \x024
+map ctrl+5 send_text all \x025
+map ctrl+6 send_text all \x026
+map ctrl+7 send_text all \x027
+map ctrl+8 send_text all \x028
+map ctrl+9 send_text all \x029
+map ctrl+shift+n no_op
+map ctrl+q no_op
+map ctrl+s no_op
+
+# Tab configuration
+tab_bar_style powerline
+tab_bar_align left
+
+# Shell integration
+shell_integration enabled
+confirm_os_window_close 0
+
+# Themes
+include dank-tabs.conf
+include frappe.conf
+include keymap.conf
+
+
+# BEGIN_KITTY_FONTS
+font_family      family="JetBrainsMono Nerd Font"
+# font_family      family="FiraCode Nerd Font Mono"
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS
+enable_kitty_keyboard_protocol no
+
+
+# Font fallback — DejaVu (broad) + Symbols Nerd Font (dev icons) + Noto Color Emoji (emojis)
+# Kitty uses LAST-MATCH-WINS
+
+# DejaVu : symboles texte, techniques, flèches, kaomoji, ★☆♠♥♦♣
+symbol_map U+0080-U+DFFF DejaVu Sans Mono
+symbol_map U+F900-U+FFFF DejaVu Sans Mono
+
+# Symbols Nerd Font : dev icons (Powerline, etc.)
+symbol_map U+E000-U+F8FF Symbols Nerd Font
+
+# Noto Color Emoji : emojis colorés uniquement
+# Noto Sans CJK JP : japonais (っロヽヾ), fullwidth (︿＾｡･) pour kaomojis Hermes
+symbol_map U+3000-U+30FF Noto Sans CJK JP
+symbol_map U+FF00-U+FFEF Noto Sans CJK JP
+symbol_map U+FE30-U+FE4F Noto Sans CJK JP
+# Noto Sans Kannada : ಠ (kaomoji disapproval)
+symbol_map U+0C80-U+0CFF Noto Sans Kannada
+# Noto Sans Thai : ๑ (kaomoji)
+symbol_map U+0E00-U+0E7F Noto Sans Thai
+# Segoe UI Symbol : ⌣ ͜ (combining, smile)
+symbol_map U+035C-U+035C Segoe UI Symbol
+symbol_map U+2323-U+2323 Segoe UI Symbol
+symbol_map U+23EF-U+23FA Segoe UI Symbol
+symbol_map U+2B00-U+2BFF Segoe UI Symbol
+symbol_map U+26A0-U+26A0 Noto Color Emoji
+symbol_map U+26A1-U+26A1 Noto Color Emoji
+symbol_map U+2699-U+2699 Noto Color Emoji
+symbol_map U+2705-U+2705 Noto Color Emoji
+symbol_map U+274C-U+274C Noto Color Emoji
+symbol_map U+2728-U+2728 Noto Color Emoji
+symbol_map U+1F000-U+1F9FF Noto Color Emoji
+symbol_map U+1FA00-U+1FFFF Noto Color Emoji
