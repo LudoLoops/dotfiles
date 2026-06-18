@@ -44,7 +44,13 @@ function glmr --description 'Push current branch and create GitLab MR'
         --remove-source-branch 2>&1)
 
     # Extract MR number from URL (e.g. .../merge_requests/42)
-    set mr_number (echo "$mr_output" | grep -oP 'merge_requests/\K[0-9]+' | tail -1)
+    # string match works on both Linux and macOS (fish builtins)
+    set mr_url_line (echo "$mr_output" | grep 'merge_requests/')
+    set mr_number ""
+    if test -n "$mr_url_line"
+        # Extract digits after "merge_requests/"
+        set mr_number (string replace -rf '.*merge_requests/([0-9]+).*' '$1' "$mr_url_line")
+    end
 
     if test -n "$mr_number"
         echo "✅ MR !$mr_number created for issue #$issue"
