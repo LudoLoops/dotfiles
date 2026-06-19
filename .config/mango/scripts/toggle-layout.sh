@@ -1,5 +1,6 @@
 #!/bin/sh
-# Cycle layouts: scroller → tile → vertical_tile → monocle → scroller
+# Cycle layouts: tile → vertical_tile → scroller → tile
+# + toggle floating with togglefloating on focused window
 # Mango 0.14+ mmsg syntax
 
 SOCK="${MANGO_INSTANCE_SIGNATURE:-$(ls /run/user/1000/mango-*.sock 2>/dev/null)}"
@@ -9,14 +10,13 @@ fi
 
 export MANGO_INSTANCE_SIGNATURE="$SOCK"
 
-# Get layout of active tag - extract the letter after "layout":
+# Get layout of active tag
 current=$(mmsg get all-tags 2>/dev/null | grep -o '"is_active":true[^}]*"layout":"[A-Z]"' | grep -o '"layout":"[A-Z]"' | tail -1 | grep -o '[A-Z]')
 
 case "$current" in
-    S) next="tile" ;;
     T) next="vertical_tile" ;;
-    V) next="monocle" ;;
-    *) next="scroller" ;;
+    V) next="scroller" ;;
+    *) next="tile" ;;
 esac
 
 mmsg dispatch setlayout,"$next"
