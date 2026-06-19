@@ -93,8 +93,6 @@ symbol_map U+035C-U+035C Segoe UI Symbol
 symbol_map U+2323-U+2323 Segoe UI Symbol
 symbol_map U+23EF-U+23FA Segoe UI Symbol
 symbol_map U+2B00-U+2BFF Segoe UI Symbol
-symbol_map U+27F2-U+27F2 Segoe UI Symbol
-symbol_map U+2139-U+2139 Symbola
 symbol_map U+26A0-U+26A0 Noto Color Emoji
 symbol_map U+26A1-U+26A1 Noto Color Emoji
 symbol_map U+2699-U+2699 Noto Color Emoji
@@ -103,52 +101,3 @@ symbol_map U+274C-U+274C Noto Color Emoji
 symbol_map U+2728-U+2728 Noto Color Emoji
 symbol_map U+1F000-U+1F9FF Noto Color Emoji
 symbol_map U+1FA00-U+1FFFF Noto Color Emoji
-
-# ── NOUVEAUX MAPPINGS (session 2026-06-10) ─────────────────────────
-# Segoe UI Emoji : emojis que Noto rend mal dans Kitty (bug COLRv1)
-symbol_map U+FE0F-U+FE0F Noto Color Emoji
-symbol_map U+26F8-U+26F8 Segoe UI Emoji
-symbol_map U+2328-U+2328 Segoe UI Emoji
-symbol_map U+2757-U+2757 Segoe UI Emoji
-symbol_map U+1F5D1-U+1F5D1 Segoe UI Emoji
-symbol_map U+1F3CE-U+1F3CE Segoe UI Emoji
-symbol_map U+1F3D4-U+1F3DD Segoe UI Emoji
-symbol_map U+1F579-U+1F579 Segoe UI Emoji
-symbol_map U+1F5A5-U+1F5B1 Segoe UI Emoji
-# Segoe UI Symbol : monochrome
-symbol_map U+267B-U+267B Segoe UI Symbol
-symbol_map U+2753-U+2753 Segoe UI Symbol
-symbol_map U+1F5D2-U+1F5D3 Segoe UI Symbol
-# Noto Color Emoji : emojis supplémentaires
-symbol_map U+2618-U+2618 Noto Color Emoji
-symbol_map U+261D-U+261D Noto Color Emoji
-symbol_map U+26BD-U+26BD Noto Color Emoji
-symbol_map U+26CF-U+26CF Noto Color Emoji
-symbol_map U+26F0-U+26F3 Noto Color Emoji
-symbol_map U+26F5-U+26F7 Noto Color Emoji
-symbol_map U+270B-U+270D Noto Color Emoji
-symbol_map U+26BE-U+26BE Noto Color Emoji
-symbol_map U+26F4-U+26F4 Noto Color Emoji
-symbol_map U+26FA-U+26FD Noto Color Emoji
-symbol_map U+1F6F3-U+1F6F3 Noto Color Emoji
-symbol_map U+26F4-U+26F4 Segoe UI Emoji
-symbol_map U+1F6F3-U+1F6F3 Segoe UI Emoji
-symbol_map U+270A-U+270A Noto Color Emoji
-symbol_map U+26A0-U+26A0 Segoe UI Emoji
-symbol_map U+1F399-U+1F399 Segoe UI Emoji
-symbol_map U+231B-U+231B Segoe UI Emoji
-symbol_map U+1F570-U+1F570 Segoe UI Emoji
-symbol_map U+2618-U+2618 Segoe UI Emoji
-symbol_map U+2702-U+2702 Segoe UI Emoji
-symbol_map U+2712-U+2712 Segoe UI Emoji
-symbol_map U+1F58A-U+1F58D Segoe UI Emoji
-symbol_map U+1F5DD-U+1F5DD Segoe UI Emoji
-symbol_map U+26EA-U+26EA Segoe UI Emoji
-symbol_map U+1F56F-U+1F56F Segoe UI Emoji
-symbol_map U+1F396-U+1F396 Segoe UI Emoji
-symbol_map U+1F39F-U+1F39F Segoe UI Emoji
-symbol_map U+26F0-U+26F0 Segoe UI Emoji
-symbol_map U+1F3CD-U+1F3CD Segoe UI Emoji
-symbol_map U+1F5C2-U+1F5C2 Segoe UI Emoji
-symbol_map U+1F43F-U+1F43F Segoe UI Emoji
-symbol_map U+26AB-U+26AB Noto Color Emoji
