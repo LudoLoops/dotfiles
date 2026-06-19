@@ -56,16 +56,10 @@ function glmr --description 'Push current branch and create GitLab MR'
         return 1
     end
 
-    # Write description to temp file (avoids quoting issues)
-    echo "$issue_desc" > /tmp/glmr-desc.md
-    echo "" >> /tmp/glmr-desc.md
-    echo "Closes #$issue" >> /tmp/glmr-desc.md
-
     echo "📋 Creating MR for issue #$issue: $issue_title"
 
     glab mr create \
         --title "$issue_title" \
-        --description (cat /tmp/glmr-desc.md | string collect) \
         --target-branch main \
         --related-issue "$issue" \
         --remove-source-branch \
