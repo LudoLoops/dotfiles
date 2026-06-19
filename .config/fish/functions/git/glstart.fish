@@ -39,10 +39,16 @@ function glstart --description 'Create branch from GitLab issue'
 
     git checkout -b "$branch"
 
-    if test $status -eq 0
-        echo "✅ Checked out: $branch"
-    else
+    if test $status -ne 0
         echo "❌ Failed to create branch"
         return 1
+    end
+
+    git push -u origin "$branch" 2>&1
+
+    if test $status -eq 0
+        echo "✅ Created + pushed: $branch"
+    else
+        echo "✅ Branch created (push failed — run 'git push -u origin $branch')"
     end
 end
