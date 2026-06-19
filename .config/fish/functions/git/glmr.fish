@@ -29,12 +29,17 @@ function glmr --description 'Push current branch and create GitLab MR'
         end
     end
 
-    # Fetch issue title — try with --repo first, fall back to current context
+    # Fetch issue title and description
     set issue_title ""
+    set issue_desc ""
     if test -n "$repo"
-        set issue_title (glab issue view $issue --repo "$repo" --output json 2>/dev/null | python3 -c "import sys, json; print(json.load(sys.stdin)['title'])" 2>/dev/null)
+        set issue_json (glab issue view $issue --repo "$repo" --output json 2>/dev/null)
     else
-        set issue_title (glab issue view $issue --output json 2>/dev/null | python3 -c "import sys, json; print(json.load(sys.stdin)['title'])" 2>/dev/null)
+        set issue_json (glab issue view $issue --output json 2>/dev/null)
+    end
+    if test -n "$issue_json"
+        set issue_title (echo "$issue_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['title'])" 2>/dev/null)
+        set issue_desc (echo "$issue_json" | python3 -c "import sys, json; print(json.load(sys.stdin).get('description',''))" 2>/dev/null)
     end
 
     # Fallback: use branch name if title fetch failed
@@ -51,10 +56,16 @@ function glmr --description 'Push current branch and create GitLab MR'
         return 1
     end
 
+    # Write description to temp file (avoids quoting issues)
+    echo "$issue_desc" > /tmp/glmr-desc.md
+    echo "" >> /tmp/glmr-desc.md
+    echo "Closes #$issue" >> /tmp/glmr-desc.md
+
     echo "📋 Creating MR for issue #$issue: $issue_title"
 
     glab mr create \
         --title "$issue_title" \
+        --description (cat /tmp/glmr-desc.md) \
         --target-branch main \
         --related-issue "$issue" \
         --remove-source-branch \
