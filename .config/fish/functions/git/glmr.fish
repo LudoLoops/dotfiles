@@ -65,7 +65,7 @@ function glmr --description 'Push current branch and create GitLab MR'
 
     glab mr create \
         --title "$issue_title" \
-        --description (cat /tmp/glmr-desc.md) \
+        --description (cat /tmp/glmr-desc.md | string collect) \
         --target-branch main \
         --related-issue "$issue" \
         --remove-source-branch \
