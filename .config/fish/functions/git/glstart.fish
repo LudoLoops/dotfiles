@@ -28,29 +28,11 @@ function glstart --description 'Create branch from GitLab issue'
     end
 
     set issue_title (echo "$issue_json" | python3 -c "import sys, json; print(json.load(sys.stdin)['title'])")
-    set issue_labels (echo "$issue_json" | python3 -c "import sys, json; print(' '.join(json.load(sys.stdin).get('labels', [])))")
-
-    # Map type labels to branch prefixes
-    set type_prefix ""
-    for label in $issue_labels
-        switch $label
-            case feature
-                set type_prefix "feat"; break
-            case bug
-                set type_prefix "fix"; break
-            case devops
-                set type_prefix "chore"; break
-        end
-    end
 
     # Slugify: lowercase, replace non-alphanumeric with dash, collapse, trim
     set slug (string lower "$issue_title" | string replace -ra '[^a-z0-9]' '-' | string replace -ra '-+' '-' | string trim -c '-')
 
-    if test -n "$type_prefix"
-        set branch "$issue-$type_prefix-$slug"
-    else
-        set branch "$issue-$slug"
-    end
+    set branch "$issue-$slug"
 
     echo "🔀 Creating branch: $branch"
     echo "   Issue #$issue: $issue_title"
