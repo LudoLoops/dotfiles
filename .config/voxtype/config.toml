@@ -22,6 +22,7 @@ key = "INSERT"
 modifiers = []
 mode = "toggle"
 enabled = true
+cancel_key = "ESC"
 
 # Activation mode: "push_to_talk" or "toggle"
 # - push_to_talk: Hold hotkey to record, release to transcribe (default)
@@ -47,17 +48,11 @@ device = "default"
 sample_rate = 16000
 
 # Maximum recording duration in seconds (safety limit)
-max_duration_secs = 60
+max_duration_secs = 300
+pause_media = true
 
-# [audio.feedback]
-# Enable audio feedback sounds (beeps when recording starts/stops)
-# enabled = true
-#
-# Sound theme: "default", "subtle", "mechanical", or path to custom theme directory
-# theme = "default"
-#
-# Volume level (0.0 to 1.0)
-# volume = 0.7
+[audio.feedback]
+enabled = false
 
 [whisper]
 # Transcription backend: "local" or "remote"
@@ -242,7 +237,8 @@ show_engine_icon = false
 
 backend = "whisper"
 enabled = true
-threshold = 0.8
+threshold = 0.95
+min_speech_duration_ms = 500
 
 [parakeet]
 streaming = true
@@ -293,13 +289,13 @@ on_demand_loading = false
 
 [osd]
 enabled = true
-frontend = "gtk4"
+frontend = "native"
 position = "bottom-center"
 width_px = 400
-height_px = 48
+height_px = 40
 margin_px = 24
 top_margin = 0.8
-opacity = 0.6
+opacity = 0.5
 waveform_window_secs = 3.0
 peak_decay_db_per_sec = 6.0
 waveform_gain = 10.0
@@ -307,14 +303,18 @@ waveform_gain = 10.0
 [text]
 spoken_punctuation = false
 smart_auto_submit = false
+filter_filler_words = true
+replacements = { "Sous-titrage Société Radio-Canada" = "", "Radio-Canada" = "", "Société Radio-Canada" = "" }
 
 [meeting]
+
 enabled = false
 
 [meeting.diarization]
 enabled = false
 
 [meeting.audio]
+mic_device = "default"
 source = "mic"
 
 [status]
