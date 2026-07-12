@@ -1,22 +1,21 @@
 #!/bin/sh
-# Cycle layouts: tile → vertical_tile → scroller → tile
-# + toggle floating with togglefloating on focused window
+# Toggle layouts: tile ↔ scroller
 # Mango 0.14+ mmsg syntax
 
-SOCK="${MANGO_INSTANCE_SIGNATURE:-$(ls /run/user/1000/mango-*.sock 2>/dev/null)}"
+SOCK="${MANGO_INSTANCE_SIGNATURE:-$(ls --color=never /run/user/1000/mango-*.sock 2>/dev/null)}"
 if [ -z "$SOCK" ]; then
     exit 1
 fi
 
 export MANGO_INSTANCE_SIGNATURE="$SOCK"
 
-# Get layout of active tag
-current=$(mmsg get all-tags 2>/dev/null | grep -o '"is_active":true[^}]*"layout":"[A-Z]"' | grep -o '"layout":"[A-Z]"' | tail -1 | grep -o '[A-Z]')
+# Get layout_symbol of the active monitor
+current=$(mmsg get all-monitors 2>/dev/null | grep -o '"active":true[^}]*"layout_symbol":"[A-Z]"' | grep -o '"layout_symbol":"[A-Z]"' | grep -o '[A-Z]')
 
-case "$current" in
-    T) next="vertical_tile" ;;
-    V) next="scroller" ;;
-    *) next="tile" ;;
-esac
+if [ "$current" = "S" ]; then
+    next="tile"
+else
+    next="scroller"
+fi
 
 mmsg dispatch setlayout,"$next"

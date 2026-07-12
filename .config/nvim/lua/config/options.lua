@@ -30,3 +30,17 @@ vim.opt.lazyredraw = false
 
 vim.opt.wrap = true
 vim.opt.linebreak = true
+
+-- Clipboard: use wl-copy/wl-paste under Wayland (Mango WM)
+vim.g.clipboard = {
+  name = 'wl-clipboard',
+  copy = {
+    ['+'] = 'wl-copy',
+    ['*'] = 'wl-copy --primary',
+  },
+  paste = {
+    ['+'] = 'wl-paste',
+    ['*'] = 'wl-paste --primary',
+  },
+  cache_enabled = 0,
+}
