@@ -36,3 +36,12 @@ fish_variables
 
 # Zellij test layouts
 .config/zellij/layouts/aether-test.kdl
+
+# DMS-generated desktop config
+.config/mango/dms/colors.conf
+.config/mango/dms/cursor.conf
+.config/hypr/dms/colors.lua
+.config/niri/dms/colors.kdl
+
+# Obsolete local backup
+.config/mango/scripts/toggle-layout.sh.bak
