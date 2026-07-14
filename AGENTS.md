@@ -1,124 +1,115 @@
 # AGENTS.md
 
-Guide for AI agents working on these dotfiles configuration files.
+Guide for AI agents working on these dotfiles.
 
-## Repository Structure
+## Repository
+
+**GNU Stow-based dotfiles** for Arch Linux / CachyOS + Hyprland (Wayland).
+Also deployed on Debian servers (see Multi-OS below).
+
+- **Git root:** `~/dotfiles/`
+- **Stow target:** `$HOME` (single package = the whole repo)
+- **Install on a new machine:**
+  ```bash
+  git clone <repo> ~/dotfiles
+  cd ~/dotfiles && stow .
+  ```
+- **After a pull:** `cd ~/dotfiles && stow .` (idempotent — recreates missing links)
+- **Re-stow after changing `.stow-local-ignore`:** `stow --restow .`
+
+Stow creates relative symlinks, e.g. `~/.config/fish → ~/dotfiles/.config/fish`,
+`~/.bashrc → ~/dotfiles/.bashrc`.
+
+### `.stow-local-ignore`
+
+Excluded from stow: `AGENTS.md`, `CLAUDE.md`, `.git`, `.gitignore`, `.claude`.
+
+> Note: because `AGENTS.md` is ignored by stow, the copy at `~/AGENTS.md`
+> (loaded by agents) is **not** auto-synced from the repo. Keep both in sync manually.
+
+## Structure
 
 ```
-.config/              # Git root (all configs are here)
-├── fish/             # Fish shell configuration
-├── nvim/             # Neovim configuration
-├── hypr/             # Hyprland window manager
-├── kitty/            # Kitty terminal
-├── waybar/           # Wayland status bar
-├── yazi/             # Terminal file manager
-├── rofi/             # App launcher
-├── dunst/            # Notification daemon
-└── README.md         # This file
+~/dotfiles/                  # git root
+├── .config/                 # → ~/.config/
+│   ├── fish/                #   shell — config.fish + functions/
+│   ├── nvim/                #   editor (LazyVim)
+│   ├── hypr/                #   window manager (HyDE)
+│   ├── kitty/               #   terminal
+│   ├── waybar/              #   status bar
+│   ├── yazi/                #   file manager
+│   ├── zed/ zellij/ tmux/
+│   ├── starship/ btop/ rofi/ dunst/ …
+│   └── CLAUDE.md            #   component-level guide
+├── .local/bin/              # → ~/.local/bin/
+├── .bashrc                  # → ~/.bashrc
+└── .stow-local-ignore
 ```
 
-**Important:** This repo uses GNU Stow. Files in `~/dotfiles/.config/` are symlinked to `~/.config/`.
+Each major component may have its own `CLAUDE.md` (e.g. `.config/fish/CLAUDE.md`,
+`.config/hypr/CLAUDE.md`) — consult those when working on a specific area.
 
-## System Context
+## System
 
-**OS:** Arch Linux / CachyOS
-**WM:** Hyprland (Wayland)
-**Shell:** Fish 3.6+
-**Editor:** Neovim
-**Terminal:** Kitty
+- **OS:** Arch Linux / CachyOS (desktop), Debian (servers)
+- **WM:** Hyprland (Wayland), HyDE integration
+- **Shell:** Fish 4.x with Starship prompt
+- **Editor:** Neovim (LazyVim)
+- **Terminal:** Kitty
+- **Package manager:** paru (AUR + pacman) on Arch, apt on Debian
 
-## Key Configuration Files
+## Fish
 
-### Shell (Fish)
-- **Location:** `fish/`
-- **Entry point:** `fish/config.fish`
-- **Functions:** `fish/functions/` (auto-loaded via `fish/functions/index.fish`)
-- **Notable functions:**
-  - `ssh-new` - SSH key & config management with TUI
-  - `update` - Multi-OS system update (auto-detects Arch/Debian)
-  - `mkroute` - SvelteKit route scaffolder
-  - `ship` - Deployment pipeline (beta/prod)
+- **Entry:** `.config/fish/config.fish`
+- **Functions:** `.config/fish/functions/` — auto-loaded by `index.fish`,
+  which sources every `.fish` file including subdirs (`git/`, `fzf/`).
+- **Do not delete `index.fish`** — it is the loader for the whole function system.
+- **Add a function:** drop a `.fish` file in `functions/`; it loads on next shell start.
+- **Multi-OS update:** the `update` function auto-detects the OS via `/etc/os-release`
+  and runs the right command (paru + paccache on Arch, apt on Debian).
+  No templates, no per-OS files — detection is inline.
 
-### Editor (Neovim)
-- **Location:** `nvim/`
-- **Entry:** `nvim/init.lua`
-- **Plugin system:** Lazy.nvim
-- **Config dir:** `nvim/lua/config/`
-- **Plugins:** `nvim/lua/plugins/`
-
-### Window Manager (Hyprland)
-- **Location:** `hypr/`
-- **Entry:** `hypr/hyprland.conf`
-- **Modular configs:** `hypr/config/`
-- **Themes:** `hypr/themes/`
-- **Animations:** `hypr/animations/`
-
-### Terminal (Kitty)
-- **Location:** `kitty/`
-- **Entry:** `kitty/kitty.conf`
-
-## Git Workflow
-
-**Repo location:** `~/dotfiles/` (git root is `~/dotfiles/.config/.git`)
-
-```bash
-cd ~/dotfiles/.config
-git add .
-git commit -m "description"
-git push
-```
-
-**Install on new machine:**
-```bash
-git clone https://github.com/LudoLoops/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-stow .config
-```
-
-## Files NOT to Modify
-
-**Ignored by git (contain sensitive data):**
-- `fish/fish_variables` - Contains API keys
-- `fish/conf.d/env.fish` - Contains API keys
-
-Do not attempt to read or modify these files.
-
-## Code Conventions
+## Conventions
 
 **Fish functions:**
-- Use `command` prefix for external tools
-- Validate arguments with `test -z`
+- `command` prefix for external tools
+- Validate args: `test -z "$arg"`
 - Error handling: `|| begin ... end`
-- Use emoji for visual feedback: `✅ ❌ 📁`
+- Emoji for feedback: ✅ ❌ 📦
 
-**Neovim:**
-- Lua config
-- Lazy.nvim for plugins
-- Follow LazyVim conventions
+**Neovim:** Lua, Lazy.nvim, follow LazyVim conventions.
 
-## When Working on These Files
+**Git:** work from `~/dotfiles/`, conventional commits `type: description`.
+Never leave uncommitted changes.
 
-1. **Read existing patterns** before modifying
-2. **Check file location** - repo is in `~/dotfiles/.config/`
-3. **Test changes:** reload shell or restart application
-4. **Commit from:** `cd ~/dotfiles/.config`
+## Files excluded from git (secrets / machine-specific)
 
-## Common Tasks
+From `.gitignore`:
 
-**Add new Fish function:**
-```bash
-nvim ~/dotfiles/.config/fish/functions/my-function.fish
-# Auto-loaded on next shell start
-```
+| Pattern | Reason |
+|---------|--------|
+| `fish/fish_variables` | API keys (universal fish vars) |
+| `fish/conf.d/` | Env vars with secrets |
+| `.config/kwinrc`, `.config/kxkbrc`, `.config/plasmarc` | Machine-specific |
 
-**Update Hyprland config:**
-```bash
-nvim ~/dotfiles/.config/hypr/config/keybinds.conf
-# Reload: hyprctl reload
-```
+Do not read or commit these.
 
-**Install new Neovim plugin:**
-```bash
-nvim ~/dotfiles/.config/nvim/lua/plugins/
-# Add plugin file, Lazy will install it
-```
+## Common commands
+
+| Task | Command |
+|------|---------|
+| Reload Fish | `source ~/.config/fish/config.fish` |
+| Reload Hyprland | `hyprctl reload` |
+| System update | `update` (auto-detects OS) |
+| Neovim plugins | `:Lazy` inside Neovim |
+| Smart cd | `z <dir>` (zoxide) |
+| Syntax-check a fish function | `fish -n ~/.config/fish/functions/<fn>.fish` |
+
+## Architecture notes
+
+- **Modular sourcing:** Hyprland `hyprland.conf` sources `keybindings.conf`,
+  `windowrules.conf`, `monitors.conf`, `config/*.conf`. Waybar includes
+  `modules/` and `includes/`. Fish `config.fish` sources `functions/index.fish`.
+  This keeps configs split by concern rather than monolithic.
+- **HyDE:** the marker `$HYDE_HYPRLAND=set` in `hyprland.conf` prevents HyDE
+  from overwriting user configs. Preserve it.
