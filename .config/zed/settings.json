@@ -7,6 +7,9 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "cursor_shape": "bar",
+  "buffer_font_family": "CaskaydiaCove Nerd Font",
+  "ui_font_family": ".ZedSans",
   "cli_default_open_behavior": "new_window",
   "outline_panel": {
     "dock": "right",
@@ -15,7 +18,7 @@
     "dock": "right",
   },
   "edit_predictions": {
-    "provider": "copilot",
+    "provider": "none",
     "disabled_globs": [],
   },
   "context_servers": {
@@ -26,42 +29,40 @@
     },
   },
   "agent": {
+    "favorite_models": [
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-5.6-terra",
+        "enable_thinking": true,
+        "effort": "medium"
+      },
+      {
+        "provider": "openai-subscribed",
+        "model": "gpt-5.4-mini",
+        "enable_thinking": true,
+        "effort": "medium"
+      }
+    ],
     "tool_permissions": {
       "default": "allow",
     },
     "dock": "left",
-    "play_sound_when_agent_done": "always",
+    "play_sound_when_agent_done": "when_hidden",
     "model_parameters": [],
     "inline_assistant_model": {
       "provider": "Z.ai",
       "model": "glm-4.7-flash",
     },
     "default_model": {
-      "provider": "Z.ai",
-      "model": "glm-5.2",
+      "effort": "medium",
+      "enable_thinking": true,
+      "provider": "openai-subscribed",
+      "model": "gpt-5.6-terra",
     },
   },
   "language_models": {
     "openai_compatible": {
-      "Z.ai": {
-        "api_url": "https://api.z.ai/api/coding/paas/v4",
-        "available_models": [
-          {
-            "name": "glm-5.2",
-            "max_tokens": 200000,
-            "max_output_tokens": 32000,
-            "max_completion_tokens": 200000,
-            "capabilities": {
-              "tools": true,
-              "images": false,
-              "parallel_tool_calls": true,
-              "prompt_cache_key": false,
-              "chat_completions": true,
-            },
-          },
-        ],
       },
-    },
     "open_router": {
       "api_url": "https://openrouter.ai/api/v1",
       "available_models": [
@@ -97,11 +98,6 @@
     "opencode": {
       "type": "registry",
     },
-    "OpenCode": {
-      "type": "custom",
-      "command": "opencode",
-      "args": ["acp"],
-    },
   },
   "relative_line_numbers": "enabled",
   "format_on_save": "on",
@@ -112,19 +108,20 @@
     "indent_size": 16,
   },
   "prettier": {
+    "allowed": true,
     "tab_size": 2,
     "trailingComma": "all",
   },
   "tab_size": 2,
   "soft_wrap": "editor_width",
-  "icon_theme": "Bearded Icon Theme",
+  "icon_theme": "Material Icon Theme",
   "vim_mode": true,
   "ui_font_size": 15,
   "buffer_font_size": 15,
   "theme": {
     "mode": "system",
-    "light": "Catppuccin Latte",
-    "dark": "Kanagawa Wave",
+    "light": "DankShell Light",
+    "dark": "One Dark",
   },
   "indent_guides": {
     "enabled": true,
