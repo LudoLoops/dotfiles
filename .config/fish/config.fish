@@ -1,8 +1,9 @@
 # overwrite greeting
 # potentially disabling fastfetch
 function fish_greeting
-    if type -q zellij; and not set -q ZELLIJ; and not set -q SSH_CONNECTION
-        zellij -l tuftux attach -c TufTux
+    # Autostart herdr (terminal workspace). Skip if already inside herdr or over SSH.
+    if type -q herdr; and not set -q HERDR_ENV; and not set -q SSH_CONNECTION
+        herdr
     end
 end
 
