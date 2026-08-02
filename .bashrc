@@ -14,8 +14,9 @@ export PAGER=less
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
 
 # Preserve Fish PATH when bash is launched from Fish
+# Fish prints PATH space-separated; convert to colon-separated for bash.
 if [[ $- != *i* ]] && command -v fish >/dev/null 2>&1; then
-    export PATH=$(fish -c 'echo $PATH')
+    export PATH=$(fish -c 'echo $PATH' | tr ' ' ':')
 fi
 
 # Zoxide (smart cd replacement)
