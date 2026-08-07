@@ -1,0 +1,70 @@
+[
+  {
+    "plugin_id": "ray.file-explorer",
+    "name": "File Explorer",
+    "version": "0.1.0",
+    "min_herdr_version": "0.7.0",
+    "description": "Open Yazi (terminal file manager) in a herdr pane",
+    "manifest_path": "/home/loops/dotfiles/.config/herdr/plugins/github/ray.file-explorer-921f378e3e1b/herdr-plugin.toml",
+    "plugin_root": "/home/loops/dotfiles/.config/herdr/plugins/github/ray.file-explorer-921f378e3e1b",
+    "enabled": true,
+    "platforms": [
+      "macos"
+    ],
+    "build": [
+      {
+        "command": [
+          "bash",
+          "-c",
+          "command -v yazi >/dev/null 2>&1 || brew install yazi"
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "open",
+        "title": "Open file explorer",
+        "contexts": [
+          "workspace"
+        ],
+        "command": [
+          "bash",
+          "-c",
+          "DIR=\"$(bash \"$HERDR_PLUGIN_ROOT/bin/resolve-dir.sh\")\"; exec \"${HERDR_BIN_PATH:-herdr}\" plugin pane open --plugin ray.file-explorer --entrypoint explorer --placement split --cwd \"$DIR\""
+        ]
+      },
+      {
+        "id": "open-tab",
+        "title": "Open file explorer (new tab)",
+        "contexts": [
+          "workspace"
+        ],
+        "command": [
+          "bash",
+          "-c",
+          "DIR=\"$(bash \"$HERDR_PLUGIN_ROOT/bin/resolve-dir.sh\")\"; exec \"${HERDR_BIN_PATH:-herdr}\" plugin pane open --plugin ray.file-explorer --entrypoint explorer --placement tab --cwd \"$DIR\""
+        ]
+      }
+    ],
+    "panes": [
+      {
+        "id": "explorer",
+        "title": "Explorer",
+        "placement": "split",
+        "command": [
+          "bash",
+          "-c",
+          "exec yazi"
+        ]
+      }
+    ],
+    "source": {
+      "kind": "github",
+      "owner": "speardragon",
+      "repo": "herdr-yazi",
+      "resolved_commit": "fb10e1c556c43f9a222591a1d398bacb563e8df6",
+      "managed_path": "/home/loops/.config/herdr/plugins/github/ray.file-explorer-921f378e3e1b",
+      "installed_unix_ms": 1785848164476
+    }
+  }
+]

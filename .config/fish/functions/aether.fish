@@ -2,9 +2,10 @@
 # Usage: aether [session_name]
 # Default session: Aether
 function aether
-    set -l session Aether
-    if test (count $argv) -gt 0
-        set session $argv[1]
-    end
-    ssh aether -t 'zellij -l aether attach -c' $session
+    # set -l session Aether
+    # if test (count $argv) -gt 0
+    #     set session $argv[1]
+    # end
+    # ssh aether -t 'zellij -l aether attach -c' $session
+    herdr --remote aether
 end
