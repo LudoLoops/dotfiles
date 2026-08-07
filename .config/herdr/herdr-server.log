@@ -1304,3 +1304,5 @@
 2026-08-07T13:31:51.184382Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w4"
 2026-08-07T13:31:51.184432Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w4" tab_id="w4:t1"
 2026-08-07T13:31:56.189392Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T13:33:10.580507Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T13:33:14.668532Z  INFO herdr::app::actions: copied selection to clipboard
