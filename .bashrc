@@ -16,7 +16,7 @@ export PAGER=less
 # Preserve Fish PATH when bash is launched from Fish
 # Fish prints PATH space-separated; convert to colon-separated for bash.
 if [[ $- != *i* ]] && command -v fish >/dev/null 2>&1; then
-    export PATH=$(fish -c 'echo $PATH' | tr ' ' ':')
+    export PATH=$(fish -c 'string join ":" $PATH')
 fi
 
 # Zoxide (smart cd replacement)
@@ -24,7 +24,4 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 OLLAMA_HOST=0.0.0.0
-
-
-# Added by Antigravity CLI installer
-export PATH="/home/loops/.local/bin:$PATH"
+export PATH="$HOME/bin:$PATH"

@@ -135,3 +135,7 @@ if test (hostname) = "aether"
 else
     alias rag-ferrite 'ssh -t aether ~/services/rag-ferrite/rag-ferrite'
 end
+
+# >>> zeroclaw >>>
+set -gx PATH "/home/loops/.cargo/bin" $PATH
+# <<< zeroclaw <<<
