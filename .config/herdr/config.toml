@@ -11,17 +11,17 @@ delivery = "system"
 switch_tab = "alt+1..9"
 
 
-# [[keys.command]] # open in a split pane
-# key = "prefix+y"
-# type = "plugin_action"
-# command = "ray.file-explorer.open"
-# description = "open file explorer"
-#
-# [[keys.command]] # open in a new tab
-# key = "prefix+Y"
-# type = "plugin_action"
-# command = "ray.file-explorer.open-tab"
-# description = "open file explorer in a new tab"
+[[keys.command]] # open in a split pane
+key = "prefix+y"
+type = "plugin_action"
+command = "ray.file-explorer.open"
+description = "open file explorer"
+
+[[keys.command]] # open in a new tab
+key = "prefix+Y"
+type = "plugin_action"
+command = "ray.file-explorer.open-tab"
+description = "open file explorer in a new tab"
 
 
 [experimental]
