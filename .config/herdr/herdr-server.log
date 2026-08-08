@@ -1306,3 +1306,108 @@
 2026-08-07T13:31:56.189392Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
 2026-08-07T13:33:10.580507Z  INFO herdr::app::actions: copied selection to clipboard
 2026-08-07T13:33:14.668532Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T13:41:43.441113Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T13:41:55.741786Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T13:43:42.542148Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-08-07T13:43:42.542200Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T13:43:44.676682Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T13:43:49.682601Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T13:43:54.692194Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T13:43:59.118893Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T13:44:51.895295Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T13:44:56.909111Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T13:45:56.598316Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T13:46:01.607149Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T13:48:48.134262Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:04:23.082258Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T14:04:28.095200Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T14:06:19.413812Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T14:06:24.427509Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T14:06:30.875808Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:07:40.331665Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:08:57.059659Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:09:52.394273Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:11:55.742636Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T14:12:04.548397Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:13:43.473461Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:18:14.530277Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:19:53.706241Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:21:45.875837Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:25:02.720954Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:25:23.352377Z  INFO herdr::server::headless: client detached client_id=2
+2026-08-07T14:25:23.557988Z  INFO herdr::server::headless: client disconnected client_id=2
+2026-08-07T14:25:26.599173Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T14:26:15.280213Z  INFO herdr::server::headless: client detached client_id=6
+2026-08-07T14:26:15.321807Z  INFO herdr::server::headless: client disconnected client_id=6
+2026-08-07T15:17:35.281936Z  INFO herdr::api::server: api server listening path=/home/loops/.config/herdr/herdr.sock
+2026-08-07T15:17:35.291872Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=2 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-08-07T15:17:35.295935Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=2 pid=5347
+2026-08-07T15:17:35.297695Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=3 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-08-07T15:17:35.298867Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=3 pid=5350
+2026-08-07T15:17:35.299290Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=4 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-08-07T15:17:35.300308Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=4 pid=5353
+2026-08-07T15:17:35.303856Z  INFO herdr::logging: session restore evaluated event="persist.restore" subsystem="persist" outcome="ok" workspaces=3
+2026-08-07T15:17:35.303884Z  INFO herdr::app: using pane scrollback configuration pane_scrollback_limit_bytes=10000000
+2026-08-07T15:17:35.447070Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T15:17:35.454096Z  INFO herdr::server::headless: restored session already has workspaces; ignoring startup cwd cwd=/home/loops
+2026-08-07T15:17:35.454276Z  INFO herdr::server::headless: client protocol socket listening path=/home/loops/.config/herdr/herdr-client.sock
+2026-08-07T15:17:35.454314Z  INFO herdr::server::headless: herdr server started api_socket=/home/loops/.config/herdr/herdr.sock client_socket=/home/loops/.config/herdr/herdr-client.sock
+2026-08-07T15:17:35.455474Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="server" outcome="started" pid=5329
+2026-08-07T15:17:35.528893Z  INFO herdr::server::headless: client connected client_id=2 cols=92 rows=45 cell_width_px=10 cell_height_px=22 render_encoding=SemanticFrame
+2026-08-07T15:17:35.548162Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=1 rows=44 cols=87 scrollback_limit_bytes=10000000
+2026-08-07T15:17:35.549894Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=1 pid=5637
+2026-08-07T15:17:36.102735Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Omp) process=omp pgid=Some(6256)
+2026-08-07T15:17:38.333339Z  INFO herdr::server::headless: client resize client_id=2 cols=91 rows=44 cell_width_px=10 cell_height_px=22
+2026-08-07T15:17:38.856394Z  INFO herdr::server::headless: client connected client_id=4 cols=91 rows=44 cell_width_px=10 cell_height_px=22 render_encoding=SemanticFrame
+2026-08-07T15:17:39.505194Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Omp) process=omp pgid=Some(6256)
+2026-08-07T15:17:39.538178Z  INFO herdr::server::headless: client detach requested via keybind client_id=4
+2026-08-07T15:17:39.541668Z  INFO herdr::server::headless: client disconnected client_id=4
+2026-08-07T15:17:40.553610Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T15:36:58.587883Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-08-07T15:36:58.587933Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t1"
+2026-08-07T15:37:03.590905Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T15:47:35.449264Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T16:17:35.450748Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T16:47:35.452627Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T16:52:13.364830Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-08-07T16:52:13.364873Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T16:52:18.374964Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T16:56:35.868720Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T16:56:35.993509Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T16:56:40.373840Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w3"
+2026-08-07T16:56:40.373896Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w3" tab_id="w3:t1"
+2026-08-07T16:56:45.376670Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T17:00:37.374805Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T17:07:32.175345Z  INFO herdr::server::headless: client connected client_id=6 cols=91 rows=44 cell_width_px=10 cell_height_px=22 render_encoding=SemanticFrame
+2026-08-07T17:07:32.902747Z  INFO herdr::server::headless: client detach requested via keybind client_id=6
+2026-08-07T17:07:32.906845Z  INFO herdr::server::headless: client disconnected client_id=6
+2026-08-07T17:16:59.468497Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T17:17:35.454240Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T17:28:19.875525Z  INFO herdr::logging: workspace focused event="workspace.focus" subsystem="workspace" outcome="ok" workspace_id="w2"
+2026-08-07T17:28:19.875572Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T17:28:22.875058Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T17:28:23.695584Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-07T17:28:28.709909Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T17:31:34.281887Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T17:31:51.340933Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T17:33:34.230707Z  INFO herdr::app::actions: copied selection to clipboard
+2026-08-07T17:47:35.455890Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T18:17:35.457156Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T18:47:35.458362Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T19:17:35.459980Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T19:37:50.470400Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t1"
+2026-08-07T19:37:55.483639Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-07T19:47:35.461870Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T20:17:35.463053Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T20:47:35.465102Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T21:17:35.466406Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T21:47:35.467476Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T22:17:35.468806Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T22:47:35.470950Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T23:17:35.470492Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-07T23:40:45.293750Z  INFO herdr::server::headless: client resize client_id=2 cols=92 rows=45 cell_width_px=10 cell_height_px=22
+2026-08-07T23:40:46.094984Z  INFO herdr::server::headless: client resize client_id=2 cols=91 rows=44 cell_width_px=10 cell_height_px=22
+2026-08-07T23:47:35.471411Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-08-08T00:13:08.374791Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w2" tab_id="w2:t2"
+2026-08-08T00:13:13.383557Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/loops/.config/herdr/session.json workspaces=3
+2026-08-08T00:13:20.627623Z  INFO herdr::app::actions: copied selection to clipboard

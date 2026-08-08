@@ -43,7 +43,7 @@
           },
           "panes": {
             "2": {
-              "cwd": "/home/loops/1Dev/Projects/Nexoria/D-Form/Plateforme-D-Form-Pro-Digital"
+              "cwd": "/home/loops/dotfiles"
             }
           },
           "zoomed": false,
@@ -57,6 +57,36 @@
       "id": "w3",
       "custom_name": null,
       "identity_cwd": "/home/loops",
+      "public_pane_numbers": {
+        "3": 1
+      },
+      "next_public_pane_number": 2,
+      "public_tab_numbers": [
+        1
+      ],
+      "next_public_tab_number": 2,
+      "tabs": [
+        {
+          "custom_name": null,
+          "layout": {
+            "Pane": 3
+          },
+          "panes": {
+            "3": {
+              "cwd": "/home/loops"
+            }
+          },
+          "zoomed": false,
+          "focused": 3,
+          "root_pane": 3
+        }
+      ],
+      "active_tab": 0
+    },
+    {
+      "id": "w4",
+      "custom_name": null,
+      "identity_cwd": "/home/loops/dotfiles/.config/herdr",
       "public_pane_numbers": {
         "4": 1
       },
@@ -73,7 +103,7 @@
           },
           "panes": {
             "4": {
-              "cwd": "/home/loops"
+              "cwd": "/home/loops/dotfiles/.config/herdr"
             }
           },
           "zoomed": false,
@@ -82,40 +112,10 @@
         }
       ],
       "active_tab": 0
-    },
-    {
-      "id": "w4",
-      "custom_name": null,
-      "identity_cwd": "/home/loops",
-      "public_pane_numbers": {
-        "6": 1
-      },
-      "next_public_pane_number": 2,
-      "public_tab_numbers": [
-        1
-      ],
-      "next_public_tab_number": 2,
-      "tabs": [
-        {
-          "custom_name": null,
-          "layout": {
-            "Pane": 6
-          },
-          "panes": {
-            "6": {
-              "cwd": "/home/loops"
-            }
-          },
-          "zoomed": false,
-          "focused": 6,
-          "root_pane": 6
-        }
-      ],
-      "active_tab": 0
     }
   ],
-  "active": 2,
-  "selected": 2,
+  "active": 0,
+  "selected": 0,
   "sidebar_width": 26,
   "sidebar_section_split": 0.5,
   "collapsed_space_keys": []
