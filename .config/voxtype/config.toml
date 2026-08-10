@@ -162,7 +162,7 @@ fallback_to_clipboard = true
 #   driver_order = ["wtype", "ydotool", "dotool", "clipboard"]
 # Example: use only ydotool, no fallback:
 #   driver_order = ["ydotool"]
-# driver_order = ["wtype", "dotool", "ydotool", "clipboard"]
+driver_order = ["ydotool", "wtype", "clipboard"]
 
 # Delay between typed characters in milliseconds
 # 0 = fastest possible, increase if characters are dropped
