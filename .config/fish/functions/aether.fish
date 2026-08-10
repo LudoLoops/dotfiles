@@ -1,11 +1,5 @@
-# SSH into aether and attach zellij session
-# Usage: aether [session_name]
-# Default session: Aether
+# SSH into aether via herdr — survives WezTerm window close
+# nohup blocks SIGHUP from WezTerm, herdr detects PTY EOF and detaches cleanly
 function aether
-    # set -l session Aether
-    # if test (count $argv) -gt 0
-    #     set session $argv[1]
-    # end
-    # ssh aether -t 'zellij -l aether attach -c' $session
-    herdr --remote aether
+    nohup herdr --remote aether
 end

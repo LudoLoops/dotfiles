@@ -23,6 +23,18 @@ type = "plugin_action"
 command = "ray.file-explorer.open-tab"
 description = "open file explorer in a new tab"
 
+[[keys.command]] # open file viewer in split
+key = "prefix+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer"
+description = "open file viewer in split"
+
+[[keys.command]] # open file viewer in new tab
+key = "prefix+shift+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer-tab"
+description = "open file viewer in new tab"
+
 
 [experimental]
 kitty_graphics = true
