@@ -1,6 +1,7 @@
 onboarding = false
 
 [ui]
+confirm_close = false
 show_agent_labels_on_pane_borders = true
 sidebar_start_collapsed = true
 

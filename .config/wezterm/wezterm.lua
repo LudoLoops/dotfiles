@@ -4,6 +4,7 @@ local wezterm = require("wezterm")
 return {
   check_for_updates = false,
   window_close_confirmation = "NeverPrompt",
+  skip_close_confirmation_for_processes_named = { "herdr", "fish", "ssh" },
   enable_wayland = true,
 
   -- Font: fallback automatique, plus besoin de symbol_map
@@ -34,7 +35,7 @@ return {
   scrollback_lines = 3000,
 
   -- Tab bar: powerline style matching dank-tabs.conf
-  enable_tab_bar = true,
+  enable_tab_bar = false,
   tab_bar_at_bottom = false,
   use_fancy_tab_bar = false,
   tab_max_width = 40,
