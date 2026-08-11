@@ -1,5 +1,5 @@
-# SSH into aether via herdr — survives WezTerm window close
-# nohup blocks SIGHUP from WezTerm, herdr detects PTY EOF and detaches cleanly
+# SSH into aether via herdr — ignores SIGHUP from WezTerm window close
+# Python wrapper keeps stdin/stdout intact (unlike nohup), only blocks SIGHUP
 function aether
-    nohup herdr --remote aether
+    python3 -c "import signal,os,sys; signal.signal(signal.SIGHUP, signal.SIG_IGN); os.execvp('herdr', ['herdr', '--remote', 'aether'])"
 end

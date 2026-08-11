@@ -3,7 +3,8 @@ local wezterm = require("wezterm")
 
 return {
   check_for_updates = false,
-  enable_wayland = false,
+  window_close_confirmation = "NeverPrompt",
+  enable_wayland = true,
 
   -- Font: fallback automatique, plus besoin de symbol_map
   font = wezterm.font_with_fallback({
