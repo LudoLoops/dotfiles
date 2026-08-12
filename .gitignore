@@ -52,3 +52,5 @@ fish_variables
 .config/herdr/session.json
 .config/herdr/plugins.json
 .config/herdr/plugins/github/
+.config/herdr/.plugins.lock
+.config/herdr/release-notes.json
