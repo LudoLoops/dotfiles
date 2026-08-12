@@ -45,3 +45,9 @@ fish_variables
 
 # Obsolete local backup
 .config/mango/scripts/toggle-layout.sh.bak
+
+# Herdr runtime (logs + session, NOT config)
+.config/herdr/herdr-client.log
+.config/herdr/herdr-server.log
+.config/herdr/session.json
+.config/herdr/plugins/github/
