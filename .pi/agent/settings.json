@@ -1,0 +1,24 @@
+{
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "medium",
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "providers": {
+    "zai": {
+      "baseUrl": "https://api.z.ai/api/coding/paas/v4"
+    }
+  },
+  "packages": [
+    "npm:@narumitw/pi-plan-mode",
+    "npm:@narumitw/pi-goal",
+    "npm:@narumitw/pi-lsp",
+    "npm:pi-powerline-footer"
+  ],
+  "lastChangelogVersion": "0.84.1",
+  "theme": "dark",
+  "hideThinkingBlock": true
+}
