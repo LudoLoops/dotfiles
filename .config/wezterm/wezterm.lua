@@ -171,12 +171,15 @@ return {
     { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-next") },
     { key = "K", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-prev") },
     -- Skin Hermes : L = light, D = dark (tape la commande + Entrée dans la session active)
+    -- Sleep nécessaire : sans délai, l'Enter arrive avant que le TUI (Ink) ait traité le texte
     { key = "L", mods = "CTRL|SHIFT", action = wezterm.action.Multiple({
       wezterm.action.SendString "/skin warm-lightmode",
+      wezterm.action.Sleep(50),
       wezterm.action.SendKey({ key = "Enter", mods = "NONE" }),
     }) },
     { key = "D", mods = "CTRL|SHIFT", action = wezterm.action.Multiple({
       wezterm.action.SendString "/skin slate",
+      wezterm.action.Sleep(50),
       wezterm.action.SendKey({ key = "Enter", mods = "NONE" }),
     }) },
   },
