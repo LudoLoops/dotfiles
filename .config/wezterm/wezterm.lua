@@ -121,21 +121,6 @@ wezterm.on("select-colorscheme", function(window, pane, id, label)
   end
 end)
 
--- Skin Hermes : L = light, D = dark
--- Le texte est envoyé, puis Enter après un petit délai (le TUI Ink doit traiter le texte d'abord)
-wezterm.on("hermes-skin-light", function(window, pane)
-  pane:send_text("/skin warm-lightmode")
-  wezterm.time.call_after(0.1, function()
-    window:active_pane():send_key({ key = "Enter" })
-  end)
-end)
-
-wezterm.on("hermes-skin-dark", function(window, pane)
-  pane:send_text("/skin slate")
-  wezterm.time.call_after(0.1, function()
-    window:active_pane():send_key({ key = "Enter" })
-  end)
-end)
 
 return {
   check_for_updates = false,
@@ -187,7 +172,7 @@ return {
     { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-next") },
     { key = "K", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-prev") },
     -- Skin Hermes : L = light, D = dark (tape la commande + Entrée dans la session active)
-        { key = "L", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("hermes-skin-light") },
-        { key = "D", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("hermes-skin-dark") },
+            { key = "L", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin warm-lightmode" },
+            { key = "D", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin slate" },
   },
 }
