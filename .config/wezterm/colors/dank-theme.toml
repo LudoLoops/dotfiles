@@ -2,12 +2,12 @@
 background = '#303446'
 foreground = '#c6d0f5'
 
-cursor_bg = '#85c1dc'
+cursor_bg = '#eebebe'
 cursor_fg = '#303446'
-cursor_border = '#85c1dc'
+cursor_border = '#eebebe'
 
-selection_bg = '#1f4967'
+selection_bg = '#744f52'
 selection_fg = '#c6d0f5'
 
-ansi = ['#292c3c', '#fd719e', '#6edc7a', '#fff672', '#6db2d1', '#1b4e65', '#85c1dc', '#d9e2e7']
-brights = ['#848b8f', '#ff9fbe', '#a5ffaf', '#fff9a5', '#a0d8f2', '#b8e9ff', '#d1f0ff', '#f8fdff']
+ansi = ['#292c3c', '#e25a5a', '#57b23e', '#ffd93f', '#f9c4c4', '#ffeeee', '#eebebe', '#423f3f']
+brights = ['#cac5c5', '#ff7f7f', '#91ff72', '#ffdc4c', '#ffc6c6', '#ffeeee', '#ffe5e5', '#fff9f9']

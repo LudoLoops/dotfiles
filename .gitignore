@@ -54,3 +54,6 @@ fish_variables
 .config/herdr/plugins/github/
 .config/herdr/.plugins.lock
 .config/herdr/release-notes.json
+
+# tmux runtime (tpm installed plugins)
+.config/tmux/plugins/
