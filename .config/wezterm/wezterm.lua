@@ -67,18 +67,50 @@ local function scheme_for(appearance)
   return "Ludo Latte"
 end
 
--- Sélecteur de thème live : Ctrl+Shift+U
-wezterm.on("select-colorscheme", function(window, pane, id, label)
-  if label then
-    window:set_config_overrides({ color_scheme = label })
-  end
-end)
+-- Zap et sélecteur gérés plus bas (après construction de scheme_choices)
 
 local scheme_choices = {}
 for name, _ in pairs(wezterm.color.get_builtin_schemes()) do
   table.insert(scheme_choices, { label = name })
 end
 table.sort(scheme_choices, function(a, b) return a.label < b.label end)
+
+-- Zap de thèmes : Ctrl+Shift+J (suivant) / Ctrl+Shift+K (précédent)
+-- Aperçu instantané, nom affiché dans le titre de la fenêtre
+local scheme_idx = nil
+
+local function cycle_scheme(window, dir)
+  if scheme_idx == nil then
+    local cur = window:effective_config().color_scheme
+    scheme_idx = 1
+    for i, c in ipairs(scheme_choices) do
+      if c.label == cur then
+        scheme_idx = i
+        break
+      end
+    end
+  end
+  scheme_idx = scheme_idx + dir
+  if scheme_idx < 1 then
+    scheme_idx = #scheme_choices
+  elseif scheme_idx > #scheme_choices then
+    scheme_idx = 1
+  end
+  local name = scheme_choices[scheme_idx].label
+  window:set_config_overrides({ color_scheme = name })
+  window:set_title("🎨 " .. name)
+end
+
+wezterm.on("cycle-scheme-next", function(window) cycle_scheme(window, 1) end)
+wezterm.on("cycle-scheme-prev", function(window) cycle_scheme(window, -1) end)
+
+wezterm.on("select-colorscheme", function(window, pane, id, label)
+  if label then
+    scheme_idx = nil
+    window:set_config_overrides({ color_scheme = label })
+    window:set_title("🎨 " .. label)
+  end
+end)
 
 return {
   check_for_updates = false,
@@ -127,5 +159,7 @@ return {
         action = wezterm.action.EmitEvent("select-colorscheme"),
       }),
     },
+    { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-next") },
+    { key = "K", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-prev") },
   },
 }
