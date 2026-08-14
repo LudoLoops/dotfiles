@@ -170,5 +170,8 @@ return {
     },
     { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-next") },
     { key = "K", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-prev") },
+    -- Skin Hermes : L = light, D = dark (tape la commande dans la session active)
+    { key = "L", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin warm-lightmode\r" },
+    { key = "D", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin slate\r" },
   },
 }
