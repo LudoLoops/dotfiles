@@ -98,16 +98,11 @@ local function cycle_scheme(window, dir)
   end
   local name = scheme_choices[scheme_idx].label
   window:set_config_overrides({ color_scheme = name })
-  -- Mémorise le choix pour palette-preview
+  -- Mémorise le choix pour palette-preview (affichage silencieux)
   local f = io.open("/tmp/wezterm-current-theme", "w")
   if f then
     f:write(name)
     f:close()
-  end
-  -- Affiche dans le pane (pas de barre de titre : window_decorations = NONE)
-  local pane = window:active_pane()
-  if pane then
-    pane:inject_output("\r\n\x1b[1;3m🎨 " .. name .. "\x1b[0m\r\n")
   end
 end
 
@@ -122,10 +117,6 @@ wezterm.on("select-colorscheme", function(window, pane, id, label)
     if f then
       f:write(label)
       f:close()
-    end
-    local p = window:active_pane()
-    if p then
-      p:inject_output("\r\n\x1b[1;3m🎨 " .. label .. "\x1b[0m\r\n")
     end
   end
 end)
