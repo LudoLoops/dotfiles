@@ -2,13 +2,13 @@ function palette-preview --description "Affiche le thème actuel + les 16 couleu
     set -l reset \e\[0m
     # Thème courant : lu depuis le titre de fenêtre WezTerm (mis à jour par le zap)
     set -l title (wezterm cli list --format json 2>/dev/null | jq -r '.[] | select(.tab_id == 1) | .title' 2>/dev/null | head -1)
-    echo "═══════════════════════════════════════"
+    echo "═══════════════════════════════════"
     if string match -q '🎨*' -- $title
-        echo "🎨 Thème actuel : "(string replace '🎨 ' '' -- $title)
+        echo "🎨 Thème : "(string replace '🎨 ' '' -- $title)
     else
-        echo "🎨 Thème actuel : auto (Frappé dark / Latte light) — zap pour changer"
+        echo "🎨 Thème : auto (dark/light système)"
     end
-    echo "═══════════════════════════════════════"
+    echo "═══════════════════════════════════"
     echo
     echo "█████ 16 couleurs ANSI █████"
     for i in (seq 0 7)
