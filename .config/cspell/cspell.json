@@ -1,0 +1,13 @@
+{
+  "import": [
+    "/home/loops/.bun/install/global/node_modules/@cspell/dict-fr-fr/cspell-ext.json"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "*",
+      "locale": "fr,fr_FR",
+      "caseSensitive": false
+    }
+  ],
+  "dictionaries": ["fr-fr", "en-gb"]
+}
