@@ -99,6 +99,11 @@ local function cycle_scheme(window, dir)
   local name = scheme_choices[scheme_idx].label
   window:set_config_overrides({ color_scheme = name })
   window:set_title("🎨 " .. name)
+  -- Affiche aussi dans le pane (car pas de barre de titre : window_decorations = NONE)
+  local pane = window:active_pane()
+  if pane then
+    pane:inject_output("\r\n\x1b[1;3m🎨 Thème: " .. name .. "\x1b[0m\r\n")
+  end
 end
 
 wezterm.on("cycle-scheme-next", function(window) cycle_scheme(window, 1) end)
