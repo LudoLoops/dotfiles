@@ -11,7 +11,6 @@ This repository contains my system configuration files (dotfiles).
 sudo pacman -S stow  # Arch
 sudo apt install stow  # Debian
 ```
-
 ## 🚀 Installation
 
 Clone the repository:
@@ -64,6 +63,25 @@ git add -A
 git commit -m "update"
 git push
 ```
+
+## 🔤 Spell check FR (Zed / cspell)
+
+Le spell-check FR de Zed (extension cspell) nécessite le dictionnaire français,
+installé **par machine** via bun (il n'est pas dans le repo) :
+
+```bash
+bun add -g @cspell/dict-fr-fr
+```
+
+La config `.config/cspell/cspell.json` (stowée) pointe vers ce dico et désactive
+le `caseSensitive` (sinon "Tous", "Aucune"... ne sont pas reconnus).
+
+⚠️ **Zed en SSH remote** : les LSP (dont cspell) tournent **sur le serveur distant**,
+pas en local. Le dico et la config doivent donc être installés sur la machine distante
+(aether inclus).
+
+Après installation ou changement de config : redémarrer Zed (le LSP charge la config
+au démarrage uniquement).
 
 ---
 
