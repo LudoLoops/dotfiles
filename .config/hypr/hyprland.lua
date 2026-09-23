@@ -110,6 +110,8 @@ require("dms.binds-user")
 require("dms.windowrules")
 
 -- --- Binds re-ajoutés APRÈS les modules DMS (priorité max : DMS ne les écrase pas) ---
--- dms/binds-user.lua contient `hl.unbind("SUPER + space")` sans rebind derrière → le
--- launcher (spotlight) était injoignable. Remis ici, après les require().
-hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Spotlight (menu)" })
+-- dms/binds-user.lua contient `hl.unbind("SUPER + space")` et `hl.unbind("ALT + space")`
+-- sans rebind derrière → les deux menus étaient injoignables. Remis ici, après les require(),
+-- en échangeant les deux : le menu complet passe sur ALT+space, le menu compact sur SUPER+space.
+hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight-bar toggle"), { description = "Menu compact (ex ALT+space)" })
+hl.bind("ALT + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Menu complet (ex SUPER+space)" })
