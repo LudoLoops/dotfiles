@@ -115,3 +115,9 @@ require("dms.windowrules")
 -- en échangeant les deux : le menu complet passe sur ALT+space, le menu compact sur SUPER+space.
 hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight-bar toggle"), { description = "Menu compact (ex ALT+space)" })
 hl.bind("ALT + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Menu complet (ex SUPER+space)" })
+
+-- --- Règles d'espace de travail (après les modules DMS = priorité max) ---
+-- Le laptop (eDP-1) porte le bureau 11, hors de la plage 1-9 : il ne s'intercale plus dans
+-- le cycle des bureaux (avant il prenait le 2, donc le cycle 1-2-3 sautait sur le laptop).
+-- Champs vérifiés dans le source : WORKSPACE_RULE_FIELDS = monitor, default, persistent, ...
+hl.workspace_rule({ workspace = "11", monitor = "eDP-1", default = true })
