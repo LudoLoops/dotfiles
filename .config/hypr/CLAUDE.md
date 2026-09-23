@@ -31,17 +31,19 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   du focus clavier). Avec `0`, Hyprland ne donne jamais le focus pointeur à la fenêtre
   survolée → la molette ne part qu'à la fenêtre focusée. `2` = comportement Mango/dwl
   (molette + survol vers la fenêtre sous le curseur, clic = focus clavier).
-- **Trackball Kensington SlimBlade Pro — boutons : rien d'appliqué, état normal.**
-  5 boutons sur l'interface souris `event6` : BTN_LEFT(272), BTN_RIGHT(273), BTN_MIDDLE(274),
-  BTN_SIDE(275), BTN_EXTRA(276).
-  ⚠️ `hl.device({ name = ..., left_handed = true })` a été testé : il échange bien clic
-  gauche ↔ droit sur ce device, mais **ce n'est pas ce que Ludo veut** → retiré.
-  ⚠️ Ne PAS injecter le preset Input Remapper `swap-buttons` (`~/.config/input-remapper-2/`) :
-  il ne mappe que BTN_RIGHT/BTN_SIDE et une fois injecté le clic ne répond plus.
-  Autoload désactivé (backup `config.json.bak-autoload-desactive`).
-  Arrêt d'une injection : `input-remapper-control --command stop-all`.
-  Méthode : identifier d'abord les codes bouton par bouton (lecture passive de
-  `/dev/input/event6`, accessible via le groupe `input`), puis décider — ne pas deviner.
+- **Trackball Kensington SlimBlade Pro — échange clic droit ↔ bouton latéral (ACTIF).**
+  5 boutons sur l'interface souris : BTN_LEFT(272), BTN_RIGHT(273), BTN_MIDDLE(274),
+  BTN_SIDE(275), BTN_EXTRA(276). L'échange est fait par un remap **noyau** (`EVIOCSKEYCODE`) :
+  `.config/hypr/bin/trackball-swap-buttons.py` (`swap` | `status` | `off`), appelé au démarrage
+  par `hl.on("hyprland.start")`. Aucun grab, aucun device virtuel → les autres souris (CX 2.4G)
+  et le touchpad ne sont pas touchés, et le pire cas en cas d'erreur est « aucun effet ».
+  Le device est résolu par nom (`SlimBlade` + présence de BTN_LEFT), pas par `eventN`.
+  Scancodes HID : `0x90002` = BTN_RIGHT, `0x90004` = BTN_SIDE.
+  ⚠️ Les bitmaps de capacités sysfs s'écrivent **poids fort en premier** (inverser les mots).
+  ⚠️ À relancer après un débranchement/rebranchement du récepteur USB (le remap vit avec
+  l'instance du device).
+  ⚠️ Ne PAS revenir à Input Remapper : le preset `swap-buttons` grabbe le device et casse le
+  clic. Arrêt d'une injection : `input-remapper-control --command stop-all`.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|

@@ -9,6 +9,14 @@ hl.on("hyprland.start", function()
 end)
 -- DMS_STARTUP_END
 
+-- Trackball Kensington SlimBlade Pro : echange clic droit <-> bouton lateral.
+-- Remap noyau per-device (voir .config/hypr/bin/trackball-swap-buttons.py) : aucun grab,
+-- aucun device virtuel, les autres souris ne sont pas touchees. A relancer apres un
+-- debranchement/rebranchement du recepteur USB (le remap vit avec l'instance du device).
+hl.on("hyprland.start", function()
+	hl.exec_cmd("/home/loops/.config/hypr/bin/trackball-swap-buttons.py swap")
+end)
+
 hl.config({
 	scrolling = {
 		-- Équivalents Mango WM (layout "scroller")
