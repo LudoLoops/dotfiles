@@ -22,7 +22,11 @@ hl.config({
 		kb_layout = "us",
 		kb_variant = "altgr-intl",
 		numlock_by_default = true,
-		follow_mouse = 0,
+		-- 2 = focus pointeur détaché du focus clavier : la molette (et le survol) vont à la
+		-- fenêtre sous le curseur même si elle n'est pas active, sans lui voler le focus clavier
+		-- (comportement Mango/dwl). Avec 0, Hyprland ne donne jamais le focus pointeur à la
+		-- fenêtre survolée → impossible de scroller dans une fenêtre non active.
+		follow_mouse = 2,
 		touchpad = {
 			tap_to_click = true,
 			natural_scroll = true,
