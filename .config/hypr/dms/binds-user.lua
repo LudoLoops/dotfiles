@@ -52,3 +52,16 @@ hl.bind("SUPER + CTRL + A", hl.dsp.layout("colresize -conf"), { description = "M
 hl.bind("SUPER + CTRL + D", hl.dsp.layout("colresize +conf"), { description = "Mango: proportion preset suivant" })
 -- Mango : ALT+Tab = focusstack next
 hl.bind("ALT + TAB", hl.dsp.window.cycle_next({ next = true }), { description = "Mango: fenêtre suivante" })
+
+-- === Mango WM — lanceurs (habitude Mango, sept. 2026) ===
+-- Super+O = obsidian. Conflit Hyprland : overview → déplacé sur Super+Z (= touche overview de Mango)
+hl.unbind("SUPER + O")
+hl.bind("SUPER + O", hl.dsp.exec_cmd("obsidian"), { description = "Mango: obsidian" })
+hl.bind("SUPER + Z", hl.dsp.exec_cmd("dms ipc call hypr toggleOverview"), { description = "Overview (ex Super+O)" })
+-- Super+T = wezterm. Conflit Hyprland : ghostty → déplacé sur Super+Return
+hl.unbind("SUPER + T")
+hl.bind("SUPER + T", hl.dsp.exec_cmd("wezterm"), { description = "Mango: wezterm" })
+hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("ghostty"), { description = "ghostty (ex Super+T)" })
+-- Super+B / Super+E : libres dans Hyprland
+hl.bind("SUPER + B", hl.dsp.exec_cmd("zen-browser"), { description = "Mango: zen-browser" })
+hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"), { description = "Mango: dolphin" })
