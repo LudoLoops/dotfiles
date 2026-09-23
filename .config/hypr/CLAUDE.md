@@ -31,12 +31,17 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   du focus clavier). Avec `0`, Hyprland ne donne jamais le focus pointeur à la fenêtre
   survolée → la molette ne part qu'à la fenêtre focusée. `2` = comportement Mango/dwl
   (molette + survol vers la fenêtre sous le curseur, clic = focus clavier).
-- **⚠️ Trackball Kensington SlimBlade Pro — ne PAS réinjecter le preset Input Remapper
-  « swap-buttons ».** Il inverse BTN_RIGHT (273) ↔ BTN_SIDE (275) ; une fois injecté, le clic
-  ne répond plus (constaté sept. 2026). Aucun hook de démarrage côté Hyprland — celui ajouté
-  puis retiré. Arrêter une injection : `input-remapper-control --command stop-all`.
-  Pour inverser gauche/droite proprement : `hl.device({ name = "...", left_handed = true })`
-  (natif, sans grab ni device virtuel).
+- **Trackball Kensington SlimBlade Pro — inversion des boutons, par périphérique.**
+  ```lua
+  hl.device({ name = "kensington-slimblade-pro(2.4ghz-receiver)-kensington-slimblade-pro-trackball(2.4ghz-receiver)",
+              left_handed = true })
+  ```
+  `left_handed` = BTN_LEFT ↔ BTN_RIGHT, **sur ce device seulement** : la souris classique
+  (CX 2.4G) et le touchpad ne sont pas touchés. Nom exact à récupérer via `hyprctl devices`.
+  ⚠️ Ne PAS utiliser le preset Input Remapper `swap-buttons` : il ne mappe que BTN_RIGHT/BTN_SIDE
+  et une fois injecté le clic ne répond plus (constaté sept. 2026). Autoload désactivé dans
+  `~/.config/input-remapper-2/config.json` (backup `.bak-autoload-desactive`).
+  Arrêter une injection : `input-remapper-control --command stop-all`.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|

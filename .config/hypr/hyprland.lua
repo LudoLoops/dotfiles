@@ -62,6 +62,13 @@ hl.config({
 	},
 })
 
+-- Trackball Kensington SlimBlade Pro : inversion des boutons (BTN_LEFT <-> BTN_RIGHT).
+-- Per-device UNIQUEMENT : la souris classique (CX 2.4G) et le touchpad ne sont pas touchés.
+hl.device({
+	name = "kensington-slimblade-pro(2.4ghz-receiver)-kensington-slimblade-pro-trackball(2.4ghz-receiver)",
+	left_handed = true,
+})
+
 hl.animation({ leaf = "windowsIn", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "default", style = "slidevert" })
