@@ -44,6 +44,15 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   l'instance du device).
   ⚠️ Ne PAS revenir à Input Remapper : le preset `swap-buttons` grabbe le device et casse le
   clic. Arrêt d'une injection : `input-remapper-control --command stop-all`.
+- **Bureau du laptop** : `hl.workspace_rule({ workspace = "11", monitor = "eDP-1", default = true })`
+  → eDP-1 porte le bureau 11, hors de la plage 1-9, pour qu'il ne s'intercale plus dans le cycle
+  des bureaux (avant il prenait le 2, donc le cycle 1-2-3 sautait sur le laptop).
+  ⚠️ Champs des workspace rules vérifiés dans le source (`WORKSPACE_RULE_FIELDS`) : `monitor`,
+  `default`, `persistent`, `gaps_in`, `gaps_out`, `float_gaps`, `border_size`, `no_border`,
+  `no_rounding`, `decorate`. En Lua c'est `layout_opts` (et non `layoutopt`).
+- ⚠️ **`hyprctl dispatch` attend une expression LUA depuis 0.56** (l'ancienne syntaxe échoue avec
+  « dispatch in lua is a shorthand for hl.dispatch(...) »). Exemple :
+  `hyprctl dispatch 'hl.dsp.window.move({ workspace = "11", follow = false, window = "address:0x..." })'`.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|
