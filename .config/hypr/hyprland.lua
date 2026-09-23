@@ -108,3 +108,8 @@ require("dms.cursor")
 require("dms.binds")
 require("dms.binds-user")
 require("dms.windowrules")
+
+-- --- Binds re-ajoutés APRÈS les modules DMS (priorité max : DMS ne les écrase pas) ---
+-- dms/binds-user.lua contient `hl.unbind("SUPER + space")` sans rebind derrière → le
+-- launcher (spotlight) était injoignable. Remis ici, après les require().
+hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Spotlight (menu)" })
