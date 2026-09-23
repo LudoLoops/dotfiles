@@ -46,8 +46,9 @@ Excluded from stow: `AGENTS.md`, `CLAUDE.md`, `.git`, `.gitignore`, `.claude`.
 └── .stow-local-ignore
 ```
 
-Each major component may have its own `CLAUDE.md` (e.g. `.config/fish/CLAUDE.md`,
-`.config/hypr/CLAUDE.md`) — consult those when working on a specific area.
+Each major component may have its own `AGENTS.md` (e.g. `.config/zed/AGENTS.md`,
+`.config/hypr/AGENTS.md`) — consult those when working on a specific area.
+(`CLAUDE.md` était l'ancien nom, pour Claude Code ; il est remplacé par `AGENTS.md`.)
 
 ## System
 
