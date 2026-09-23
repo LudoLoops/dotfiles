@@ -27,6 +27,10 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
 - **Bureaux empilés verticalement** : `hl.animation({ leaf = "workspaces",
   style = "slidevert" })` = `tag_animation_direction=0` côté Mango. Hyprland
   n'a pas de pile de workspaces verticale — l'effet vient de l'animation.
+- **Molette dans la fenêtre non active** : `input.follow_mouse = 2` (focus pointeur détaché
+  du focus clavier). Avec `0`, Hyprland ne donne jamais le focus pointeur à la fenêtre
+  survolée → la molette ne part qu'à la fenêtre focusée. `2` = comportement Mango/dwl
+  (molette + survol vers la fenêtre sous le curseur, clic = focus clavier).
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|
