@@ -9,14 +9,6 @@ hl.on("hyprland.start", function()
 end)
 -- DMS_STARTUP_END
 
--- Input Remapper : réinjecte le preset « swap-buttons » du trackball Kensington
--- (inversion BTN_RIGHT <-> BTN_SIDE). Équivalent de l'exec-once de Mango dans
--- ~/.config/mango/autostart.conf. Le script retente tant que le service
--- input-remapper / le récepteur USB ne sont pas prêts.
-hl.on("hyprland.start", function()
-	hl.exec_cmd("/home/loops/.local/bin/input-remapper-autostart.sh")
-end)
-
 hl.config({
 	scrolling = {
 		-- Équivalents Mango WM (layout "scroller")

@@ -31,11 +31,12 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   du focus clavier). Avec `0`, Hyprland ne donne jamais le focus pointeur à la fenêtre
   survolée → la molette ne part qu'à la fenêtre focusée. `2` = comportement Mango/dwl
   (molette + survol vers la fenêtre sous le curseur, clic = focus clavier).
-- **Trackball Kensington SlimBlade Pro** : le preset Input Remapper « swap-buttons »
-  (inversion BTN_RIGHT ↔ BTN_SIDE) est réinjecté au démarrage par
-  `hl.on("hyprland.start")` → `~/.local/bin/input-remapper-autostart.sh`
-  (= l'`exec-once` de `~/.config/mango/autostart.conf`). Le script n'est pas dans
-  le repo dotfiles (fichier réel dans `~/.local/bin/`, pas de lien stow).
+- **⚠️ Trackball Kensington SlimBlade Pro — ne PAS réinjecter le preset Input Remapper
+  « swap-buttons ».** Il inverse BTN_RIGHT (273) ↔ BTN_SIDE (275) ; une fois injecté, le clic
+  ne répond plus (constaté sept. 2026). Aucun hook de démarrage côté Hyprland — celui ajouté
+  puis retiré. Arrêter une injection : `input-remapper-control --command stop-all`.
+  Pour inverser gauche/droite proprement : `hl.device({ name = "...", left_handed = true })`
+  (natif, sans grab ni device virtuel).
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|
