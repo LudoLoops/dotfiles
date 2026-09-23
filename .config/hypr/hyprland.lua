@@ -10,9 +10,17 @@ end)
 -- DMS_STARTUP_END
 
 hl.config({
+	scrolling = {
+		-- Équivalents Mango WM (layout "scroller")
+		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
+		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
+		explicit_column_widths = "0.25, 0.5, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
+		focus_fit_method = 1,
+	},
 	input = {
-		-- empty inherits XKB_DEFAULT_LAYOUT (libxkbcommon), falls back to "us"
-		kb_layout = "",
+		-- Mango input.conf : xkb_rules_layout=us + xkb_rules_variant=altgr-intl
+		kb_layout = "us",
+		kb_variant = "altgr-intl",
 		numlock_by_default = true,
 		follow_mouse = 0,
 		touchpad = {
@@ -24,7 +32,7 @@ hl.config({
 		gaps_in = 5,
 		gaps_out = 5,
 		border_size = 2,
-		layout = "dwindle",
+		layout = "scrolling",
 	},
 	decoration = {
 		rounding = 12,
@@ -52,7 +60,7 @@ hl.config({
 
 hl.animation({ leaf = "windowsIn", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 3, bezier = "default" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "default" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 5, bezier = "default", style = "slidevert" })
 hl.animation({ leaf = "windowsMove", enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "border", enabled = true, speed = 3, bezier = "default" })

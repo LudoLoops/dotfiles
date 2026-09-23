@@ -1,35 +1,54 @@
--- Optional per-user keybind overrides (managed by DMS). Loaded after default binds.
--- Binds Mango WM reportés sur Hyprland (muscle memory) — source : ~/.config/mango/dms/binds.conf
--- Ce fichier est chargé APRÈS dms/binds.lua : en cas de conflit, ces binds gagnent.
+-- DMS user keybind overrides (edit via Control Center or dms; do not remove this header)
 
--- === Navigation bureaux (Mango : viewtoleft / viewtoright) ===
--- Override DMS : SUPER+W était "toggle group"
-hl.bind("SUPER + W", hl.dsp.focus({ workspace = "e-1" }))
-hl.bind("SUPER + S", hl.dsp.focus({ workspace = "e+1" }))
-
--- === Focus fenêtres, style Mango A/D (en plus des flèches et H/J/K/L) ===
-hl.bind("SUPER + A", hl.dsp.focus({ direction = "l" }))
-hl.bind("SUPER + D", hl.dsp.focus({ direction = "r" }))
-
--- === Changement d'écran (Mango : Super+Shift+flèches = focusmon) ===
--- Override DMS : SUPER+SHIFT+flèches était "move window"
-hl.bind("SUPER + SHIFT + left", hl.dsp.focus({ monitor = "l" }))
-hl.bind("SUPER + SHIFT + right", hl.dsp.focus({ monitor = "r" }))
-hl.bind("SUPER + SHIFT + A", hl.dsp.focus({ monitor = "l" }))
-hl.bind("SUPER + SHIFT + D", hl.dsp.focus({ monitor = "r" }))
-
--- === Envoyer la fenêtre sur l'autre écran (Mango : Super+Ctrl+flèches = tagmon) ===
--- Override DMS : SUPER+CTRL+flèches était "focus monitor"
-hl.bind("SUPER + CTRL + left", hl.dsp.window.move({ monitor = "l" }))
-hl.bind("SUPER + CTRL + right", hl.dsp.window.move({ monitor = "r" }))
-
--- === Déplacer la fenêtre vers le bureau N sans le suivre (Mango : Super+Alt+N = tagsilent) ===
+hl.unbind("ALT + CTRL + space")
+hl.bind("ALT + CTRL + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "dms ipc call spotlight toggle" })
+hl.unbind("SUPER + ALT + 1")
 hl.bind("SUPER + ALT + 1", hl.dsp.window.move({ workspace = "1", follow = false }))
+hl.unbind("SUPER + ALT + 2")
 hl.bind("SUPER + ALT + 2", hl.dsp.window.move({ workspace = "2", follow = false }))
+hl.unbind("SUPER + ALT + 3")
 hl.bind("SUPER + ALT + 3", hl.dsp.window.move({ workspace = "3", follow = false }))
+hl.unbind("SUPER + ALT + 4")
 hl.bind("SUPER + ALT + 4", hl.dsp.window.move({ workspace = "4", follow = false }))
+hl.unbind("SUPER + ALT + 5")
 hl.bind("SUPER + ALT + 5", hl.dsp.window.move({ workspace = "5", follow = false }))
+hl.unbind("SUPER + ALT + 6")
 hl.bind("SUPER + ALT + 6", hl.dsp.window.move({ workspace = "6", follow = false }))
+hl.unbind("SUPER + ALT + 7")
 hl.bind("SUPER + ALT + 7", hl.dsp.window.move({ workspace = "7", follow = false }))
+hl.unbind("SUPER + ALT + 8")
 hl.bind("SUPER + ALT + 8", hl.dsp.window.move({ workspace = "8", follow = false }))
+hl.unbind("SUPER + ALT + 9")
 hl.bind("SUPER + ALT + 9", hl.dsp.window.move({ workspace = "9", follow = false }))
+hl.unbind("SUPER + S")
+hl.bind("SUPER + S", hl.dsp.focus({ workspace = "e+1" }))
+hl.unbind("SUPER + W")
+hl.bind("SUPER + W", hl.dsp.focus({ workspace = "e-1" }))
+hl.unbind("SUPER + A")
+hl.bind("SUPER + A", hl.dsp.focus({ direction = "l" }))
+hl.unbind("SUPER + CTRL + left")
+hl.bind("SUPER + CTRL + left", hl.dsp.window.move({ monitor = "l" }))
+hl.unbind("SUPER + CTRL + right")
+hl.bind("SUPER + CTRL + right", hl.dsp.window.move({ monitor = "r" }))
+hl.unbind("SUPER + D")
+hl.bind("SUPER + D", hl.dsp.focus({ direction = "r" }))
+hl.unbind("SUPER + SHIFT + A")
+hl.bind("SUPER + SHIFT + A", hl.dsp.focus({ monitor = "l" }))
+hl.unbind("SUPER + SHIFT + D")
+hl.bind("SUPER + SHIFT + D", hl.dsp.focus({ monitor = "r" }))
+hl.unbind("SUPER + SHIFT + left")
+hl.bind("SUPER + SHIFT + left", hl.dsp.focus({ monitor = "l" }))
+hl.unbind("SUPER + SHIFT + right")
+hl.bind("SUPER + SHIFT + right", hl.dsp.focus({ monitor = "r" }))
+hl.unbind("ALT + space")
+hl.unbind("SUPER + SHIFT + F")
+hl.unbind("SUPER + space")
+hl.unbind("SUPER + F")
+hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }), { description = "Toggle fullscreen" })
+
+-- === Mango WM — bindings de déplacement manquants ===
+-- Mango : SUPER+CTRL,a/d = switch_proportion_preset previous/next
+hl.bind("SUPER + CTRL + A", hl.dsp.layout("colresize -conf"), { description = "Mango: proportion preset précédent" })
+hl.bind("SUPER + CTRL + D", hl.dsp.layout("colresize +conf"), { description = "Mango: proportion preset suivant" })
+-- Mango : ALT+Tab = focusstack next
+hl.bind("ALT + TAB", hl.dsp.window.cycle_next({ next = true }), { description = "Mango: fenêtre suivante" })
