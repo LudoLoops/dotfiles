@@ -11,6 +11,16 @@ delivery = "system"
 [keys]
 switch_tab = "alt+1..9"
 
+# Bureaux : ctrl+alt+1..9, et ctrl+alt+W / ctrl+alt+S pour precedent / suivant
+switch_workspace = "ctrl+alt+1..9"
+previous_workspace = "ctrl+alt+w"
+next_workspace = "ctrl+alt+s"
+
+# Agents : ctrl+shift+alt+1..9, et ctrl+shift+alt+W / ctrl+shift+alt+S pour precedent / suivant
+focus_agent = "ctrl+shift+alt+1..9"
+previous_agent = "ctrl+shift+alt+w"
+next_agent = "ctrl+shift+alt+s"
+
 
 [[keys.command]] # open in a split pane
 key = "prefix+y"
