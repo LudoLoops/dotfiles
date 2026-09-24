@@ -17,6 +17,11 @@
           "paths": [
             "/home/loops/dev/Nexoria-hub/dformpro"
           ]
+        },
+        {
+          "paths": [
+            "/home/loops/dev/punchin-hub/punchin.now/./"
+          ]
         }
       ]
     }
@@ -130,6 +135,21 @@
   "soft_wrap": "editor_width",
   "icon_theme": "Material Icon Theme",
   "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always"
+          }
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always"
+          }
+        }
+      },
+      "enable_lsp_tasks": true
+    },
     "cspell": {
       "initialization_options": {
         "defaultSettings": {
