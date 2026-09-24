@@ -1,7 +1,19 @@
-function palette-preview --description "Affiche les 16 couleurs ANSI + faux code — zap les thèmes avec Ctrl+Shift+J/K"
+function palette-preview --description "Affiche le thème actuel + les 16 couleurs ANSI — zap avec Ctrl+Shift+J/K"
     set -l reset \e\[0m
+    # Thème courant : lu depuis /tmp/wezterm-current-theme (écrit par le zap Ctrl+Shift+J/K)
+    set -l theme ""
+    if test -f /tmp/wezterm-current-theme
+        set theme (cat /tmp/wezterm-current-theme)
+    end
+    echo "═══════════════════════════════════"
+    if test -n "$theme"
+        echo "🎨 Thème : $theme"
+    else
+        echo "🎨 Thème : auto (dark/light système)"
+    end
+    echo "═══════════════════════════════════"
+    echo
     echo "█████ 16 couleurs ANSI █████"
-    # Fond : couleurs 0-7 puis 8-15
     for i in (seq 0 7)
         printf '\e[4%dm         %s ' $i $reset
     end
@@ -30,5 +42,5 @@ function palette-preview --description "Affiche les 16 couleurs ANSI + faux code
     echo "─── Bold/italic/underline ───"
     printf '\e[1mbold%s \e[3mitalic%s \e[4munderline%s \e[1;3mboth%s\n' $reset $reset $reset $reset
     echo
-    echo "Zap avec Ctrl+Shift+J / Ctrl+Shift+K 👀"
+    echo "Zap : Ctrl+Shift+J / Ctrl+Shift+K — puis re-lance palette-preview pour le nom"
 end

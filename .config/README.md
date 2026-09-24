@@ -86,3 +86,14 @@ au démarrage uniquement).
 ---
 
 📌 Keep it modular, minimal, and portable.
+
+## 🎨 Raccourcis WezTerm (thèmes)
+
+| Raccourci | Action |
+|---|---|
+| `Ctrl+Shift+J/K` | Thème WezTerm suivant/précédent (aperçu live) |
+| `Ctrl+Shift+U` | Fuzzy-search de tous les thèmes |
+| `Ctrl+Shift+L` | Skin Hermes **light** (`warm-lightmode`) |
+| `Ctrl+Shift+D` | Skin Hermes **dark** (`slate`) |
+
+`palette-preview` (fish) affiche le thème courant + les 16 couleurs ANSI.

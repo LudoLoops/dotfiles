@@ -98,11 +98,11 @@ local function cycle_scheme(window, dir)
   end
   local name = scheme_choices[scheme_idx].label
   window:set_config_overrides({ color_scheme = name })
-  window:set_title("🎨 " .. name)
-  -- Affiche aussi dans le pane (car pas de barre de titre : window_decorations = NONE)
-  local pane = window:active_pane()
-  if pane then
-    pane:inject_output("\r\n\x1b[1;3m🎨 Thème: " .. name .. "\x1b[0m\r\n")
+  -- Mémorise le choix pour palette-preview (affichage silencieux)
+  local f = io.open("/tmp/wezterm-current-theme", "w")
+  if f then
+    f:write(name)
+    f:close()
   end
 end
 
@@ -113,9 +113,14 @@ wezterm.on("select-colorscheme", function(window, pane, id, label)
   if label then
     scheme_idx = nil
     window:set_config_overrides({ color_scheme = label })
-    window:set_title("🎨 " .. label)
+    local f = io.open("/tmp/wezterm-current-theme", "w")
+    if f then
+      f:write(label)
+      f:close()
+    end
   end
 end)
+
 
 return {
   check_for_updates = false,
@@ -166,5 +171,8 @@ return {
     },
     { key = "J", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-next") },
     { key = "K", mods = "CTRL|SHIFT", action = wezterm.action.EmitEvent("cycle-scheme-prev") },
+    -- Skin Hermes : L = light, D = dark (tape la commande + Entrée dans la session active)
+            { key = "L", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin warm-lightmode" },
+            { key = "D", mods = "CTRL|SHIFT", action = wezterm.action.SendString "/skin slate" },
   },
 }
