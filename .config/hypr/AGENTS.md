@@ -44,12 +44,18 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   l'instance du device).
   ⚠️ Ne PAS revenir à Input Remapper : le preset `swap-buttons` grabbe le device et casse le
   clic. Arrêt d'une injection : `input-remapper-control --command stop-all`.
-- **Bureau du laptop** : `hl.workspace_rule({ workspace = "11", monitor = "eDP-1", default = true })`
-  → eDP-1 porte le bureau 11, hors de la plage 1-9, pour qu'il ne s'intercale plus dans le cycle
-  des bureaux (avant il prenait le 2, donc le cycle 1-2-3 sautait sur le laptop).
+- **Plages de bureaux séparées par écran** (générées par une boucle Lua dans `hyprland.lua`,
+  après les require() DMS) : extérieur **1-9** (`Super+1..9`), laptop **11-19**
+  (`Super+Ctrl+1..9`). Chaque série est rattachée à son écran par une workspace rule
+  (`workspace = N, monitor: ...`), donc un numéro ne peut pas atterrir sur l'autre écran.
+  `Super+Shift+1..9` envoie la fenêtre sur 1-9, `Super+Ctrl+Shift+1..9` sur 11-19.
+  `workspace = 11, monitor: eDP-1, default = true` = le laptop démarre sur 11.
   ⚠️ Champs des workspace rules vérifiés dans le source (`WORKSPACE_RULE_FIELDS`) : `monitor`,
   `default`, `persistent`, `gaps_in`, `gaps_out`, `float_gaps`, `border_size`, `no_border`,
   `no_rounding`, `decorate`. En Lua c'est `layout_opts` (et non `layoutopt`).
+  ⚠️ Pas de numérotation par écran façon tags Mango : les IDs Hyprland sont globaux. Le sélecteur
+  `m~N` / `r~N` veut dire « le bureau N s'il est sur cet écran », PAS « le Nième de cet écran »
+  (vérifié dans `src/helpers/MiscFunctions.cpp`, `getWorkspaceIDNameFromString`).
 - ⚠️ **`hyprctl dispatch` attend une expression LUA depuis 0.56** (l'ancienne syntaxe échoue avec
   « dispatch in lua is a shorthand for hl.dispatch(...) »). Exemple :
   `hyprctl dispatch 'hl.dsp.window.move({ workspace = "11", follow = false, window = "address:0x..." })'`.

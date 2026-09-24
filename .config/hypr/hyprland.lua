@@ -116,8 +116,20 @@ require("dms.windowrules")
 hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight-bar toggle"), { description = "Menu compact (ex ALT+space)" })
 hl.bind("ALT + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Menu complet (ex SUPER+space)" })
 
--- --- Règles d'espace de travail (après les modules DMS = priorité max) ---
--- Le laptop (eDP-1) porte le bureau 11, hors de la plage 1-9 : il ne s'intercale plus dans
--- le cycle des bureaux (avant il prenait le 2, donc le cycle 1-2-3 sautait sur le laptop).
+-- --- Plages de bureaux séparées par écran (après les modules DMS = priorité max) ---
+-- Extérieur = 1-9 (Super+1..9), laptop = 11-19 (Super+Ctrl+1..9). Chaque série est rattachée
+-- à son écran par une workspace rule, donc un numéro ne peut pas atterrir sur l'autre écran.
 -- Champs vérifiés dans le source : WORKSPACE_RULE_FIELDS = monitor, default, persistent, ...
 hl.workspace_rule({ workspace = "11", monitor = "eDP-1", default = true })
+for i = 1, 9 do
+	hl.workspace_rule({ workspace = tostring(i), monitor = "HDMI-A-1" })
+	hl.workspace_rule({ workspace = tostring(10 + i), monitor = "eDP-1" })
+	hl.bind("SUPER + " .. i, hl.dsp.focus({ workspace = tostring(i) }),
+		{ description = "Bureau " .. i .. " (extérieur)" })
+	hl.bind("SUPER + CTRL + " .. i, hl.dsp.focus({ workspace = tostring(10 + i) }),
+		{ description = "Bureau " .. (10 + i) .. " (laptop)" })
+	hl.bind("SUPER + SHIFT + " .. i, hl.dsp.window.move({ workspace = tostring(i) }),
+		{ description = "Fenêtre -> bureau " .. i })
+	hl.bind("SUPER + CTRL + SHIFT + " .. i, hl.dsp.window.move({ workspace = tostring(10 + i) }),
+		{ description = "Fenêtre -> bureau " .. (10 + i) .. " (laptop)" })
+end
