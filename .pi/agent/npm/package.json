@@ -2,9 +2,10 @@
   "name": "pi-extensions",
   "private": true,
   "dependencies": {
-    "@narumitw/pi-goal": "^0.51.0",
-    "@narumitw/pi-lsp": "^0.49.4",
-    "@narumitw/pi-plan-mode": "^0.49.3",
-    "pi-powerline-footer": "^0.8.1"
+    "@narumitw/pi-goal": "^0.54.4",
+    "@narumitw/pi-lsp": "^0.49.7",
+    "@narumitw/pi-plan-mode": "^0.57.1",
+    "@quintinshaw/pi-dynamic-workflows": "^3.10.1",
+    "pi-powerline-footer": "^0.17.0"
   }
 }
