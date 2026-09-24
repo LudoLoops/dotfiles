@@ -65,3 +65,5 @@ hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("ghostty"), { description = "ghostty (
 -- Super+B / Super+E : libres dans Hyprland
 hl.bind("SUPER + B", hl.dsp.exec_cmd("zen-browser"), { description = "Mango: zen-browser" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"), { description = "Mango: dolphin" })
+
+hl.unbind("Print")
