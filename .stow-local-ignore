@@ -11,3 +11,6 @@ CLAUDE.md
 .config/herdr/.plugins.lock
 .config/herdr/plugins/config
 .config/herdr/plugins/github
+
+# Reglages pi agent propres a la machine (theme clair/sombre) - ne pas stower
+.pi/agent/settings.json
