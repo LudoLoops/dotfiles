@@ -1,0 +1,12 @@
+[
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 275,
+                "origin_hash": "cb707cfd0d39398b7ca5c1444a25f1ac"
+            }
+        ],
+        "target_uinput": "mouse"
+    }
+]
