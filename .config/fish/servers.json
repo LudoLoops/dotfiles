@@ -1,0 +1,16 @@
+{
+  "hosts": [
+    {
+      "name": "tuftux",
+      "ssh": null,
+      "local": true,
+      "ignore": false
+    },
+    {
+      "name": "atlas",
+      "ssh": "atlas",
+      "local": false,
+      "ignore": false
+    }
+  ]
+}
