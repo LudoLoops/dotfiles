@@ -118,24 +118,31 @@ function __update_refresh
               }
           ]
         ) as $discovered
+      | (
+          $discovered
+          | map(
+              . as $new
+              | (first($old.hosts[]? | select(.name == $new.name)) // null) as $existing
+              | if $existing == null then
+                  $new
+                else
+                  $new
+                  + {
+                      ssh: (if $existing.ssh == null then $new.ssh else $existing.ssh end),
+                      ignore: $existing.ignore
+                    }
+                end
+            )
+        ) as $merged
+      | ($merged | map(.name)) as $seen
       | {
           hosts:
             (
-              $discovered
-              | map(
-                  . as $new
-                  | ($old.hosts[]? | select(.name == $new.name)) as $existing
-                  | if $existing then
-                      $new
-                      + {
-                          ssh: ($existing.ssh // $new.ssh),
-                          ignore: ($existing.ignore // $new.ignore),
-                          local: ($existing.local // $new.local)
-                        }
-                    else
-                      $new
-                    end
-                )
+              $merged
+              + [
+                  $old.hosts[]?
+                  | select(.name as $name | ($seen | index($name) | not))
+                ]
               | sort_by(.name)
             )
         }
@@ -184,8 +191,13 @@ end
 
 function update
     set -l inventory (__update_inventory_path)
+    set -l action ""
 
-    switch "$argv[1]"
+    if test (count $argv) -gt 0
+        set action "$argv[1]"
+    end
+
+    switch "$action"
         case --help -h
             echo "Usage:"
             echo "  update                 Update every enabled host"
@@ -208,7 +220,7 @@ function update
             return $status
 
         case --host
-            if test -z "$argv[2]"
+            if test (count $argv) -lt 2
                 echo "❌ Usage: update --host <name>"
                 return 2
             end

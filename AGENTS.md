@@ -70,8 +70,12 @@ Component-specific guidance may exist in nested `AGENTS.md` files, notably
 - `functions/index.fish` sources the function tree, including subdirectories.
 - Do not remove `index.fish`.
 - Add new functions as individual `.fish` files.
-- `update.fish` currently detects the local OS and supports Arch/CachyOS/Manjaro
-  plus Debian/Ubuntu. Its orchestration model may evolve separately.
+- `update.fish` orchestrates machine updates using `.config/fish/servers.json`.
+- `update` updates every enabled host; `update --host <name>` targets one host.
+- `update --refresh` refreshes the inventory from Tailscale while preserving existing
+  `ignore` choices and manually retained hosts. Newly discovered peers are ignored by default.
+- OS detection happens at update time, not in the inventory. Arch/CachyOS/Manjaro,
+  Debian/Ubuntu, and NixOS are supported.
 
 ## Hyprland / DMS
 
@@ -128,7 +132,11 @@ Important ignored paths include:
 | Reload Fish | `source ~/.config/fish/config.fish` |
 | Verify Hyprland | `Hyprland --verify-config` |
 | Reload Hyprland | `hyprctl reload` |
-| Local system update | `update` |
+| Update all enabled machines | `update` |
+| Update only tuftux | `update --local` |
+| Update one machine | `update --host <name>` |
+| Refresh machine inventory | `update --refresh` |
+| List machine inventory | `update --list` |
 | Neovim plugins | `:Lazy` |
 | Smart cd | `z <dir>` |
 | Check Fish syntax | `fish -n ~/.config/fish/functions/<fn>.fish` |
