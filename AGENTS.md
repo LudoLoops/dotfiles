@@ -4,126 +4,131 @@ Guide for AI agents working on these dotfiles.
 
 ## Repository
 
-**GNU Stow-based dotfiles** for Arch Linux / CachyOS + Hyprland (Wayland).
-Also deployed on Debian servers (see Multi-OS below).
+GNU Stow-based dotfiles for **tuftux** (Arch Linux / CachyOS + Hyprland).
 
 - **Git root:** `~/dotfiles/`
-- **Stow target:** `$HOME` (single package = the whole repo)
-- **Install on a new machine:**
-  ```bash
-  git clone <repo> ~/dotfiles
-  cd ~/dotfiles && stow .
-  ```
-- **After a pull:** `cd ~/dotfiles && stow .` (idempotent — recreates missing links)
-- **Re-stow after changing `.stow-local-ignore`:** `stow --restow .`
+- **Stow target:** `$HOME`
+- **Single Stow package:** the repository root
+- **Install:** `cd ~/dotfiles && stow .`
+- **After a pull:** `cd ~/dotfiles && stow --restow .`
 
-Stow creates relative symlinks, e.g. `~/.config/fish → ~/dotfiles/.config/fish`,
-`~/.bashrc → ~/dotfiles/.bashrc`.
+Stow creates relative symlinks into `$HOME`. `AGENTS.md` itself is intentionally
+stowed to `~/AGENTS.md`, so the repository copy is the source of truth.
 
-### `.stow-local-ignore`
+### Files intentionally not stowed
 
-Excluded from stow: `AGENTS.md`, `CLAUDE.md`, `.git`, `.gitignore`, `.claude`.
+See `.stow-local-ignore`. Notable entries:
 
-> Note: because `AGENTS.md` is ignored by stow, the copy at `~/AGENTS.md`
-> (loaded by agents) is **not** auto-synced from the repo. Keep both in sync manually.
+- `.config/mango/` — legacy compositor config kept only as a backup
+- `.pi/agent/settings.json` — machine-specific Pi settings
+- Herdr runtime/session/plugin state
+- Git metadata and local tool runtime directories
+
+## Current desktop
+
+- **OS:** Arch Linux / CachyOS
+- **WM:** Hyprland
+- **Desktop shell:** DMS (DankMaterialShell)
+- **Shell:** Fish 4.x + Starship
+- **Editor:** Neovim / LazyVim
+- **Terminals:** Kitty and WezTerm configs are tracked
+- **Package manager:** paru
+- **File manager:** Yazi
+
+DMS owns desktop-shell concerns such as the bar, notifications, wallpaper, lock/idle,
+and related desktop UI. Waybar, HyDE, Dunst, Niri, and Zellij are no longer part of
+the active setup.
 
 ## Structure
 
 ```
-~/dotfiles/                  # git root
-├── .config/                 # → ~/.config/
-│   ├── fish/                #   shell — config.fish + functions/
-│   ├── nvim/                #   editor (LazyVim)
-│   ├── hypr/                #   window manager (HyDE)
-│   ├── kitty/               #   terminal
-│   ├── waybar/              #   status bar
-│   ├── yazi/                #   file manager
-│   ├── zed/ zellij/ tmux/
-│   ├── starship/ btop/ rofi/ dunst/ …
-│   └── CLAUDE.md            #   component-level guide
-├── .local/bin/              # → ~/.local/bin/
-├── .bashrc                  # → ~/.bashrc
+~/dotfiles/
+├── .config/
+│   ├── fish/          # shell config + functions
+│   ├── hypr/          # Hyprland + DMS integration
+│   ├── kitty/         # Kitty
+│   ├── wezterm/       # WezTerm
+│   ├── nvim/          # LazyVim
+│   ├── starship/      # prompt
+│   ├── btop/          # system monitor
+│   ├── yazi/          # file manager
+│   ├── zed/           # editor config
+│   └── mango/         # legacy backup, ignored by Stow
+├── .local/bin/
+├── .bashrc
+├── AGENTS.md
 └── .stow-local-ignore
 ```
 
-Each major component may have its own `AGENTS.md` (e.g. `.config/zed/AGENTS.md`,
-`.config/hypr/AGENTS.md`) — consult those when working on a specific area.
-(`CLAUDE.md` était l'ancien nom, pour Claude Code ; il est remplacé par `AGENTS.md`.)
-
-## System
-
-- **OS:** Arch Linux / CachyOS (desktop), Debian (servers)
-- **WM:** Hyprland (Wayland), HyDE integration
-- **Shell:** Fish 4.x with Starship prompt
-- **Editor:** Neovim (LazyVim)
-- **Terminal:** Kitty
-- **Package manager:** paru (AUR + pacman) on Arch, apt on Debian
+Component-specific guidance may exist in nested `AGENTS.md` files, notably
+`.config/hypr/AGENTS.md` and `.config/zed/AGENTS.md`.
 
 ## Fish
 
-- **Entry:** `.config/fish/config.fish`
-- **Functions:** `.config/fish/functions/` — auto-loaded by `index.fish`,
-  which sources every `.fish` file including subdirs (`git/`, `fzf/`).
-- **Do not delete `index.fish`** — it is the loader for the whole function system.
-- **Add a function:** drop a `.fish` file in `functions/`; it loads on next shell start.
-- **Multi-OS update:** the `update` function auto-detects the OS via `/etc/os-release`
-  and runs the right command (paru + paccache on Arch, apt on Debian).
-  No templates, no per-OS files — detection is inline.
+- Entry point: `.config/fish/config.fish`
+- Functions: `.config/fish/functions/`
+- `functions/index.fish` sources the function tree, including subdirectories.
+- Do not remove `index.fish`.
+- Add new functions as individual `.fish` files.
+- `update.fish` currently detects the local OS and supports Arch/CachyOS/Manjaro
+  plus Debian/Ubuntu. Its orchestration model may evolve separately.
+
+## Hyprland / DMS
+
+- Main config: `.config/hypr/hyprland.lua`
+- DMS fragments: `.config/hypr/dms/*.lua`
+- User overrides: `.config/hypr/dms/binds-user.lua`
+- Generated DMS files such as colors are intentionally ignored by Git.
+- Legacy Mango behavior is documented where it explains current Hyprland binds,
+  but `.config/mango/` itself is not active.
+
+After Hyprland changes:
+
+```bash
+Hyprland --verify-config
+hyprctl reload
+```
 
 ## Conventions
 
-**Fish functions:**
-- `command` prefix for external tools
-- Validate args: `test -z "$arg"`
-- Error handling: `|| begin ... end`
-- Emoji for feedback: ✅ ❌ 📦
+**Fish**
+- Prefer `command` for external commands.
+- Validate arguments.
+- Handle command failures explicitly.
 
-**Neovim:** Lua, Lazy.nvim, follow LazyVim conventions.
+**Neovim**
+- Lua + Lazy.nvim; follow LazyVim conventions.
 
-**Git:** work from `~/dotfiles/`, conventional commits `type: description`.
-Never leave uncommitted changes.
+**Git**
+- Work from `~/dotfiles/`.
+- Use conventional commits: `type: description`.
+- Keep changes focused.
+- Do not leave intended repository changes uncommitted.
 
-## Files excluded from git (secrets / machine-specific)
+## Secrets and machine-specific state
 
-From `.gitignore`:
+Do not commit runtime state, credentials, caches, histories, sessions, generated
+machine-specific files, or secrets.
 
-| Pattern | Reason |
-|---------|--------|
-| `fish/fish_variables` | API keys (universal fish vars) |
-| `fish/conf.d/` | Env vars with secrets |
-| `.config/kwinrc`, `.config/kxkbrc`, `.config/plasmarc` | Machine-specific |
+Important ignored paths include:
 
-Do not read or commit these.
+- `.config/fish/fish_variables`
+- `.config/fish/conf.d/`
+- `.config/kwinrc`, `.config/kxkbrc`, `.config/plasmarc`
+- Herdr runtime/session/plugin files
+- DMS-generated color files
+- local backup files
+- `.pi/agent/settings.json`
 
 ## Common commands
 
 | Task | Command |
-|------|---------|
+|---|---|
+| Restow dotfiles | `cd ~/dotfiles && stow --restow .` |
 | Reload Fish | `source ~/.config/fish/config.fish` |
+| Verify Hyprland | `Hyprland --verify-config` |
 | Reload Hyprland | `hyprctl reload` |
-| System update | `update` (auto-detects OS) |
-| Neovim plugins | `:Lazy` inside Neovim |
-| Smart cd | `z <dir>` (zoxide) |
-| Syntax-check a fish function | `fish -n ~/.config/fish/functions/<fn>.fish` |
-
-## Architecture notes
-
-- **Modular sourcing:** Hyprland `hyprland.conf` sources `keybindings.conf`,
-  `windowrules.conf`, `monitors.conf`, `config/*.conf`. Waybar includes
-  `modules/` and `includes/`. Fish `config.fish` sources `functions/index.fish`.
-  This keeps configs split by concern rather than monolithic.
-- **HyDE:** the marker `$HYDE_HYPRLAND=set` in `hyprland.conf` prevents HyDE
-  from overwriting user configs. Preserve it.
-
-## graphify
-
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
-
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
-
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+| Local system update | `update` |
+| Neovim plugins | `:Lazy` |
+| Smart cd | `z <dir>` |
+| Check Fish syntax | `fish -n ~/.config/fish/functions/<fn>.fish` |
