@@ -1,99 +1,94 @@
-# My Dotfiles
+# Dotfiles
 
-This repository contains my system configuration files (dotfiles).
+Dotfiles for **tuftux**, managed with GNU Stow.
 
-**Setup:** GNU Stow for symlinks only. Git repo is in `.config/`.
+## Setup
 
-## 🛠 Requirements
-
-**GNU Stow** (for symlinks):
-```bash
-sudo pacman -S stow  # Arch
-sudo apt install stow  # Debian
-```
-## 🚀 Installation
-
-Clone the repository:
+The Git repository lives at `~/dotfiles` and is stowed as a single package into
+`$HOME`.
 
 ```bash
 git clone https://github.com/LudoLoops/dotfiles.git ~/dotfiles
 cd ~/dotfiles
-stow .config
+stow .
 ```
 
-## 🔗 How it works
+After pulling changes:
 
-GNU Stow creates symlinks:
 ```bash
 cd ~/dotfiles
-stow .config  # Creates all .config symlinks
+stow --restow .
 ```
 
-Result:
+Files listed in `.stow-local-ignore` stay in the repository but are not deployed.
+This is used notably for the legacy Mango configuration.
+
+## Current desktop
+
+- Arch Linux / CachyOS
+- Hyprland
+- DMS (DankMaterialShell) for the desktop shell
+- Fish + Starship
+- Neovim / LazyVim
+- Kitty and WezTerm
+- Yazi
+- paru
+
+HyDE, Waybar, Dunst, Niri, Zellij, Waypaper, Wlogout and Oh My Posh are no longer
+part of the active setup.
+
+## Main configuration
+
+```text
+.config/
+├── fish/          shell config and functions
+├── hypr/          Hyprland + DMS integration
+├── kitty/         Kitty
+├── wezterm/       WezTerm
+├── nvim/          LazyVim
+├── starship/      prompt
+├── btop/          system monitor
+├── yazi/          file manager
+├── zed/           editor config
+└── mango/         legacy backup, ignored by Stow
+```
+
+Repository guidance for coding agents lives in `AGENTS.md`. Component-specific
+guidance may live in nested `AGENTS.md` files.
+
+## Workflow
+
+Edits made through the stowed paths modify the repository files directly.
+
 ```bash
-~/.config/fish → ~/dotfiles/.config/fish
-~/.config/nvim → ~/dotfiles/.config/nvim
-~/.config/yazi → ~/dotfiles/.config/yazi
-```
-
-## 📁 Structure
-
-```
-~/dotfiles/
-└── .config/              # Git repo root (.git is here)
-    ├── fish/             # Shell functions, config
-    ├── nvim/             # Neovim config
-    ├── yazi/             # File manager
-    ├── hypr/             # Hyprland WM
-    ├── waybar/           # Status bar
-    └── ...
-```
-
-## 🔄 Update workflow
-
-Edit configs directly (they're symlinks):
-```bash
-nvim ~/.config/fish/config.fish  # Edits ~/dotfiles/.config/fish/config.fish
-```
-
-Commit and push:
-```bash
+nvim ~/.config/fish/config.fish
 cd ~/dotfiles
+git status
+git diff
 git add -A
-git commit -m "update"
+git commit -m "type: description"
 git push
 ```
 
-## 🔤 Spell check FR (Zed / cspell)
+## Zed / cspell French dictionary
 
-Le spell-check FR de Zed (extension cspell) nécessite le dictionnaire français,
-installé **par machine** via bun (il n'est pas dans le repo) :
+The French cspell dictionary is installed per machine:
 
 ```bash
 bun add -g @cspell/dict-fr-fr
 ```
 
-La config `.config/cspell/cspell.json` (stowée) pointe vers ce dico et désactive
-le `caseSensitive` (sinon "Tous", "Aucune"... ne sont pas reconnus).
+The tracked `.config/cspell/cspell.json` points to that dictionary. When Zed runs
+against a remote machine, cspell and its dictionary must also exist on that remote
+machine.
 
-⚠️ **Zed en SSH remote** : les LSP (dont cspell) tournent **sur le serveur distant**,
-pas en local. Le dico et la config doivent donc être installés sur la machine distante
-(aether inclus).
+## WezTerm theme shortcuts
 
-Après installation ou changement de config : redémarrer Zed (le LSP charge la config
-au démarrage uniquement).
-
----
-
-📌 Keep it modular, minimal, and portable.
-
-## 🎨 Raccourcis WezTerm (thèmes)
-
-| Raccourci | Action |
+| Shortcut | Action |
 |---|---|
-| `Ctrl+Shift+J/K` | Thème WezTerm suivant/précédent (aperçu live) |
-| `Ctrl+Shift+U` | Fuzzy-search de tous les thèmes |
-| `Ctrl+Shift+L` | Skin Hermes **light** (`warm-lightmode`) |
-| `Ctrl+Shift+D` | Skin Hermes **dark** (`slate`) |
+| `Ctrl+Shift+J/K` | Next / previous WezTerm theme |
+| `Ctrl+Shift+U` | Fuzzy-search themes |
+| `Ctrl+Shift+L` | Hermes light skin (`warm-lightmode`) |
+| `Ctrl+Shift+D` | Hermes dark skin (`slate`) |
 
-`palette-preview` (fish) affiche le thème courant + les 16 couleurs ANSI.
+`palette-preview` in Fish shows the current palette and ANSI colors.
