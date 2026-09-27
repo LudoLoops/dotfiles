@@ -58,3 +58,7 @@ fish_variables
 # Machine-specific Pi agent settings
 .pi/agent/settings.json
 
+
+.config/fish/servers.json
+.config/niri/dms/colors.kdl
+.config/waybar/theme.css

@@ -60,19 +60,36 @@ function __update_inventory_path
     echo "$HOME/.config/fish/servers.json"
 end
 
-function __update_list
+function __update_inventory_default_path
+    echo "$HOME/.config/fish/servers.default.json"
+end
+
+function __update_ensure_inventory
     set -l inventory (__update_inventory_path)
 
-    if not test -f "$inventory"
-        echo "❌ Inventory not found: $inventory"
-        return 1
+    if test -f "$inventory"
+        return
     end
+
+    set -l default_inventory (__update_inventory_default_path)
+    if test -f "$default_inventory"
+        command cp "$default_inventory" "$inventory"
+    else
+        echo '{"hosts":[]}' >"$inventory"
+    end
+end
+
+function __update_list
+    set -l inventory (__update_inventory_path)
+    __update_ensure_inventory
+
 
     command jq -r '.hosts[] | "\(.name)\t\(if .local then "local" else (.ssh // "-") end)\t\(if .ignore then "ignored" else "enabled" end)"' "$inventory"         | command column -t -s (printf '\t')
 end
 
 function __update_refresh
     set -l inventory (__update_inventory_path)
+    __update_ensure_inventory
 
     if not type -q tailscale
         echo "❌ tailscale is not installed"
@@ -90,10 +107,6 @@ function __update_refresh
     command tailscale status --json >"$status_file" || begin
         rm -f "$status_file" "$merged_file"
         return 1
-    end
-
-    if not test -f "$inventory"
-        echo '{"hosts":[]}' >"$inventory"
     end
 
     command jq -s '
@@ -161,6 +174,7 @@ end
 
 function __update_host --argument requested
     set -l inventory (__update_inventory_path)
+    __update_ensure_inventory
 
     if not type -q jq
         echo "❌ jq is required"
@@ -191,6 +205,7 @@ end
 
 function update
     set -l inventory (__update_inventory_path)
+    __update_ensure_inventory
     set -l action ""
 
     if test (count $argv) -gt 0
@@ -237,12 +252,6 @@ function update
 
     if not type -q jq
         echo "❌ jq is required"
-        return 1
-    end
-
-    if not test -f "$inventory"
-        echo "❌ Inventory not found: $inventory"
-        echo "   Run: update --refresh"
         return 1
     end
 
