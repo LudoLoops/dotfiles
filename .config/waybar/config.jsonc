@@ -73,7 +73,6 @@
         "orientation": "inherit",
         "modules": [
             "custom/cliphist",
-            "custom/hyde-menu",
             "custom/power"
         ]
     }

@@ -6,8 +6,8 @@
     "on-click": "~/.config/waybar/bin/audio-output-cycle",
     "on-click-right": "pavucontrol-qt -t 3 || pavucontrol -t 3",
     "on-click-middle": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
-    "on-scroll-up": "hyde-shell volumecontrol -o i",
-    "on-scroll-down": "hyde-shell volumecontrol -o d",
+    "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +5%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -5%",
     "tooltip-format": "{icon} {desc} // {volume}%",
     "scroll-step": 5,
     "format-icons": {

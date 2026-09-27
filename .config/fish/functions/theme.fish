@@ -1,15 +1,12 @@
-function theme --description 'Switch theme — Kitty + Zellij'
+function theme --description 'Switch Kitty theme'
     set -l themes mocha frappe latte tokyo-night rose-pine gruvbox nord
     set -l conf ~/.config/kitty/kitty.conf
-    set -l zconf ~/.config/zellij/config.kdl
 
-    # Thème actuel
     set -l current (grep -oE '(mocha|frappe|latte|tokyo-night|rose-pine|gruvbox|nord)' $conf | head -1)
     if test -z "$current"
         set current "?"
     end
 
-    # Mode direct: theme frappe
     if test (count $argv) -gt 0
         if contains $argv[1] $themes
             _theme_switch $argv[1]
@@ -17,7 +14,6 @@ function theme --description 'Switch theme — Kitty + Zellij'
         end
     end
 
-    # Menu simple
     echo ""
     echo "  Current: $current"
     echo ""
@@ -39,8 +35,7 @@ function theme --description 'Switch theme — Kitty + Zellij'
 
     if string match -qr '^\d+$' -- $choice
         if test $choice -ge 1 -a $choice -le (count $themes)
-            set -l picked $themes[$choice]
-            _theme_switch $picked
+            _theme_switch $themes[$choice]
             return
         end
     end
@@ -51,16 +46,8 @@ end
 function _theme_switch
     set -l theme $argv[1]
     set -l conf ~/.config/kitty/kitty.conf
-    set -l zconf ~/.config/zellij/config.kdl
 
     sed -i "s/include \(mocha\|frappe\|latte\|tokyo-night\|rose-pine\|gruvbox\|nord\)\.conf/include $theme.conf/" $conf
 
-    set -l zname $theme
-    switch $theme
-        case gruvbox
-            set zname "gruvbox-dark"
-    end
-    sed -i "s/theme \".*\"/theme \"$zname\"/" $zconf
-
-    echo "✓ $theme — restart Zellij to apply"
+    echo "✓ $theme — restart Kitty to apply"
 end
