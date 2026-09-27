@@ -122,7 +122,7 @@ function __update_refresh
           $discovered
           | map(
               . as $new
-              | (first($old.hosts[]? | select(.name == $new.name)) // null) as $existing
+              | (first($old.hosts[]? | select((.name | ascii_downcase) == ($new.name | ascii_downcase))) // null) as $existing
               | if $existing == null then
                   $new
                 else
@@ -134,14 +134,14 @@ function __update_refresh
                 end
             )
         ) as $merged
-      | ($merged | map(.name)) as $seen
+      | ($merged | map(.name | ascii_downcase)) as $seen
       | {
           hosts:
             (
               $merged
               + [
                   $old.hosts[]?
-                  | select(.name as $name | ($seen | index($name) | not))
+                  | select((.name | ascii_downcase) as $name | ($seen | index($name) | not))
                 ]
               | sort_by(.name)
             )
