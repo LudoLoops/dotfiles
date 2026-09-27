@@ -11,7 +11,7 @@ function __update_local
     switch "$os_id"
         case arch cachyos manjaro
             echo "📦 Updating Arch packages..."
-            command paru -Syu --noconfirm || return 1
+            command paru -Syu --noconfirm --sudoflags "-n" || return 1
 
             if type -q paccache
                 echo "🧹 Cleaning package cache..."
@@ -58,7 +58,7 @@ function __update_remote --argument ssh_target display_name
 
 case "$ID" in
   arch|cachyos|manjaro)
-    paru -Syu --noconfirm
+    paru -Syu --noconfirm --sudoflags "-n"
     if command -v paccache >/dev/null 2>&1; then
       sudo paccache -rk1 || true
     fi
