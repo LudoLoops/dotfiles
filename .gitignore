@@ -59,3 +59,9 @@ fish_variables
 .config/tmux/plugins/
 # DMS local backups (migration artifacts)
 .config/hypr/.dms-backups/
+
+# Machine-specific Pi agent settings
+.pi/agent/settings.json
+
+# Local input-remapper backups
+.config/input-remapper-2/*.bak*

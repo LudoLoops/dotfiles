@@ -1,7 +1,0 @@
-/* Loops theme */
-
-@import "/home/loops/.local/share/waybar/styles/defaults.css";
-
-window#waybar {
-    background: transparent;
-}

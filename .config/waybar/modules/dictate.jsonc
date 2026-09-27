@@ -1,8 +1,0 @@
-{
-    "module/dictate": {
-        "return-type": "json",
-        "exec": "$HOME/.config/waybar/bin/dictate-status",
-        "interval": 2,
-        "on-click": "~/.local/bin/dictate-toggle"
-    }
-}
