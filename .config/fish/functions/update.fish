@@ -25,8 +25,8 @@ function __update_local
 
         case debian ubuntu
             echo "📦 Updating Debian packages..."
-            command sudo apt update || return 1
-            command sudo apt upgrade -y || return 1
+            command sudo -n apt update || return 1
+            command sudo -n apt upgrade -y || return 1
 
         case nixos
             set -l repo "$HOME/nixos-atlas"
@@ -65,8 +65,8 @@ case "$ID" in
     fi
     ;;
   debian|ubuntu)
-    sudo apt update
-    sudo apt upgrade -y
+    sudo -n apt update
+    sudo -n apt upgrade -y
     ;;
   nixos)
     repo="$HOME/nixos-atlas"
