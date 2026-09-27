@@ -27,6 +27,7 @@ function __update_local
             echo "📦 Updating Debian packages..."
             command sudo -n apt update || return 1
             command sudo -n apt upgrade -y || return 1
+            command sudo -n apt autoremove -y || return 1
 
         case nixos
             set -l repo "$HOME/nixos-atlas"
@@ -67,6 +68,7 @@ case "$ID" in
   debian|ubuntu)
     sudo -n apt update
     sudo -n apt upgrade -y
+    sudo -n apt autoremove -y
     ;;
   nixos)
     repo="$HOME/nixos-atlas"
