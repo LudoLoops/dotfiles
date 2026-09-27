@@ -15,3 +15,6 @@ CLAUDE.md
 # Reglages pi agent propres a la machine (theme clair/sombre) - ne pas stower
 .pi/agent/settings.json
 .config/herdr/release-notes.json
+
+# Legacy compositor config kept as backup
+.config/mango/
