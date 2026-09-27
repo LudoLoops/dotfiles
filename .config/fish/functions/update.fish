@@ -97,7 +97,7 @@ function __update_refresh
     end
 
     command jq -s '
-      def clean_dns: sub("\\.$"; "");
+      def clean_dns: rtrimstr(".");
       .[0] as $old
       | .[1] as $ts
       | (
