@@ -26,6 +26,7 @@ function __update_local
         case debian ubuntu
             echo "📦 Updating Debian packages..."
             command sudo -n apt update || return 1
+            command apt list --upgradable 2>/dev/null
             command sudo -n apt upgrade -y || return 1
             command sudo -n apt autoremove -y || return 1
 
@@ -67,6 +68,7 @@ case "$ID" in
     ;;
   debian|ubuntu)
     sudo -n apt update
+    apt list --upgradable 2>/dev/null
     sudo -n apt upgrade -y
     sudo -n apt autoremove -y
     ;;
