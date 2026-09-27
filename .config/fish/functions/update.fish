@@ -51,9 +51,23 @@ function __update_remote --argument ssh_target display_name
     echo
     echo "━━━ $display_name ($ssh_target) ━━━"
 
-    set -l script (string join '\n'         'set -e'         'os_id=$(sed -n '\''s/^ID=//p'\'' /etc/os-release | tr -d '\''"'\'')'         'case "$os_id" in'         '  arch|cachyos|manjaro)'         '    paru -Syu --noconfirm'         '    command -v paccache >/dev/null 2>&1 && sudo paccache -rk1 || true'         '    command -v flatpak >/dev/null 2>&1 && flatpak update -y || true'         '    ;;'         '  debian|ubuntu)'         '    sudo apt update'         '    sudo apt upgrade -y'         '    ;;'         '  nixos)'         '    repo="$HOME/nixos-atlas"'         '    test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }'         '    git -C "$repo" pull --ff-only'         '    sudo nixos-rebuild switch --flake "$repo#atlas"'         '    ;;'         '  *) echo "Unsupported OS: $os_id" >&2; exit 1 ;;'         'esac')
+    set -l os_id (command ssh "$ssh_target" "sed -n 's/^ID=//p' /etc/os-release | tr -d '\"'")
+    if test $status -ne 0
+        echo "❌ Failed to detect OS on $display_name"
+        return 1
+    end
 
-    command ssh -t "$ssh_target" bash -lc (string escape -- "$script")
+    switch "$os_id"
+        case arch cachyos manjaro
+            command ssh -t "$ssh_target" 'paru -Syu --noconfirm; if command -v paccache >/dev/null 2>&1; then sudo paccache -rk1 || true; end'
+        case debian ubuntu
+            command ssh -t "$ssh_target" 'sudo apt update && sudo apt upgrade -y'
+        case nixos
+            command ssh -t "$ssh_target" 'repo="$HOME/nixos-atlas"; test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }; git -C "$repo" pull --ff-only && sudo nixos-rebuild switch --flake "$repo#atlas"'
+        case '*'
+            echo "❌ Unsupported OS on $display_name: $os_id"
+            return 1
+    end
 end
 
 function __update_inventory_path
