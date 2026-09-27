@@ -181,7 +181,7 @@ function __update_host --argument requested
         return 1
     end
 
-    set -l entry (command jq -c --arg name "$requested" '.hosts[] | select(.name == $name)' "$inventory")
+    set -l entry (command jq -c --arg name "$requested" '.hosts[] | select((.name | ascii_downcase) == ($name | ascii_downcase))' "$inventory")
     if test -z "$entry"
         echo "❌ Unknown host: $requested"
         return 1

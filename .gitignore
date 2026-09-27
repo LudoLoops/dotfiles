@@ -60,5 +60,5 @@ fish_variables
 
 
 .config/fish/servers.json
-.config/niri/dms/colors.kdl
-.config/waybar/theme.css
+.config/niri/
+.config/waybar/
