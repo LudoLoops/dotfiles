@@ -7,10 +7,6 @@
 # Usage: fastfetch → runs fastfetch -l none
 abbr -a fastfetch 'fastfetch -l none'
 
-# Update the current machine through the shared updater.
-# Usage: up → update --local
-alias up='update --local'
-
 # Nvim Editor Launcher
 # Launches Neovim in the current terminal
 # Usage: v [path] → opens path or current directory in nvim
