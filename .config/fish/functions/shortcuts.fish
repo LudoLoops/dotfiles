@@ -7,9 +7,9 @@
 # Usage: fastfetch → runs fastfetch -l none
 abbr -a fastfetch 'fastfetch -l none'
 
-# Nix flake update
-# Usage: fu → nix flake update
-alias fu='nix flake update'
+# Update the current machine through the shared updater.
+# Usage: up → update --local
+alias up='update --local'
 
 # Nvim Editor Launcher
 # Launches Neovim in the current terminal
