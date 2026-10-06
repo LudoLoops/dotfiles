@@ -37,7 +37,8 @@ function __update_local
                 return 1
             end
 
-            if test -n (command git -C "$repo" status --porcelain)
+            set -l dirty (command git -C "$repo" status --porcelain)
+            if test (count $dirty) -gt 0
                 echo "❌ Atlas repository is dirty: $repo"
                 echo "   Commit, stash, or discard local changes before running update."
                 return 1
