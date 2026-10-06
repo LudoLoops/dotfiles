@@ -37,8 +37,28 @@ function __update_local
                 return 1
             end
 
+            if test -n (command git -C "$repo" status --porcelain)
+                echo "❌ Atlas repository is dirty: $repo"
+                echo "   Commit, stash, or discard local changes before running update."
+                return 1
+            end
+
             echo "📦 Updating Atlas from its configuration repository..."
+            command git -C "$repo" switch main || return 1
             command git -C "$repo" pull --ff-only || return 1
+
+            echo "♻️  Updating Nix flake inputs..."
+            command nix flake update --flake "$repo" || return 1
+
+            if not command git -C "$repo" diff --quiet -- flake.lock
+                echo "📝 Publishing updated flake.lock to GitLab..."
+                command git -C "$repo" add flake.lock || return 1
+                command git -C "$repo" commit -m "chore(flake): update inputs" || return 1
+                command git -C "$repo" push origin main || return 1
+            else
+                echo "✅ Nix flake inputs already up to date"
+            end
+
             command sudo nixos-rebuild switch --flake "$repo#atlas" || return 1
 
         case '*'
@@ -75,7 +95,28 @@ case "$ID" in
   nixos)
     repo="$HOME/nixos-atlas"
     test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
+
+    if [ -n "$(git -C "$repo" status --porcelain)" ]; then
+      echo "Atlas repository is dirty: $repo" >&2
+      echo "Commit, stash, or discard local changes before running update." >&2
+      exit 1
+    fi
+
+    git -C "$repo" switch main
     git -C "$repo" pull --ff-only
+
+    echo "Updating Nix flake inputs..."
+    nix flake update --flake "$repo"
+
+    if ! git -C "$repo" diff --quiet -- flake.lock; then
+      echo "Publishing updated flake.lock to GitLab..."
+      git -C "$repo" add flake.lock
+      git -C "$repo" commit -m "chore(flake): update inputs"
+      git -C "$repo" push origin main
+    else
+      echo "Nix flake inputs already up to date"
+    fi
+
     sudo nixos-rebuild switch --flake "$repo#atlas"
     ;;
   *)
