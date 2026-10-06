@@ -1,0 +1,56 @@
+{
+  "version": 3,
+  "workspaces": [
+    {
+      "id": "w7",
+      "custom_name": null,
+      "identity_cwd": "/home/loops/1Dev/Projects/denden",
+      "public_pane_numbers": {
+        "2": 2,
+        "3": 4
+      },
+      "next_public_pane_number": 5,
+      "public_tab_numbers": [
+        2,
+        4
+      ],
+      "next_public_tab_number": 5,
+      "tabs": [
+        {
+          "custom_name": null,
+          "layout": {
+            "Pane": 2
+          },
+          "panes": {
+            "2": {
+              "cwd": "/home/loops/1Dev/Projects/denden"
+            }
+          },
+          "zoomed": false,
+          "focused": 2,
+          "root_pane": 2
+        },
+        {
+          "custom_name": null,
+          "layout": {
+            "Pane": 3
+          },
+          "panes": {
+            "3": {
+              "cwd": "/home/loops/1Dev/Projects"
+            }
+          },
+          "zoomed": false,
+          "focused": 3,
+          "root_pane": 3
+        }
+      ],
+      "active_tab": 1
+    }
+  ],
+  "active": 0,
+  "selected": 0,
+  "sidebar_width": null,
+  "sidebar_section_split": null,
+  "collapsed_space_keys": []
+}
