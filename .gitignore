@@ -6,6 +6,7 @@ fish_variables
 .config/kxkbrc
 .config/plasmarc
 
+.config/herdr/session-snapshots/
 # fish config folder
 .config/fish/conf.d/
 
