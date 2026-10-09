@@ -40,14 +40,6 @@ set -gx PATH $_path_extra $PATH
 set fzf_preview_dir_cmd eza --all --color=always
 set fzf_fd_opts --hidden --ignore node_modules --max-depth 5
 
-### "bat" as manpager
-set -x MANROFFOPT -c
-if type -q bat
-    set -x MANPAGER "sh -c 'col -bx | bat -plman'"
-else if type -q batcat
-    set -x MANPAGER "sh -c 'col -bx | batcat -plman'"
-end
-
 # This prevents me from installing packages with pip without being
 # in a virtualenv first.
 set -g -x PIP_REQUIRE_VIRTUALENV true
@@ -58,16 +50,6 @@ set -g -x PIP_REQUIRE_VIRTUALENV true
 # update
 
 #
-# bat — Debian uses batcat, Arch uses bat
-if type -q bat
-    alias cat='bat --style=plain'
-else if type -q batcat
-    alias cat='batcat --style=plain'
-end
-# Kitty icat — only if kitten is available
-if type -q kitten
-    alias icat='kitten icat'
-end
 
 # Replace ls with eza
 alias ls='eza --icons --color=always --group-directories-first' # my preferred listing
@@ -125,12 +107,11 @@ if type -q zeditor
 end
 # Note: Kitty SSH integration disabled - use `kitty +kitten ssh host` explicitly if needed
 
-
 # Added by Antigravity CLI installer
 set -gx PATH "/home/loops/.local/bin" $PATH
 
 # rag-ferrite — local on aether, SSH from anywhere else
-if test (hostname) = "aether"
+if test (hostname) = aether
     alias rag-ferrite '~/services/rag-ferrite/rag-ferrite'
 else
     alias rag-ferrite 'ssh -t aether ~/services/rag-ferrite/rag-ferrite'
