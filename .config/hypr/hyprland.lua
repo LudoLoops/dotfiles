@@ -24,6 +24,7 @@ hl.config({
 		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
 		explicit_column_widths = "0.25, 0.5, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
+		wrap_focus = true, -- Super+A/D: boucler entre colonnes sans changer de moniteur
 	},
 	input = {
 		-- Mango input.conf : xkb_rules_layout=us + xkb_rules_variant=altgr-intl
