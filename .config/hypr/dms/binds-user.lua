@@ -59,7 +59,7 @@ hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { description = "Next window" }
 hl.unbind("ALT + space")
 hl.unbind("Print")
 hl.unbind("SUPER + F")
-hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }), { description = "Fullscreen" })
+hl.bind("SUPER + F", hl.dsp.window.fullscreen_state({ internal = 2, client = 0, action = "toggle" }), { description = "Fake fullscreen" })
 hl.unbind("SUPER + RETURN")
 hl.unbind("SUPER + SHIFT + F")
 hl.bind("SUPER + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }), { description = "Maximize" })
