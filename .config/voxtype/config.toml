@@ -9,7 +9,7 @@
 # ("idle", "recording", "transcribing") to this file whenever it changes.
 # Required for `voxtype record toggle` and `voxtype status` commands.
 state_file = "auto"
-engine = "whisper"
+engine = "whistle"
 
 [hotkey]
 # Key to hold for push-to-talk
@@ -53,6 +53,11 @@ pause_media = true
 
 [audio.feedback]
 enabled = false
+
+[whistle]
+model = "whistle.cact"
+language = "fr"
+runtime = "/home/loops/.local/lib/voxtype/libneedle.so"
 
 [whisper]
 # Transcription backend: "local" or "remote"
@@ -119,13 +124,13 @@ gpu_isolation = false
 #
 # Enable eager input processing (transcribe chunks while recording continues)
 # Reduces perceived latency on slower machines by processing audio in parallel.
- eager_processing = true
+eager_processing = true
 #
 # Duration of each audio chunk in seconds (default: 5.0)
- eager_chunk_secs = 3.0
+eager_chunk_secs = 3.0
 #
 # Overlap between chunks in seconds (helps catch words at boundaries, default: 0.5)
- eager_overlap_secs = 0.5
+eager_overlap_secs = 0.5
 language = "fr"
 
 # --- Remote backend settings (used when backend = "remote") ---
@@ -150,7 +155,8 @@ language = "fr"
 # - type: Simulates keyboard input at cursor position (requires ydotool)
 # - clipboard: Copies text to clipboard (requires wl-copy)
 mode = "type"
-
+restore_clipboard = true
+restore_clipboard_delay_ms = 500
 # Fall back to clipboard if typing fails
 fallback_to_clipboard = true
 
@@ -162,14 +168,14 @@ fallback_to_clipboard = true
 #   driver_order = ["wtype", "ydotool", "dotool", "clipboard"]
 # Example: use only ydotool, no fallback:
 #   driver_order = ["ydotool"]
-driver_order = ["ydotool", "wtype", "clipboard"]
+driver_order = ["wtype", "ydotool", "clipboard"]
 
 # Delay between typed characters in milliseconds
 # 0 = fastest possible, increase if characters are dropped
-type_delay_ms = 0
+type_delay_ms = 8
 auto_submit = false
 shift_enter_newlines = false
-pre_type_delay_ms = 0
+pre_type_delay_ms = 1000
 
 # Automatically submit (send Enter key) after outputting transcribed text
 # Useful for chat applications, command lines, or forms where you want
