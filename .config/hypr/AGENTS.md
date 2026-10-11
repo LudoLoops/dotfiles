@@ -45,7 +45,8 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   l'instance du device).
   ⚠️ Ne PAS revenir à Input Remapper : le preset `swap-buttons` grabbe le device et casse le
   clic. Arrêt d'une injection : `input-remapper-control --command stop-all`.
-- **Plages de bureaux séparées par écran** (générées par une boucle Lua dans `hyprland.lua`,
+- **Plages de bureaux séparées par écran** (règles générées par une boucle Lua dans
+  `hyprland.lua`, raccourcis numérotés déclarés explicitement avec descriptions anglaises,
   après les require() DMS) : extérieur **1-9** (`Super+1..9`), laptop **11-19**
   (`Super+Ctrl+1..9`). Chaque série est rattachée à son écran par une workspace rule
   (`workspace = N, monitor: ...`), donc un numéro ne peut pas atterrir sur l'autre écran.
