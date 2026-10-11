@@ -13,8 +13,9 @@
 Tout le reste (wallpaper, idle, lock, notifications, bar) = DMS.
 
 ## Syntaxe binds Lua
-`hl.bind("SUPER + W", hl.dsp.focus({ workspace = "e-1" }))` — le dernier
+`hl.bind("SUPER + W", hl.dsp.focus({ workspace = "r-1" }))` — le dernier
 bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua).
+`Super+S` / `Super+W` : navigation `r+1` / `r-1` sur le moniteur actif, y compris les bureaux vides.
 
 ## Parité Mango WM (sept. 2026)
 - **Clavier** : `input.kb_layout = "us"` + `kb_variant = "altgr-intl"` (= Mango
