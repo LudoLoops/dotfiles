@@ -78,7 +78,7 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   | `view`/`viewtoleft|right` — Super+1-9, Super+w/s | `hl.dsp.focus({ workspace })` |
   | `switch_proportion_preset` — Super+Ctrl+a/d | `hl.dsp.layout("colresize -conf" / "+conf")` |
   | `focusstack next` — Alt+Tab | `hl.dsp.window.cycle_next({ next = true })` |
-- **Lanceurs** (parité Mango) : `Super+T` = wezterm, `Super+B` = zen-browser,
+- **Lanceurs** (parité Mango) : `Super+T` = kitty, `Super+B` = zen-browser,
   `Super+E` = dolphin, `Super+O` = obsidian. Binds Hyprland en conflit déplacés :
   ghostty (`Super+T`) → **Super+Return**, overview (`Super+O`) → **Super+Z**
   (= touche overview de Mango ; `Super+Tab` reste aussi).
