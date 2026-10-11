@@ -114,8 +114,8 @@ require("dms.windowrules")
 -- dms/binds-user.lua contient `hl.unbind("SUPER + space")` et `hl.unbind("ALT + space")`
 -- sans rebind derrière → les deux menus étaient injoignables. Remis ici, après les require(),
 -- en échangeant les deux : le menu complet passe sur ALT+space, le menu compact sur SUPER+space.
-hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight-bar toggle"), { description = "Menu compact (ex ALT+space)" })
-hl.bind("ALT + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Menu complet (ex SUPER+space)" })
+hl.bind("SUPER + space", hl.dsp.exec_cmd("dms ipc call spotlight-bar toggle"), { description = "Ouvrir le menu compact" })
+hl.bind("ALT + space", hl.dsp.exec_cmd("dms ipc call spotlight toggle"), { description = "Ouvrir le menu complet" })
 
 -- --- Plages de bureaux séparées par écran (après les modules DMS = priorité max) ---
 -- Extérieur = 1-9 (Super+1..9), laptop = 11-19 (Super+Ctrl+1..9). Chaque série est rattachée
@@ -126,13 +126,13 @@ for i = 1, 9 do
 	hl.workspace_rule({ workspace = tostring(i), monitor = "HDMI-A-1" })
 	hl.workspace_rule({ workspace = tostring(10 + i), monitor = "eDP-1" })
 	hl.bind("SUPER + " .. i, hl.dsp.focus({ workspace = tostring(i) }),
-		{ description = "Bureau " .. i .. " (extérieur)" })
+		{ description = "Aller au bureau " .. i .. " (écran externe)" })
 	hl.bind("SUPER + CTRL + " .. i, hl.dsp.focus({ workspace = tostring(10 + i) }),
-		{ description = "Bureau " .. (10 + i) .. " (laptop)" })
+		{ description = "Aller au bureau " .. (10 + i) .. " (portable)" })
 	hl.bind("SUPER + SHIFT + " .. i, hl.dsp.window.move({ workspace = tostring(i) }),
-		{ description = "Fenêtre -> bureau " .. i })
+		{ description = "Déplacer la fenêtre vers le bureau " .. i })
 	hl.bind("SUPER + CTRL + SHIFT + " .. i, hl.dsp.window.move({ workspace = tostring(10 + i) }),
-		{ description = "Fenêtre -> bureau " .. (10 + i) .. " (laptop)" })
+		{ description = "Déplacer la fenêtre vers le bureau " .. (10 + i) .. " (portable)" })
 end
 
 -- --- Screenshot : annotation satty + presse-papier + sauvegarde ---
