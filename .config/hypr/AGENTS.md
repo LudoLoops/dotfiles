@@ -16,6 +16,12 @@ Tout le reste (wallpaper, idle, lock, notifications, bar) = DMS.
 `hl.bind("SUPER + W", hl.dsp.focus({ workspace = "r-1" }))` — le dernier
 bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua).
 `Super+S` / `Super+W` : navigation `r+1` / `r-1` sur le moniteur actif, y compris les bureaux vides.
+- Les binds personnalisés de `hyprland.lua` (bureaux numérotés, menus et Print) sont
+  précédés de `hl.unbind(...)` après les `require("dms.*")` : évite de conserver
+  simultanément le bind par défaut DMS et le bind personnalisé.
+  Le libellé « overridden by config.kdl » de l’éditeur DMS est codé en dur et
+  peut apparaître sous Hyprland ; vérifier les conflits réels dans
+  `dms keybinds show hyprland` plutôt que chercher un fichier Niri `config.kdl`.
 
 ## Parité Mango WM (sept. 2026)
 - **Clavier** : `input.kb_layout = "us"` + `kb_variant = "altgr-intl"` (= Mango
