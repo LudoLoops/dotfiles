@@ -211,10 +211,10 @@ hl.bind("SUPER + CTRL + SHIFT + 8", hl.dsp.window.move({ workspace = "18" }), { 
 hl.unbind("SUPER + CTRL + SHIFT + 9")
 hl.bind("SUPER + CTRL + SHIFT + 9", hl.dsp.window.move({ workspace = "19" }), { description = "Send to 19 (laptop)" })
 
--- --- Screenshot : annotation satty + presse-papier + sauvegarde ---
+-- --- Screenshot : annotation satty + presse-papier uniquement ---
 -- Prend le pas sur le bind DMS de Print (chargé après les require()).
 -- Capture le moniteur actif (image figée), satty pour annoter/recadrer,
--- Entrée = copie dans le presse-papier + fichier dans ~/Pictures/Screenshots.
+-- Entrée = copie dans le presse-papier, sans sauvegarde automatique.
 hl.unbind("Print")
 hl.bind("Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/screenshot-annotate.sh"),
 	{ description = "Screenshot & annotate" })

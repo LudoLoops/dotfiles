@@ -1,13 +1,10 @@
 #!/bin/bash
 # Screenshot avec annotation : capture le moniteur actif (image figée), ouvre satty pour
-# annoter/recadrer, et Entrée = copie dans le presse-papier + sauvegarde du fichier.
+# annoter/recadrer, et Entrée = copie uniquement dans le presse-papier.
 #
 # Flux repris du script Mango (~/.config/mango/scripts/screenshot.sh), porté sur Hyprland
-# (hyprctl au lieu de mmsg) avec la copie presse-papier et la sauvegarde.
+# (hyprctl au lieu de mmsg), sans enregistrement automatique.
 set -u
-
-DIR="$HOME/Pictures/Screenshots"
-mkdir -p "$DIR"
 
 MON=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
 
@@ -22,7 +19,5 @@ grim -o "$MON" - | satty \
     --resize smart \
     --floating-hack \
     --copy-command wl-copy \
-    --output-filename "$DIR/Screenshot_%Y-%m-%d_%H-%M-%S.png" \
     --actions-on-enter save-to-clipboard \
-    --save-after-copy \
     --early-exit all

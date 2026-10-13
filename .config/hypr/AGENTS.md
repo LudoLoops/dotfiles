@@ -69,8 +69,8 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   `hyprctl dispatch 'hl.dsp.window.move({ workspace = "11", follow = false, window = "address:0x..." })'`.
 - **Screenshot (Print)** : `.config/hypr/bin/screenshot-annotate.sh` — capture le **moniteur actif**
   (grim, image figée donc pas de sélection live), puis **satty** pour annoter/recadrer, et
-  **Entrée = copie dans le presse-papier + sauvegarde** dans
-  `~/Pictures/Screenshots/Screenshot_<date>.png` (`--save-after-copy`, `--early-exit all`).
+  **Entrée = copie uniquement dans le presse-papier**, sans création de fichier
+  (`--actions-on-enter save-to-clipboard`, `--early-exit all`).
   Le bind est posé dans `hyprland.lua` après les require() → il prend le pas sur le
   `dms screenshot` de DMS (dont le bind reste enregistré mais masqué : le dernier gagne).
   `Ctrl+Print` / `Alt+Print` restent ceux de DMS (écran complet / fenêtre).
