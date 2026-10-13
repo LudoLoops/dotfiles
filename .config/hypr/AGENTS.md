@@ -34,10 +34,9 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
 - **Bureaux empilés verticalement** : `hl.animation({ leaf = "workspaces",
   style = "slidevert" })` = `tag_animation_direction=0` côté Mango. Hyprland
   n'a pas de pile de workspaces verticale — l'effet vient de l'animation.
-- **Molette dans la fenêtre non active** : `input.follow_mouse = 2` (focus pointeur détaché
-  du focus clavier). Avec `0`, Hyprland ne donne jamais le focus pointeur à la fenêtre
-  survolée → la molette ne part qu'à la fenêtre focusée. `2` = comportement Mango/dwl
-  (molette + survol vers la fenêtre sous le curseur, clic = focus clavier).
+- **Focus indépendant du survol** : `input.follow_mouse = 0`. Déplacer le pointeur
+  sur une autre fenêtre ne change pas le focus ; la molette ne cible pas une
+  fenêtre inactive simplement parce que le pointeur la survole.
 - **Trackball Kensington SlimBlade Pro — échange clic droit ↔ bouton latéral (ACTIF).**
   5 boutons sur l'interface souris : BTN_LEFT(272), BTN_RIGHT(273), BTN_MIDDLE(274),
   BTN_SIDE(275), BTN_EXTRA(276). L'échange est fait par un remap **noyau** (`EVIOCSKEYCODE`) :
