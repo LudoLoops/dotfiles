@@ -15,5 +15,11 @@ AGENTS.md
 .pi/agent/settings.json
 .config/herdr/release-notes.json
 
+# DMS-managed local configuration (do not overwrite with Stow)
+.config/environment.d/90-dms.conf
+.config/kitty/dank-tabs.conf
+.config/kitty/dank-theme.conf
+.config/wezterm/colors/dank-theme.toml
+
 # Legacy compositor config kept as backup
 .config/mango/
