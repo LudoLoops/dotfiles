@@ -38,6 +38,8 @@ hl.config({
 		-- (comportement Mango/dwl). Avec 0, Hyprland ne donne jamais le focus pointeur à la
 		-- fenêtre survolée → impossible de scroller dans une fenêtre non active.
 		follow_mouse = 2,
+		-- No focus steal on transitions between tiled and floating windows.
+		float_switch_override_focus = 0,
 		touchpad = {
 			tap_to_click = true,
 			natural_scroll = true,
