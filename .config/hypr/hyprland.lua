@@ -33,8 +33,8 @@ hl.config({
 		kb_layout = "us",
 		kb_variant = "altgr-intl",
 		numlock_by_default = true,
-		-- Do not follow the pointer: keyboard focus stays on the active window.
-		follow_mouse = 0,
+		-- Mouse events follow the pointer, but keyboard focus changes only on click.
+		follow_mouse = 2,
 		-- No focus steal on transitions between tiled and floating windows.
 		float_switch_override_focus = 0,
 		touchpad = {
