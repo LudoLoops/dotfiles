@@ -29,7 +29,7 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   explicite, Hyprland retombe sur `us` simple (XKB_DEFAULT_LAYOUT non défini).
 - **Layout** : `general.layout = "scrolling"` (natif depuis 0.54) +
   `scrolling { direction = "right", column_width = 0.5,
-  explicit_column_widths = "0.25, 0.5, 0.75, 1.0" }` = Mango `scroller`
+  explicit_column_widths = "0.25, 0.33, 0.5, 0.66, 0.75, 1.0" }` = Mango `scroller`
   (`scroller_default_proportion`, `scroller_proportion_preset`).
 - **Bureaux empilés verticalement** : `hl.animation({ leaf = "workspaces",
   style = "slidevert" })` = `tag_animation_direction=0` côté Mango. Hyprland

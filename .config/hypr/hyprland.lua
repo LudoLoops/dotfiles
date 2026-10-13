@@ -24,7 +24,7 @@ hl.config({
 		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
 		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
 		fullscreen_on_one_column = false, -- preserve width presets on single-column workspaces
-		explicit_column_widths = "0.25, 0.5, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
+		explicit_column_widths = "0.25, 0.33, 0.5, 0.66, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
 		wrap_focus = true, -- Super+A/D: boucler entre colonnes sans changer de moniteur
 	},
