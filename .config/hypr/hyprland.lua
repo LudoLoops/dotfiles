@@ -79,6 +79,13 @@ hl.animation({ leaf = "windowsMove", enabled = true, speed = 4, bezier = "defaul
 hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "border", enabled = true, speed = 3, bezier = "default" })
 
+-- Ignore Kitty's own maximize requests on launch. Single-column full width is
+-- still managed by scrolling.fullscreen_on_one_column (without maximizing).
+hl.window_rule({
+	name = "kitty-ignore-maximize-request",
+	match = { class = "^kitty$" },
+	suppress_event = "maximize",
+})
 hl.window_rule({ match = { class = "^(org\\.wezfurlong\\.wezterm)$" }, tile = true })
 hl.window_rule({ match = { class = "^(org\\.gnome\\.)" }, rounding = 12 })
 hl.window_rule({ match = { class = "^(gnome-control-center)$" }, tile = true })
