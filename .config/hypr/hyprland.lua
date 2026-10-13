@@ -24,7 +24,7 @@ hl.config({
 		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
 		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
 		fullscreen_on_one_column = false, -- preserve width presets on single-column workspaces
-		explicit_column_widths = "0.25, 0.33, 0.5, 0.66, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
+		explicit_column_widths = "0.25, 0.3333, 0.5, 0.6666, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
 		wrap_focus = true, -- Super+A/D: boucler entre colonnes sans changer de moniteur
 	},
@@ -119,6 +119,13 @@ hl.window_rule({
 	pin = true,
 	border_size = 0,
 })
+
+-- Show the selected scrolling width with the built-in DMS toast (no extra OSD service).
+-- Declared after DMS binds so these replace the default resize-only actions.
+hl.unbind("SUPER + CTRL + A")
+hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd prev"), { description = "Previous column width (OSD)" })
+hl.unbind("SUPER + CTRL + D")
+hl.bind("SUPER + CTRL + D", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd next"), { description = "Next column width (OSD)" })
 
 -- --- Binds re-ajoutés APRÈS les modules DMS (priorité max : DMS ne les écrase pas) ---
 -- dms/binds-user.lua contient `hl.unbind("SUPER + space")` et `hl.unbind("ALT + space")`

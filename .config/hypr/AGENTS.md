@@ -29,8 +29,9 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   explicite, Hyprland retombe sur `us` simple (XKB_DEFAULT_LAYOUT non défini).
 - **Layout** : `general.layout = "scrolling"` (natif depuis 0.54) +
   `scrolling { direction = "right", column_width = 0.5,
-  explicit_column_widths = "0.25, 0.33, 0.5, 0.66, 0.75, 1.0" }` = Mango `scroller`
+  explicit_column_widths = "0.25, 0.3333, 0.5, 0.6666, 0.75, 1.0" }` = Mango `scroller`
   (`scroller_default_proportion`, `scroller_proportion_preset`).
+- **Indicateur de largeur** : `Super+Ctrl+A/D` utilise `bin/scrolling-width-osd` (après les binds DMS) : change le preset et affiche un toast DMS avec 25 / 33,33 / 50 / 66,66 / 75 / 100 %.
 - **Bureaux empilés verticalement** : `hl.animation({ leaf = "workspaces",
   style = "slidevert" })` = `tag_animation_direction=0` côté Mango. Hyprland
   n'a pas de pile de workspaces verticale — l'effet vient de l'animation.
@@ -83,7 +84,7 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   | `exchange_client` — Super+Shift+↑/↓ | `hl.dsp.window.move({ direction })` |
   | `tag`/`tagsilent` — Super+Shift/Alt+1-9 | `hl.dsp.window.move({ workspace })` (`follow=false` pour silent) |
   | `view`/`viewtoleft|right` — Super+1-9, Super+w/s | `hl.dsp.focus({ workspace })` |
-  | `switch_proportion_preset` — Super+Ctrl+a/d | `hl.dsp.layout("colresize -conf" / "+conf")` |
+  | `switch_proportion_preset` — Super+Ctrl+a/d | `bin/scrolling-width-osd prev/next` (Hyprland + toast DMS) |
   | `focusstack next` — Alt+Tab | `hl.dsp.window.cycle_next({ next = true })` |
 - **Lanceurs** (parité Mango) : `Super+T` = kitty, `Super+B` = zen-browser,
   `Super+E` = dolphin, `Super+O` = obsidian. Binds Hyprland en conflit déplacés :
