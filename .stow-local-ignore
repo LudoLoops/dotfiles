@@ -1,7 +1,6 @@
 AGENTS.md
 .git
 .gitignore
-.claude
 
 # Herdr runtime files
 .config/herdr/herdr-client.log

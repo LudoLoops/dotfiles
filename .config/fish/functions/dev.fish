@@ -236,7 +236,7 @@ end
 # Smart Branch Creation (Optimized for token efficiency)
 # =============================================================================
 # Deterministic branch creation using gh CLI + git
-# No Claude involvement needed - guaranteed consistent results
+# No AI dependency - deterministic results
 
 function smart-branch --description "Create intelligent feature branch with validation"
     if not git rev-parse --git-dir >/dev/null 2>&1
@@ -311,7 +311,7 @@ function smart-branch --description "Create intelligent feature branch with vali
 end
 
 # Code Quality Check (Run linting, type checking, tests)
-# Returns pass/fail status for Claude analysis
+# Returns pass/fail status for quality checks
 function check-quality --description "Run linting, type check, and tests"
     set checks_passed 0
     set checks_failed 0
