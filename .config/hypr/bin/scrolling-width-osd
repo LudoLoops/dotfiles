@@ -60,6 +60,10 @@ def main():
     if sys.argv[1] != "show":
         direction = "-" if sys.argv[1] == "prev" else "+"
         try:
+            # A maximized window ignores scrolling column width changes until
+            # its maximized state is cleared (fullscreen=1 in activewindow).
+            if window.get("fullscreen") == 1:
+                hyprctl("dispatch", 'hl.dsp.window.fullscreen({ mode = "maximized", action = "unset" })')
             hyprctl("dispatch", f'hl.dsp.layout("colresize {direction}conf")')
         except subprocess.CalledProcessError as exc:
             print(exc.stderr, file=sys.stderr)

@@ -23,7 +23,7 @@ hl.config({
 		-- Équivalents Mango WM (layout "scroller")
 		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
 		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
-		fullscreen_on_one_column = false, -- preserve width presets on single-column workspaces
+		fullscreen_on_one_column = true, -- fill available width when only one column remains
 		explicit_column_widths = "0.25, 0.3333, 0.5, 0.6666, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
 		wrap_focus = true, -- Super+A/D: boucler entre colonnes sans changer de moniteur
