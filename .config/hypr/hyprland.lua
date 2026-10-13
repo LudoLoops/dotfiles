@@ -18,10 +18,12 @@ hl.on("hyprland.start", function()
 end)
 
 hl.config({
+	xwayland = { force_zero_scaling = true },
 	scrolling = {
 		-- Équivalents Mango WM (layout "scroller")
 		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
 		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
+		fullscreen_on_one_column = false, -- preserve width presets on single-column workspaces
 		explicit_column_widths = "0.25, 0.5, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
 		wrap_focus = true, -- Super+A/D: boucler entre colonnes sans changer de moniteur
@@ -109,6 +111,15 @@ require("dms.cursor")
 require("dms.binds")
 require("dms.binds-user")
 require("dms.windowrules")
+
+-- Keep only the Zen Browser Picture-in-Picture window visible on all workspaces.
+hl.window_rule({
+	name = "zen-pip-pinned",
+	match = { class = "^zen$", title = "^Picture-in-Picture$" },
+	float = true,
+	pin = true,
+	border_size = 0,
+})
 
 -- --- Binds re-ajoutés APRÈS les modules DMS (priorité max : DMS ne les écrase pas) ---
 -- dms/binds-user.lua contient `hl.unbind("SUPER + space")` et `hl.unbind("ALT + space")`
