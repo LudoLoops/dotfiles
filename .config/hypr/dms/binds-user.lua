@@ -49,7 +49,7 @@ hl.bind("SUPER + SHIFT + right", hl.dsp.focus({ monitor = "r" }), { description 
 hl.unbind("SUPER + B")
 hl.bind("SUPER + B", hl.dsp.exec_cmd("zen-browser"), { description = "Zen Browser" })
 hl.unbind("SUPER + E")
-hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"), { description = "Dolphin" })
+hl.bind("SUPER + E", hl.dsp.exec_cmd("env QT_QPA_PLATFORMTHEME=qt6ct dolphin"), { description = "Dolphin" })
 hl.unbind("SUPER + O")
 hl.bind("SUPER + O", hl.dsp.exec_cmd("obsidian"), { description = "Obsidian" })
 hl.unbind("SUPER + RETURN")
