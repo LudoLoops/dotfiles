@@ -51,10 +51,6 @@ function exegol-vpn --description "Manage Exegol VPN profiles"
     end
 
     # Preserve the existing file when possible
-    set -l existed false
-    if test -f "$target"
-        set existed true
-    end
 
     command cp -- "$source" "$target"
     or return 1
@@ -64,11 +60,4 @@ function exegol-vpn --description "Manage Exegol VPN profiles"
 
     echo "VPN configured: $container -> $profile"
 
-    if test "$existed" = true
-        exegol restart "$container"
-    else
-        echo "Created: $target"
-        echo "Create the container with:"
-        echo "exegol start $container --vpn $target"
-    end
 end
