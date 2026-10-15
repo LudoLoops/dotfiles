@@ -24,4 +24,4 @@ complete -c exegol-vpn \
 # Second argument: library profiles
 complete -c exegol-vpn \
     -n 'test (count (commandline -opc)) -eq 2' \
-    -a '(__exego-vpn_profiles)'
+    -a '(__exegol-vpn_profiles)'
