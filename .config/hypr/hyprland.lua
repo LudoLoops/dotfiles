@@ -10,6 +10,7 @@ hl.env("QT_QPA_PLATFORMTHEME_QT6", "qt6ct")
 hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --systemd --all")
 	hl.exec_cmd("systemctl --user start hyprland-session.target")
+	hl.exec_cmd("xhost +si:localuser:root")
 end)
 -- DMS_STARTUP_END
 
@@ -25,8 +26,8 @@ hl.config({
 	xwayland = { force_zero_scaling = true },
 	scrolling = {
 		-- Équivalents Mango WM (layout "scroller")
-		direction = "right",                             -- nouvelles fenêtres / défilement vers la droite
-		column_width = 0.5,                              -- = scroller_default_proportion (Mango)
+		direction = "right", -- nouvelles fenêtres / défilement vers la droite
+		column_width = 0.5, -- = scroller_default_proportion (Mango)
 		fullscreen_on_one_column = true, -- fill available width when only one column remains
 		explicit_column_widths = "0.25, 0.3333, 0.5, 0.6666, 0.75, 1.0", -- = scroller_proportion_preset (Mango)
 		focus_fit_method = 1,
@@ -134,9 +135,17 @@ hl.window_rule({
 -- Show the selected scrolling width with the built-in DMS toast (no extra OSD service).
 -- Declared after DMS binds so these replace the default resize-only actions.
 hl.unbind("SUPER + CTRL + A")
-hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd prev"), { description = "Previous column width (OSD)" })
+hl.bind(
+	"SUPER + CTRL + A",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd prev"),
+	{ description = "Previous column width (OSD)" }
+)
 hl.unbind("SUPER + CTRL + D")
-hl.bind("SUPER + CTRL + D", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd next"), { description = "Next column width (OSD)" })
+hl.bind(
+	"SUPER + CTRL + D",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/scrolling-width-osd next"),
+	{ description = "Next column width (OSD)" }
+)
 
 -- --- Binds re-ajoutés APRÈS les modules DMS (priorité max : DMS ne les écrase pas) ---
 -- dms/binds-user.lua contient `hl.unbind("SUPER + space")` et `hl.unbind("ALT + space")`
@@ -244,5 +253,8 @@ hl.bind("SUPER + CTRL + SHIFT + 9", hl.dsp.window.move({ workspace = "19" }), { 
 -- Capture le moniteur actif (image figée), satty pour annoter/recadrer,
 -- Entrée = copie dans le presse-papier, sans sauvegarde automatique.
 hl.unbind("Print")
-hl.bind("Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/screenshot-annotate.sh"),
-	{ description = "Screenshot & annotate" })
+hl.bind(
+	"Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/screenshot-annotate.sh"),
+	{ description = "Screenshot & annotate" }
+)
