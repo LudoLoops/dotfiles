@@ -73,6 +73,7 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
   (`--actions-on-enter save-to-clipboard`, `--early-exit all`).
   Le bind est posé dans `hyprland.lua` après les require() → il prend le pas sur le
   `dms screenshot` de DMS (dont le bind reste enregistré mais masqué : le dernier gagne).
+  `Shift+Print` lance `hyprcrop freeze` (sélection interactive d'une zone, fenêtre ou écran ; copie dans le presse-papier et sauvegarde dans `/dev/shm/hyprcrop`).
   `Ctrl+Print` / `Alt+Print` restent ceux de DMS (écran complet / fenêtre).
   Le script résout lui-même `HYPRLAND_INSTANCE_SIGNATURE`, donc il marche aussi lancé à la main.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :

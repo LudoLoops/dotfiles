@@ -258,3 +258,4 @@ hl.bind(
 	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/screenshot-annotate.sh"),
 	{ description = "Screenshot & annotate" }
 )
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("hyprcrop freeze"), { description = "HyprCrop freeze screenshot" })
