@@ -4,20 +4,6 @@ function roadmap --description 'Show open GitHub or GitLab issues grouped by mil
             echo "Usage: roadmap [--prompt]" >&2
             return 2
         end
-
-        printf '%s\n' \
-            "Organise une roadmap du projet directement dans GitHub ou GitLab, selon le dépôt." \
-            "" \
-            "- Utilise les **milestones** pour regrouper les issues par étapes fonctionnelles." \
-            "- Répartis les issues existantes dans les milestones correspondantes." \
-            "- Définis un **ordre de priorité cohérent** pour les issues de chaque milestone, en tenant compte des dépendances techniques." \
-            "- Réutilise l'existant et évite les doublons ou les issues de coordination inutiles." \
-            "- Ne crée pas de document Markdown séparé pour la roadmap." \
-            "" \
-            "Analyse le projet et organise les milestones et les issues comme tu le juges pertinent." \
-            "" \
-            "Présente-moi ensuite la roadmap proposée, avec les étapes et l'ordre des issues."
-        return 0
     end
 
     for tool in git jq
@@ -44,6 +30,39 @@ function roadmap --description 'Show open GitHub or GitLab issues grouped by mil
     else
         echo "roadmap: origin is not a supported GitHub or GitLab remote" >&2
         return 1
+    end
+
+    if test (count $argv) -eq 1
+        if test "$provider" = github
+            printf '%s\n' \
+                "Organise la roadmap de ce dépôt directement dans GitHub Projects, sans utiliser les milestones pour cette organisation." \
+                "" \
+                "- Réutilise le Project du dépôt s'il existe, sinon crée-en un." \
+                "- Ajoute les issues existantes au Project, sans les dupliquer." \
+                "- Utilise un champ **Étape** pour regrouper les issues par phases fonctionnelles." \
+                "- Définis un **ordre de priorité manuel** dans chaque étape, en tenant compte des dépendances techniques." \
+                "- Configure une vue Table regroupée par étape, en conservant cet ordre manuel." \
+                "- Prévois l'ajout automatique des nouvelles issues au Project si possible." \
+                "- Évite les doublons, les issues de coordination inutiles et les documents Markdown de roadmap." \
+                "" \
+                "Analyse le dépôt et organise son Project comme tu le juges pertinent." \
+                "" \
+                "Présente-moi ensuite les étapes et l'ordre des issues."
+        else
+            printf '%s\n' \
+                "Organise une roadmap du projet directement dans GitLab." \
+                "" \
+                "- Utilise les **milestones** pour regrouper les issues par étapes fonctionnelles." \
+                "- Répartis les issues existantes dans les milestones correspondantes." \
+                "- Définis un **ordre de priorité cohérent** pour les issues de chaque milestone, en tenant compte des dépendances techniques." \
+                "- Réutilise l'existant et évite les doublons ou les issues de coordination inutiles." \
+                "- Ne crée pas de document Markdown séparé pour la roadmap." \
+                "" \
+                "Analyse le projet et organise les milestones et les issues comme tu le juges pertinent." \
+                "" \
+                "Présente-moi ensuite la roadmap proposée, avec les étapes et l'ordre des issues."
+        end
+        return 0
     end
 
     if not type -q $cli
