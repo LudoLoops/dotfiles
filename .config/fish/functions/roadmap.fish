@@ -1,4 +1,4 @@
-function roadmap --description 'Show open GitHub or GitLab issues grouped by milestone'
+function roadmap --description 'Show open GitHub Project or GitLab milestone issues by priority'
     if test (count $argv) -gt 0
         if test (count $argv) -ne 1; or test "$argv[1]" != "--prompt"
             echo "Usage: roadmap [--prompt]" >&2
@@ -70,48 +70,23 @@ function roadmap --description 'Show open GitHub or GitLab issues grouped by mil
         return 1
     end
 
+    if test "$provider" = github
+        __roadmap_github
+        return $status
+    end
+
     set -l temp_dir (command mktemp -d)
     or return 1
     set -l issues "$temp_dir/issues.ndjson"
     set -l milestones "$temp_dir/milestones.ndjson"
     set -l result 0
 
-    if test "$provider" = gitlab
-        command glab api 'projects/:id/milestones?include_parent_milestones=true&per_page=100' --paginate --output ndjson >"$milestones"
+    command glab api 'projects/:id/milestones?include_parent_milestones=true&per_page=100' --paginate --output ndjson >"$milestones"
+    or set result 1
+
+    if test $result -eq 0
+        command glab api 'projects/:id/issues?state=opened&order_by=relative_position&sort=asc&per_page=100' --paginate --output ndjson >"$issues"
         or set result 1
-
-        if test $result -eq 0
-            command glab api 'projects/:id/issues?state=opened&order_by=relative_position&sort=asc&per_page=100' --paginate --output ndjson >"$issues"
-            or set result 1
-        end
-    else
-        command gh api 'repos/{owner}/{repo}/milestones?state=all&per_page=100' --paginate --slurp >"$temp_dir/milestones.json"
-        or set result 1
-
-        if test $result -eq 0
-            command jq -cr '.[][] | {id: .number, title: .title}' "$temp_dir/milestones.json" >"$milestones"
-            or set result 1
-        end
-
-        if test $result -eq 0
-            command gh api 'repos/{owner}/{repo}/issues?state=open&sort=created&direction=asc&per_page=100' --paginate --slurp >"$temp_dir/issues.json"
-            or set result 1
-        end
-
-        if test $result -eq 0
-            # GitHub's API does not expose milestone drag-and-drop order.
-            command jq -cr '.[][] | select(.pull_request == null) | {
-                iid: .number,
-                title: .title,
-                relative_position: .number,
-                milestone: (if .milestone == null then null else {id: .milestone.number} end)
-            }' "$temp_dir/issues.json" >"$issues"
-            or set result 1
-        end
-
-        if test $result -eq 0
-            echo "roadmap: GitHub issues sorted by number (manual milestone order is unavailable via API)" >&2
-        end
     end
 
     if test $result -eq 0
