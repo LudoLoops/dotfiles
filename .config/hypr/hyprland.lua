@@ -248,14 +248,16 @@ hl.bind("SUPER + CTRL + SHIFT + 8", hl.dsp.window.move({ workspace = "18" }), { 
 hl.unbind("SUPER + CTRL + SHIFT + 9")
 hl.bind("SUPER + CTRL + SHIFT + 9", hl.dsp.window.move({ workspace = "19" }), { description = "Send to 19 (laptop)" })
 
--- --- Screenshot : annotation satty + presse-papier uniquement ---
--- Prend le pas sur le bind DMS de Print (chargé après les require()).
--- Capture le moniteur actif (image figée), satty pour annoter/recadrer,
--- Entrée = copie dans le presse-papier, sans sauvegarde automatique.
+-- --- Screenshots HyprCrop optimized: temporary PNG removed after clipboard/annotation ---
+-- Print: select frozen region + Satty
+-- Ctrl+Print: active window + Satty
+-- Shift+Print: focused monitor full screen + Satty
+-- Ctrl+Shift+Print: active window directly to clipboard
 hl.unbind("Print")
-hl.bind(
-	"Print",
-	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/screenshot-annotate.sh"),
-	{ description = "Screenshot & annotate" }
-)
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("hyprcrop freeze"), { description = "HyprCrop freeze screenshot" })
+hl.unbind("CTRL + Print")
+hl.unbind("SHIFT + Print")
+hl.unbind("CTRL + SHIFT + Print")
+hl.bind("Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"), { description = "Select region & annotate (Satty)" })
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"), { description = "Active window & annotate (Satty)" })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"), { description = "Full focused monitor & annotate (Satty)" })
+hl.bind("CTRL + SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window-clipboard"), { description = "Active window to clipboard" })
