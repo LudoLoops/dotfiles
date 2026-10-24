@@ -21,7 +21,7 @@ function roadmap --description 'Show GitLab issues grouped by milestone and prio
     or set result 1
 
     if test $result -eq 0
-        command glab api 'projects/:id/issues?state=all&order_by=relative_position&sort=asc&per_page=100' --paginate --output ndjson >"$issues"
+        command glab api 'projects/:id/issues?state=opened&order_by=relative_position&sort=asc&per_page=100' --paginate --output ndjson >"$issues"
         or set result 1
     end
 
