@@ -1,4 +1,25 @@
 function roadmap --description 'Show open GitHub or GitLab issues grouped by milestone'
+    if test (count $argv) -gt 0
+        if test (count $argv) -ne 1; or test "$argv[1]" != "--prompt"
+            echo "Usage: roadmap [--prompt]" >&2
+            return 2
+        end
+
+        printf '%s\n' \
+            "Organise une roadmap du projet directement dans GitHub ou GitLab, selon le dépôt." \
+            "" \
+            "- Utilise les **milestones** pour regrouper les issues par étapes fonctionnelles." \
+            "- Répartis les issues existantes dans les milestones correspondantes." \
+            "- Définis un **ordre de priorité cohérent** pour les issues de chaque milestone, en tenant compte des dépendances techniques." \
+            "- Réutilise l'existant et évite les doublons ou les issues de coordination inutiles." \
+            "- Ne crée pas de document Markdown séparé pour la roadmap." \
+            "" \
+            "Analyse le projet et organise les milestones et les issues comme tu le juges pertinent." \
+            "" \
+            "Présente-moi ensuite la roadmap proposée, avec les étapes et l'ordre des issues."
+        return 0
+    end
+
     for tool in git jq
         if not type -q $tool
             echo "roadmap: missing dependency: $tool" >&2
