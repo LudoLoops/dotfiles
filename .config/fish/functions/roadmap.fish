@@ -95,8 +95,8 @@ function roadmap --description 'Show open GitHub Project or GitLab milestone iss
             # Keep GitLab's API order for equally ranked or unranked issues.
             def issue_priority:
                 ((.description // ""
-                  | split("\\n")[0]
-                  | try (capture("priority:?\\\\s+(?<number>[0-9]+)"; "i").number | tonumber) catch null
+                  | split("\n")[0]
+                  | try (capture("priority:?\\s+(?<number>[0-9]+)"; "i").number | tonumber) catch null
                 ) // 2147483647);
 
             def issue_lines:
