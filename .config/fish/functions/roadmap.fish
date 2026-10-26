@@ -91,8 +91,19 @@ function roadmap --description 'Show open GitHub Project or GitLab milestone iss
 
     if test $result -eq 0
         command jq -rs --slurpfile milestones "$milestones" '
+            # Respect an explicit "Priority N" on the first description line.
+            # Keep GitLab's API order for equally ranked or unranked issues.
+            def issue_priority:
+                ((.description // ""
+                  | split("\\n")[0]
+                  | try (capture("priority:?\\\\s+(?<number>[0-9]+)"; "i").number | tonumber) catch null
+                ) // 2147483647);
+
             def issue_lines:
-                if length == 0 then
+                to_entries
+                | sort_by([(.value | issue_priority), .key])
+                | map(.value)
+                | if length == 0 then
                     "  (aucune issue)"
                   else
                     map("  [\(if .state == "closed" then "x" else " " end)] #\(.iid) \(.title)")
