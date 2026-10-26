@@ -186,8 +186,16 @@ PROMPT
     fi
 
     jq -rs --slurpfile milestones "$tmp/milestones.ndjson" '
+      # Read explicit per-issue priority while keeping API order as a tie-break.
+      def issue_priority:
+        ((.description // ""
+          | split("\n")[0]
+          | try (capture("priority:?\\s+(?<number>[0-9]+)"; "i").number | tonumber) catch null
+        ) // 2147483647);
       def issue_lines:
-        sort_by(.relative_position // 2147483647, .iid)
+        to_entries
+        | sort_by([(.value | issue_priority), .key])
+        | map(.value)
         | if length == 0 then "  (aucune issue)"
           else map("  [ ] #\(.iid) \(.title)") | join("\n") end;
       . as $issues
