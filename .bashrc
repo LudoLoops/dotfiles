@@ -25,3 +25,4 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 OLLAMA_HOST=0.0.0.0
 export PATH="$HOME/bin:$PATH"
+. "$HOME/.cargo/env"
