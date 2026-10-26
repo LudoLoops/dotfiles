@@ -92,8 +92,7 @@ function roadmap --description 'Show open GitHub Project or GitLab milestone iss
     if test $result -eq 0
         command jq -rs --slurpfile milestones "$milestones" '
             def issue_lines:
-                sort_by(.relative_position // 2147483647, .iid)
-                | if length == 0 then
+                if length == 0 then
                     "  (aucune issue)"
                   else
                     map("  [\(if .state == "closed" then "x" else " " end)] #\(.iid) \(.title)")
