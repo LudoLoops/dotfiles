@@ -130,6 +130,62 @@ esac'
     command ssh -t "$ssh_target" "printf %s $encoded | base64 -d | bash"
 end
 
+function __update_anrisol
+    # ANRISOL's flake is maintained on Atlas. The VPS only has a deployed copy
+    # in /root/nixos-anrisol, and loops has no passwordless sudo there.
+    echo
+    echo "━━━ anrisol (NixOS via Atlas) ━━━"
+
+    set -l script 'set -euo pipefail
+repo="$HOME/1Dev-nvme/projects/nixos-anrisol"
+identity="$HOME/.ssh/id_ed25519_anrisol-atlas"
+
+if [ ! -f "$repo/flake.nix" ]; then
+    echo "ANRISOL flake not found at $repo" >&2
+    exit 1
+fi
+
+if [ -n "$(git -C "$repo" status --porcelain)" ]; then
+    echo "ANRISOL repository is dirty: $repo" >&2
+    echo "Commit, stash, or discard local changes before running update." >&2
+    exit 1
+fi
+
+if [ ! -f "$identity" ]; then
+    echo "ANRISOL SSH key not found at $identity" >&2
+    exit 1
+fi
+
+echo "Updating ANRISOL configuration on Atlas..."
+git -C "$repo" switch main
+git -C "$repo" pull --ff-only
+
+echo "Updating ANRISOL Nix flake inputs..."
+nix flake update --flake "$repo"
+
+if ! git -C "$repo" diff --quiet -- flake.lock; then
+    git -C "$repo" add flake.lock
+    git -C "$repo" commit -m "chore(flake): update inputs"
+    git -C "$repo" push origin main
+else
+    echo "ANRISOL flake inputs already up to date"
+fi
+
+echo "Deploying ANRISOL over Tailscale..."
+rsync -az --exclude=.git \
+    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -i $identity" \
+    "$repo/" root@anrisol:/root/nixos-anrisol/
+
+ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$identity" \
+    root@anrisol "nixos-rebuild switch --flake /root/nixos-anrisol#anrisol"
+
+echo "ANRISOL update complete"
+'
+
+    set -l encoded (command printf '%s' "$script" | command base64 -w0)
+    command ssh -T atlas "printf %s $encoded | base64 -d | bash"
+end
+
 function __update_inventory_path
     echo "$HOME/.config/fish/servers.json"
 end
@@ -273,7 +329,11 @@ function __update_host --argument requested
             echo "❌ No SSH target configured for $requested"
             return 1
         end
-        __update_remote "$ssh_target" "$requested"
+        if test (string lower -- "$requested") = anrisol
+            __update_anrisol
+        else
+            __update_remote "$ssh_target" "$requested"
+        end
     end
 end
 
