@@ -72,7 +72,7 @@ end
 
 function __update_remote --argument ssh_target display_name
     echo
-    echo "━━━ $display_name ($ssh_target) ━━━"
+    echo "━━━ $display_name ━━━"
 
     set -l script 'set -e
 . /etc/os-release
@@ -134,7 +134,7 @@ function __update_anrisol
     # Anrisol fetches its own private GitLab repository and builds locally.
     # The read-only deploy key cannot publish flake.lock changes.
     echo
-    echo "━━━ anrisol (NixOS) ━━━"
+    echo "━━━ anrisol ━━━"
 
     set -l script 'set -euo pipefail
 repo="/root/nixos-anrisol-git"
@@ -164,7 +164,7 @@ git -C "$repo" pull --ff-only
 # Deploy the committed lockfile. A read-only GitLab deploy key cannot push
 # a newly generated flake.lock; refresh it from a write-enabled checkout.
 echo "Using committed ANRISOL flake.lock (GitLab access is read-only)..."
-nix flake check --no-build --flake "$repo"
+nix flake check --no-build "$repo"
 nixos-rebuild switch --flake "$repo#anrisol"
 
 echo "ANRISOL update complete"
@@ -311,7 +311,7 @@ function __update_host --argument requested
 
     if test "$is_local" = true
         echo
-        echo "━━━ $requested (local) ━━━"
+        echo "━━━ $requested ━━━"
         __update_local
     else
         if test -z "$ssh_target"
