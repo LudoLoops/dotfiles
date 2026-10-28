@@ -31,8 +31,36 @@ function __update_local
             command sudo -n apt autoremove -y || return 1
 
         case nixos
-            __update_nixos (command hostname -s) "" true
-            return $status
+            set -l repo "$HOME/nixos-atlas"
+            if not test -f "$repo/flake.nix"
+                echo "❌ NixOS flake not found at $repo"
+                return 1
+            end
+
+            set -l dirty (command git -C "$repo" status --porcelain)
+            if test (count $dirty) -gt 0
+                echo "❌ Atlas repository is dirty: $repo"
+                echo "   Commit, stash, or discard local changes before running update."
+                return 1
+            end
+
+            echo "📦 Updating Atlas from its configuration repository..."
+            command git -C "$repo" switch main || return 1
+            command git -C "$repo" pull --ff-only || return 1
+
+            echo "♻️  Updating Nix flake inputs..."
+            command nix flake update --flake "$repo" || return 1
+
+            if not command git -C "$repo" diff --quiet -- flake.lock
+                echo "📝 Publishing updated flake.lock to GitLab..."
+                command git -C "$repo" add flake.lock || return 1
+                command git -C "$repo" commit -m "chore(flake): update inputs" || return 1
+                command git -C "$repo" push origin main || return 1
+            else
+                echo "✅ Nix flake inputs already up to date"
+            end
+
+            command sudo nixos-rebuild switch --flake "$repo#atlas" || return 1
 
         case '*'
             echo "❌ Unsupported OS: $os_id"
@@ -66,8 +94,31 @@ case "$ID" in
     sudo -n apt autoremove -y
     ;;
   nixos)
-    echo "Unsupported NixOS host: register it in the shared NixOS updater." >&2
-    exit 1
+    repo="$HOME/nixos-atlas"
+    test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
+
+    if [ -n "$(git -C "$repo" status --porcelain)" ]; then
+      echo "Atlas repository is dirty: $repo" >&2
+      echo "Commit, stash, or discard local changes before running update." >&2
+      exit 1
+    fi
+
+    git -C "$repo" switch main
+    git -C "$repo" pull --ff-only
+
+    echo "Updating Nix flake inputs..."
+    nix flake update --flake "$repo"
+
+    if ! git -C "$repo" diff --quiet -- flake.lock; then
+      echo "Publishing updated flake.lock to GitLab..."
+      git -C "$repo" add flake.lock
+      git -C "$repo" commit -m "chore(flake): update inputs"
+      git -C "$repo" push origin main
+    else
+      echo "Nix flake inputs already up to date"
+    fi
+
+    sudo nixos-rebuild switch --flake "$repo#atlas"
     ;;
   *)
     echo "Unsupported OS: $ID" >&2
@@ -79,114 +130,60 @@ esac'
     command ssh -t "$ssh_target" "printf %s $encoded | base64 -d | bash"
 end
 
-function __update_nixos --argument-names machine ssh_target is_local
-    # One deployment flow for the three NixOS machines.
-    # Server deploy keys are read-only: only Atlas publishes flake.lock.
-    set -l host (string lower -- "$machine")
-    set -l repo
-    set -l write_mode readonly
-
-    switch "$host"
-        case atlas
-            set repo /home/loops/nixos-atlas
-            set write_mode writable
-        case nova
-            set repo /home/loops/nixos-nova
-        case anrisol
-            # Preserve the older rsync-managed /root/nixos-anrisol checkout.
-            set repo /root/nixos-anrisol-git
-        case '*'
-            echo "Unsupported NixOS machine: $machine" >&2
-            return 1
-    end
-
+function __update_anrisol
+    # ANRISOL's flake is maintained on Atlas. The VPS only has a deployed copy
+    # in /root/nixos-anrisol, and loops has no passwordless sudo there.
     echo
-    echo "━━━ $host ━━━"
+    echo "━━━ anrisol ━━━"
 
     set -l script 'set -euo pipefail
-host="$1"
-repo="$2"
-write_mode="$3"
-remote="git@gitlab.com:lelabdev/infra/nixos-${host}.git"
+repo="$HOME/1Dev-nvme/projects/nixos-anrisol"
+identity="$HOME/.ssh/id_ed25519_anrisol-atlas"
 
-# Clone only when no Git checkout exists; never replace another directory.
-if [ ! -d "$repo/.git" ]; then
-    if [ -e "$repo" ]; then
-        echo "Refusing to replace existing directory: $repo" >&2
-        exit 1
-    fi
-    echo "Cloning $host configuration..."
-    git clone --branch main --single-branch "$remote" "$repo"
+if [ ! -f "$repo/flake.nix" ]; then
+    echo "ANRISOL flake not found at $repo" >&2
+    exit 1
 fi
 
-status="$(git -C "$repo" status --porcelain)"
-if [ -n "$status" ]; then
-    if [ "$host" = atlas ] && [ "$status" = " M flake.lock" ]; then
-        echo "Resuming previous Atlas flake.lock update..."
-    else
-        echo "Repository has local changes: $repo" >&2
-        git -C "$repo" status --short >&2
-        echo "Commit or resolve them before updating." >&2
-        exit 1
-    fi
+if [ -n "$(git -C "$repo" status --porcelain)" ]; then
+    echo "ANRISOL repository is dirty: $repo" >&2
+    echo "Commit, stash, or discard local changes before running update." >&2
+    exit 1
 fi
 
-# Check both private repositories before any deployment. The identity used
-# here must also work for the private nixos-common flake input.
-if [ "$write_mode" = readonly ]; then
-    for url in "$remote" git@gitlab.com:lelabdev/infra/nixos-common.git; do
-        if ! GIT_SSH_COMMAND="ssh -o BatchMode=yes -o StrictHostKeyChecking=yes" git ls-remote "$url" HEAD >/dev/null; then
-            echo "GitLab SSH access failed on $host for $url" >&2
-            echo "Check this users SSH identity, known_hosts, and GitLab deploy-key permissions." >&2
-            exit 1
-        fi
-    done
+if [ ! -f "$identity" ]; then
+    echo "ANRISOL SSH key not found at $identity" >&2
+    exit 1
 fi
 
-echo "Updating $host configuration from GitLab..."
+echo "Updating ANRISOL configuration on Atlas..."
 git -C "$repo" switch main
 git -C "$repo" pull --ff-only
 
-if [ "$write_mode" = writable ]; then
-    echo "Updating Nix flake inputs..."
-    nix flake update --flake "$repo"
-else
-    echo "Using committed flake.lock (read-only GitLab access)..."
-fi
+echo "Updating ANRISOL Nix flake inputs..."
+nix flake update --flake "$repo"
 
-# Check only the target host, not unrelated configurations (e.g. atlas-vm).
-echo "Validating NixOS configuration for $host..."
-nix eval --raw "$repo#nixosConfigurations.$host.config.system.build.toplevel.drvPath" >/dev/null
-
-if [ "$write_mode" = writable ] && ! git -C "$repo" diff --quiet -- flake.lock; then
-    echo "Publishing updated flake.lock..."
-    git -C "$repo" add -- flake.lock
+if ! git -C "$repo" diff --quiet -- flake.lock; then
+    git -C "$repo" add flake.lock
     git -C "$repo" commit -m "chore(flake): update inputs"
     git -C "$repo" push origin main
+else
+    echo "ANRISOL flake inputs already up to date"
 fi
 
-echo "Activating NixOS on $host..."
-if [ "$(id -u)" -eq 0 ]; then
-    nixos-rebuild switch --flake "$repo#$host"
-else
-    sudo -n nixos-rebuild switch --flake "$repo#$host"
-fi
-echo "$host update complete"
+echo "Deploying ANRISOL over Tailscale..."
+rsync -az --exclude=.git \
+    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -i $identity" \
+    "$repo/" root@anrisol:/root/nixos-anrisol/
+
+ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$identity" \
+    root@anrisol "nixos-rebuild switch --flake /root/nixos-anrisol#anrisol"
+
+echo "ANRISOL update complete"
 '
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    if test "$is_local" = true
-        if test "$host" = anrisol
-            command printf '%s' "$script" | command sudo -H bash -s -- "$host" "$repo" "$write_mode"
-        else
-            command printf '%s' "$script" | command bash -s -- "$host" "$repo" "$write_mode"
-        end
-    else if test "$host" = anrisol
-        # Anrisol needs root to read its GitLab deploy key and switch NixOS.
-        command ssh -tt "$ssh_target" "printf %s $encoded | base64 -d | sudo -H bash -s -- '$host' '$repo' '$write_mode'"
-    else
-        command ssh -tt "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$host' '$repo' '$write_mode'"
-    end
+    command ssh -T atlas "printf %s $encoded | base64 -d | bash"
 end
 
 function __update_inventory_path
@@ -323,27 +320,20 @@ function __update_host --argument requested
     set -l is_local (echo "$entry" | command jq -r '.local // false')
     set -l ssh_target (echo "$entry" | command jq -r '.ssh // empty')
 
-    set -l name (string lower -- "$requested")
-    if contains -- "$name" atlas nova anrisol
-        if test "$is_local" = true
-            __update_nixos "$name" "" true
-        else
-            if test -z "$ssh_target"
-                echo "No SSH target configured for $requested" >&2
-                return 1
-            end
-            __update_nixos "$name" "$ssh_target" false
-        end
-    else if test "$is_local" = true
+    if test "$is_local" = true
         echo
         echo "━━━ $requested ━━━"
         __update_local
     else
         if test -z "$ssh_target"
-            echo "No SSH target configured for $requested" >&2
+            echo "❌ No SSH target configured for $requested"
             return 1
         end
-        __update_remote "$ssh_target" "$requested"
+        if test (string lower -- "$requested") = anrisol
+            __update_anrisol
+        else
+            __update_remote "$ssh_target" "$requested"
+        end
     end
 end
 
