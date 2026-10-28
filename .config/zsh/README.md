@@ -50,3 +50,15 @@ enabled only when their corresponding executable is available.
 
 Note: Fish abbreviations become Zsh aliases here: unlike Fish abbreviations,
 they are expanded at execution, not inserted into the editable command line.
+
+## Shared NixOS server prompt
+
+The three NixOS servers (Atlas, Nova, Anrisol) use
+\`.config/zsh/prompt.zsh\` for the **same Zsh prompt**, with the hostname
+resolved dynamically by \`%m\`. The file does not install Starship.
+
+It is imported by the individual NixOS flake configurations as the
+\`dotfiles\` (non-flake) input. Each server pins the exact upstream
+revision in its own \`flake.lock\`. Changing the prompt therefore
+requires updating that one input on each host and rebuilding, without
+changing any host-specific NixOS service or secret.
