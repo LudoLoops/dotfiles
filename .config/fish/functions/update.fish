@@ -119,10 +119,28 @@ if [ ! -d "$repo/.git" ]; then
     git clone --branch main --single-branch "$remote" "$repo"
 fi
 
-if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "Repository has local changes: $repo" >&2
-    echo "Commit or resolve them before updating." >&2
-    exit 1
+status="$(git -C "$repo" status --porcelain)"
+if [ -n "$status" ]; then
+    if [ "$host" = atlas ] && [ "$status" = " M flake.lock" ]; then
+        echo "Resuming previous Atlas flake.lock update..."
+    else
+        echo "Repository has local changes: $repo" >&2
+        git -C "$repo" status --short >&2
+        echo "Commit or resolve them before updating." >&2
+        exit 1
+    fi
+fi
+
+# Check both private repositories before any deployment. The identity used
+# here must also work for the private nixos-common flake input.
+if [ "$write_mode" = readonly ]; then
+    for url in "$remote" git@gitlab.com:lelabdev/infra/nixos-common.git; do
+        if ! GIT_SSH_COMMAND="ssh -o BatchMode=yes -o StrictHostKeyChecking=yes" git ls-remote "$url" HEAD >/dev/null; then
+            echo "GitLab SSH access failed on $host for $url" >&2
+            echo "Check this users SSH identity, known_hosts, and GitLab deploy-key permissions." >&2
+            exit 1
+        fi
+    done
 fi
 
 echo "Updating $host configuration from GitLab..."
@@ -136,7 +154,9 @@ else
     echo "Using committed flake.lock (read-only GitLab access)..."
 fi
 
-nix flake check --no-build "$repo"
+# Check only the target host, not unrelated configurations (e.g. atlas-vm).
+echo "Validating NixOS configuration for $host..."
+nix eval --raw "$repo#nixosConfigurations.$host.config.system.build.toplevel.drvPath" >/dev/null
 
 if [ "$write_mode" = writable ] && ! git -C "$repo" diff --quiet -- flake.lock; then
     echo "Publishing updated flake.lock..."
