@@ -131,59 +131,48 @@ esac'
 end
 
 function __update_anrisol
-    # ANRISOL's flake is maintained on Atlas. The VPS only has a deployed copy
-    # in /root/nixos-anrisol, and loops has no passwordless sudo there.
+    # Anrisol fetches its own private GitLab repository and builds locally.
+    # The read-only deploy key cannot publish flake.lock changes.
     echo
-    echo "━━━ anrisol (NixOS via Atlas) ━━━"
+    echo "━━━ anrisol (NixOS) ━━━"
 
     set -l script 'set -euo pipefail
-repo="$HOME/1Dev-nvme/projects/nixos-anrisol"
-identity="$HOME/.ssh/id_ed25519_anrisol-atlas"
+repo="/root/nixos-anrisol-git"
+remote="git@gitlab.com:lelabdev/infra/nixos-anrisol.git"
 
-if [ ! -f "$repo/flake.nix" ]; then
-    echo "ANRISOL flake not found at $repo" >&2
-    exit 1
+# The previous /root/nixos-anrisol was populated by rsync without .git.
+# Keep it intact; bootstrap a separate Git checkout on the first run.
+if [ ! -d "$repo/.git" ]; then
+    if [ -e "$repo" ]; then
+        echo "Refusing to overwrite existing directory: $repo" >&2
+        exit 1
+    fi
+    echo "Cloning ANRISOL configuration from GitLab..."
+    git clone --branch main --single-branch "$remote" "$repo"
 fi
 
 if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "ANRISOL repository is dirty: $repo" >&2
-    echo "Commit, stash, or discard local changes before running update." >&2
+    echo "ANRISOL repository has local changes: $repo" >&2
+    echo "Commit or resolve them before updating." >&2
     exit 1
 fi
 
-if [ ! -f "$identity" ]; then
-    echo "ANRISOL SSH key not found at $identity" >&2
-    exit 1
-fi
-
-echo "Updating ANRISOL configuration on Atlas..."
+echo "Updating ANRISOL configuration on Anrisol..."
 git -C "$repo" switch main
 git -C "$repo" pull --ff-only
 
-echo "Updating ANRISOL Nix flake inputs..."
-nix flake update --flake "$repo"
-
-if ! git -C "$repo" diff --quiet -- flake.lock; then
-    git -C "$repo" add flake.lock
-    git -C "$repo" commit -m "chore(flake): update inputs"
-    git -C "$repo" push origin main
-else
-    echo "ANRISOL flake inputs already up to date"
-fi
-
-echo "Deploying ANRISOL over Tailscale..."
-rsync -az --exclude=.git \
-    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -i $identity" \
-    "$repo/" root@anrisol:/root/nixos-anrisol/
-
-ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$identity" \
-    root@anrisol "nixos-rebuild switch --flake /root/nixos-anrisol#anrisol"
+# Deploy the committed lockfile. A read-only GitLab deploy key cannot push
+# a newly generated flake.lock; refresh it from a write-enabled checkout.
+echo "Using committed ANRISOL flake.lock (GitLab access is read-only)..."
+nix flake check --no-build --flake "$repo"
+nixos-rebuild switch --flake "$repo#anrisol"
 
 echo "ANRISOL update complete"
 '
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh -T atlas "printf %s $encoded | base64 -d | bash"
+    # SSH as loops; prompt for sudo on Anrisol rather than relying on Atlas.
+    command ssh -tt anrisol "printf %s $encoded | base64 -d | sudo -H bash"
 end
 
 function __update_inventory_path
