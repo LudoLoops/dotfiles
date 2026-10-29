@@ -40,7 +40,10 @@ function __update_local
             set -l dirty (command git -C "$repo" status --porcelain)
             if test (count $dirty) -gt 0
                 if test (count $dirty) -eq 1; and test "$dirty[1]" = ' M flake.lock'
-                    echo "📝 Atlas has a pending flake.lock update; preserving it for the updater."
+                    # The upstream lockfile may have changed. Save the generated
+                    # local copy, pull main, and let the updater regenerate it.
+                    echo "📝 Atlas: saving pending flake.lock in a Git stash before pull..."
+                    command git -C "$repo" stash push -m "update: pending flake.lock before pull" -- flake.lock; or return 1
                 else
                     echo "❌ Atlas repository has local changes: $repo"
                     command git -C "$repo" status --short
@@ -109,7 +112,9 @@ case "$ID" in
     dirty="$(git -C "$repo" status --porcelain)"
     if [ -n "$dirty" ]; then
       if [ "$host" = atlas ] && [ "$dirty" = " M flake.lock" ]; then
-        echo "Atlas: keeping pending flake.lock for update and commit."
+        echo "Atlas: saving pending flake.lock in Git stash before pulling main..."
+        git -C "$repo" stash push -m "update: pending flake.lock before pull" -- flake.lock
+        echo "Atlas: saved original lockfile (git stash list shows backup)."
       elif [ "$host" = nova ] && [ "$dirty" = "?? secrets/" ]; then
         echo "Nova: preserving untracked secrets/; these files will not be committed."
       else
@@ -121,6 +126,16 @@ case "$ID" in
     fi
 
     git -C "$repo" switch main
+
+    if [ "$host" = nova ]; then
+      echo "Nova: checking GitLab access using the SSH agent forwarded from TufTux..."
+      if ! git -C "$repo" ls-remote --exit-code origin refs/heads/main >/dev/null; then
+        echo "Nova cannot read its private GitLab repository." >&2
+        echo "Ensure TufTux ssh-agent has a GitLab-authorized key; no private keys need copying to Nova." >&2
+        exit 1
+      fi
+    fi
+
     git -C "$repo" pull --ff-only
 
     if [ "$host" = atlas ]; then
@@ -136,7 +151,9 @@ case "$ID" in
         git -C "$repo" commit -m "chore(flake): update inputs"
         git -C "$repo" push origin main
       fi
-      sudo -n nixos-rebuild switch --flake "$repo#$host"
+      # The private nixos-common flake may be fetched again during the root
+      # rebuild, so keep the temporary SSH agent available to that command.
+      sudo -n --preserve-env=SSH_AUTH_SOCK,GIT_SSH_COMMAND nixos-rebuild switch --flake "$repo#$host"
     fi
     ;;
   *)
@@ -146,7 +163,22 @@ case "$ID" in
 esac'
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
+    set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10
+
+    if test (string lower -- "$display_name") = nova
+        # Nova has no GitLab deploy key: forward the local agent for the
+        # duration of this update instead of storing a private key on Nova.
+        if not set -q SSH_AUTH_SOCK
+            echo "❌ Nova requires TufTux SSH agent forwarding for private GitLab access."
+            echo "   Run ssh-add -l on TufTux to check your agent identities."
+            return 1
+        end
+        # Force a fresh connection so an existing ControlMaster cannot
+        # silently bypass forwarding on an earlier non-forwarded session.
+        set -a ssh_flags -A -o ControlMaster=no -o ControlPath=none
+    end
+
+    command ssh $ssh_flags "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
 end
 
 function __update_anrisol

@@ -26,6 +26,42 @@ Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `
 
 If the fallback root login is also unavailable, a privileged Anrisol session must activate the sudo rule once. The script will report this explicitly rather than request a password. `nixos-rebuild` can apply arbitrary NixOS configuration and must be treated as root-equivalent even with a command-scoped sudo rule.
 
+### Private GitLab access on Nova
+
+Nova has no GitLab SSH private key. For `update --host nova`, the TufTux SSH
+agent is forwarded **only for the duration of that SSH session**. No key is
+copied to Nova. On TufTux, a GitLab-authorized SSH identity must already be
+loaded in your agent:
+
+```sh
+ssh-add -l
+ssh -A -o ControlMaster=no -o ControlPath=none loops@nova \
+  'git -C ~/nixos-nova ls-remote --exit-code origin refs/heads/main'
+```
+
+The update script runs the same GitLab preflight without waiting for a password.
+If it fails, configure the existing TufTux SSH agent/key; do not replace GitLab
+access with unauthenticated HTTPS. Agent forwarding grants Nova temporary use
+of the forwarded identities while the connection is alive, so use it only with
+a trusted and secured server. A dedicated read-only GitLab deploy key on Nova
+is an alternative if forwarding is undesirable, but publishing `flake.lock`
+also requires GitLab write access.
+
+### Pending Atlas flake.lock changes
+
+If Atlas has **only** an unstaged `flake.lock` modification, `update`
+preserves it in a named Git stash before fetching the newer `main`.
+The Atlas updater then refreshes the flake inputs against current `main`,
+runs the rebuild, and commits/pushes the new `flake.lock`. The prior
+generated lock remains recoverable:
+
+```sh
+ssh atlas 'git -C ~/nixos-atlas stash list'
+```
+
+Other dirty files still block the update. Do not apply the old stashed
+`flake.lock` over the new version without reviewing the differences.
+
 ### Arch package updates on TufTux
 
 `paru` invokes root `pacman`, so a one-time local sudoers grant is needed for unattended package updates. Run these commands **once**, interactively, while logged in as your regular TufTux user:
@@ -46,7 +82,7 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 
 - TufTux: `paru` + cache cleanup + user Flatpaks
 - Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
-- Nova: `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
+- Nova: temporary TufTux SSH agent forwarding for GitLab access, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
 - Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then run `sudo -n nixos-rebuild` via `loops` (fallback: legacy SSH root access)
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
