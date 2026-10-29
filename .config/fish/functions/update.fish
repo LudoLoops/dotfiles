@@ -135,59 +135,59 @@ esac'
 end
 
 function __update_anrisol
-    # ANRISOL's flake is maintained on Atlas. The VPS only has a deployed copy
-    # in /root/nixos-anrisol, and loops has no passwordless sudo there.
     echo
     echo "━━━ anrisol ━━━"
-
     set -l script 'set -euo pipefail
 export GIT_TERMINAL_PROMPT=0
 export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10"
-repo="$HOME/1Dev-nvme/projects/nixos-anrisol"
-identity="$HOME/.ssh/id_ed25519_anrisol-atlas"
 
-if [ ! -f "$repo/flake.nix" ]; then
-    echo "ANRISOL flake not found at $repo" >&2
+repo=""
+for candidate in "$HOME/1Dev-nvme/projects/nixos-anrisol" "$HOME/1Dev-nvme/projects/1dev/nixos-anrisol" "$HOME/nixos-anrisol"; do
+    if [ -f "$candidate/flake.nix" ] && [ -d "$candidate/.git" ]; then
+        repo="$candidate"
+        break
+    fi
+done
+if [ -z "$repo" ]; then
+    echo "Anrisol repository missing on Atlas NVMe" >&2
     exit 1
 fi
 
+ssh_opts="-T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
+if ssh $ssh_opts anrisol "sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null 2>&1"; then
+    target="anrisol"
+    destination="/home/loops/nixos-anrisol"
+    rebuild="sudo -n /run/current-system/sw/bin/nixos-rebuild"
+elif ssh $ssh_opts root@anrisol "true" 2>/dev/null; then
+    target="root@anrisol"
+    destination="/root/nixos-anrisol"
+    rebuild="/run/current-system/sw/bin/nixos-rebuild"
+else
+    echo "Anrisol has neither passwordless loops sudo nor key-only root SSH" >&2
+    echo "Enable the NixOS nixos-rebuild sudo rule on Anrisol once" >&2
+    exit 1
+fi
+
+echo "Using Atlas checkout: $repo"
+echo "Deploy SSH target: $target"
 if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "ANRISOL repository is dirty: $repo" >&2
-    echo "Commit, stash, or discard local changes before running update." >&2
+    echo "Repository is dirty: $repo" >&2
     exit 1
 fi
-
-if [ ! -f "$identity" ]; then
-    echo "ANRISOL SSH key not found at $identity" >&2
-    exit 1
-fi
-
-echo "Updating ANRISOL configuration on Atlas..."
 git -C "$repo" switch main
 git -C "$repo" pull --ff-only
-
-echo "Updating ANRISOL Nix flake inputs..."
 nix flake update --flake "$repo"
-
 if ! git -C "$repo" diff --quiet -- flake.lock; then
     git -C "$repo" add flake.lock
     git -C "$repo" commit -m "chore(flake): update inputs"
     git -C "$repo" push origin main
-else
-    echo "ANRISOL flake inputs already up to date"
 fi
 
-echo "Deploying ANRISOL over Tailscale..."
-rsync -az --exclude=.git \
-    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=10 -i $identity" \
-    "$repo/" root@anrisol:/root/nixos-anrisol/
-
-ssh -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=10 -i "$identity" \
-    root@anrisol "nixos-rebuild switch --flake /root/nixos-anrisol#anrisol"
-
-echo "ANRISOL update complete"
+ssh $ssh_opts "$target" "mkdir -p $destination"
+rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$repo/" "$target:$destination/"
+ssh $ssh_opts "$target" "$rebuild switch --flake $destination#anrisol"
+echo "Anrisol update complete"
 '
-
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
     command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 atlas "printf %s $encoded | base64 -d | bash"
 end
