@@ -151,7 +151,9 @@ case "$ID" in
         git -C "$repo" commit -m "chore(flake): update inputs"
         git -C "$repo" push origin main
       fi
-      sudo -n nixos-rebuild switch --flake "$repo#$host"
+      # The private nixos-common flake may be fetched again during the root
+      # rebuild, so keep the temporary SSH agent available to that command.
+      sudo -n --preserve-env=SSH_AUTH_SOCK,GIT_SSH_COMMAND nixos-rebuild switch --flake "$repo#$host"
     fi
     ;;
   *)
