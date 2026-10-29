@@ -11,6 +11,18 @@
       "ssh": "atlas",
       "local": false,
       "ignore": false
+    },
+    {
+      "name": "nova",
+      "ssh": "loops@nova",
+      "local": false,
+      "ignore": false
+    },
+    {
+      "name": "anrisol",
+      "ssh": "anrisol",
+      "local": false,
+      "ignore": false
     }
   ]
 }
