@@ -18,10 +18,13 @@ Check the connections **before** running updates:
 ```sh
 ssh -o BatchMode=yes atlas 'sudo -n nixos-rebuild --help >/dev/null'
 ssh -o BatchMode=yes loops@nova 'sudo -n nixos-rebuild --help >/dev/null'
-ssh -o BatchMode=yes atlas 'ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$HOME/.ssh/id_ed25519_anrisol-atlas" root@anrisol true'
+ssh -o BatchMode=yes atlas 'ssh -o BatchMode=yes anrisol true'
+ssh -o BatchMode=yes atlas 'ssh -o BatchMode=yes anrisol "sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null"'
 ```
 
-Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `wheel` sudo. Anrisol is updated *through Atlas* using the already configured dedicated root key and does not require adding passwordless sudo on the VPS. No SSH private keys go in the repository.
+Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `wheel` sudo. Anrisol is updated *through Atlas* using the existing SSH alias `anrisol`, which uses the SOPS-managed key and logs in as `loops`. Prefer `sudo -n nixos-rebuild` on Anrisol; a key-only `root@anrisol` login is only a compatibility fallback. The narrow `sudo` rule is declared in GitLab `lelabdev/infra/srv-anrisol/nix` MR !5. **It requires one privileged NixOS activation before passwordless updates can work**. No SSH private keys go in the repository.
+
+If the fallback root login is also unavailable, a privileged Anrisol session must activate the sudo rule once. The script will report this explicitly rather than request a password. `nixos-rebuild` can apply arbitrary NixOS configuration and must be treated as root-equivalent even with a command-scoped sudo rule.
 
 ### Arch package updates on TufTux
 
@@ -44,6 +47,6 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 - TufTux: `paru` + cache cleanup + user Flatpaks
 - Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
 - Nova: `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
-- Anrisol: on Atlas, `~/1Dev-nvme/projects/nixos-anrisol` pull/flake update, rsync over Tailscale, and root `nixos-rebuild` on Anrisol
+- Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then run `sudo -n nixos-rebuild` via `loops` (fallback: legacy SSH root access)
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
