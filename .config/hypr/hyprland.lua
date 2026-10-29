@@ -60,7 +60,7 @@ hl.config({
 		shadow = {
 			enabled = true,
 			range = 30,
-			render_power = 5,
+			render_power = 4,
 			offset = "0 5",
 			color = "rgba(00000070)",
 		},
@@ -257,7 +257,23 @@ hl.unbind("Print")
 hl.unbind("CTRL + Print")
 hl.unbind("SHIFT + Print")
 hl.unbind("CTRL + SHIFT + Print")
-hl.bind("Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"), { description = "Select region & annotate (Satty)" })
-hl.bind("CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"), { description = "Active window & annotate (Satty)" })
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"), { description = "Full focused monitor & annotate (Satty)" })
-hl.bind("CTRL + SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window-clipboard"), { description = "Active window to clipboard" })
+hl.bind(
+	"Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"),
+	{ description = "Select region & annotate (Satty)" }
+)
+hl.bind(
+	"CTRL + Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"),
+	{ description = "Active window & annotate (Satty)" }
+)
+hl.bind(
+	"SHIFT + Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"),
+	{ description = "Full focused monitor & annotate (Satty)" }
+)
+hl.bind(
+	"CTRL + SHIFT + Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window-clipboard"),
+	{ description = "Active window to clipboard" }
+)
