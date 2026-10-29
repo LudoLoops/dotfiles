@@ -39,7 +39,9 @@ function __update_local
 
             set -l dirty (command git -C "$repo" status --porcelain)
             if test (count $dirty) -gt 0
-                echo "❌ Atlas repository is dirty: $repo"
+                echo "❌ Atlas repository has local changes: $repo"
+                command git -C "$repo" status --short
+                echo "   Changes preserved. Review them before updating."
                 return 1
             end
 
@@ -101,7 +103,9 @@ case "$ID" in
     test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
 
     if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-      echo "Repository is dirty: $repo" >&2
+      echo "Repository has local changes: $repo" >&2
+      git -C "$repo" status --short >&2
+      echo "Changes preserved. Review them before updating." >&2
       exit 1
     fi
 
@@ -171,7 +175,9 @@ fi
 echo "Using Atlas checkout: $repo"
 echo "Deploy SSH target: $target"
 if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "Repository is dirty: $repo" >&2
+    echo "Repository has local changes: $repo" >&2
+    git -C "$repo" status --short >&2
+    echo "Changes preserved. Review them before updating." >&2
     exit 1
 fi
 git -C "$repo" switch main
@@ -187,9 +193,30 @@ ssh $ssh_opts "$target" "mkdir -p $destination"
 rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$repo/" "$target:$destination/"
 ssh $ssh_opts "$target" "$rebuild switch --flake $destination#anrisol"
 echo "Anrisol update complete"
+echo "ANRISOL_UPDATE_OK"
 '
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 atlas "printf %s $encoded | base64 -d | bash"
+    if test -z "$encoded"
+        echo "❌ Anrisol update: remote script encoding produced empty input"
+        return 1
+    end
+
+    # Show remote output immediately, but reject a silent SSH exit code 0.
+    # Anrisol must acknowledge that the full deployment actually finished.
+    set -l output_file (command mktemp); or return 1
+    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 atlas "printf %s $encoded | base64 -d | bash" | command tee "$output_file"
+    set -l pipeline_status $pipestatus
+    if test "$pipeline_status[1]" -ne 0 -o "$pipeline_status[2]" -ne 0
+        command rm -f "$output_file"
+        echo "❌ Anrisol update: remote execution failed"
+        return 1
+    end
+    if not command grep -qx 'ANRISOL_UPDATE_OK' "$output_file"
+        command rm -f "$output_file"
+        echo "❌ Anrisol update: no completion confirmation received from Atlas"
+        return 1
+    end
+    command rm -f "$output_file"
 end
 
 function __update_inventory_path
