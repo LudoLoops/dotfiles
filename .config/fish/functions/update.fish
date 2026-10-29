@@ -39,10 +39,14 @@ function __update_local
 
             set -l dirty (command git -C "$repo" status --porcelain)
             if test (count $dirty) -gt 0
-                echo "❌ Atlas repository has local changes: $repo"
-                command git -C "$repo" status --short
-                echo "   Changes preserved. Review them before updating."
-                return 1
+                if test (count $dirty) -eq 1; and test "$dirty[1]" = ' M flake.lock'
+                    echo "📝 Atlas has a pending flake.lock update; preserving it for the updater."
+                else
+                    echo "❌ Atlas repository has local changes: $repo"
+                    command git -C "$repo" status --short
+                    echo "   Changes preserved. Review them before updating."
+                    return 1
+                end
             end
 
             command git -C "$repo" switch main || return 1
@@ -102,11 +106,18 @@ case "$ID" in
     esac
     test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
 
-    if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-      echo "Repository has local changes: $repo" >&2
-      git -C "$repo" status --short >&2
-      echo "Changes preserved. Review them before updating." >&2
-      exit 1
+    dirty="$(git -C "$repo" status --porcelain)"
+    if [ -n "$dirty" ]; then
+      if [ "$host" = atlas ] && [ "$dirty" = " M flake.lock" ]; then
+        echo "Atlas: keeping pending flake.lock for update and commit."
+      elif [ "$host" = nova ] && [ "$dirty" = "?? secrets/" ]; then
+        echo "Nova: preserving untracked secrets/; these files will not be committed."
+      else
+        echo "Repository has local changes: $repo" >&2
+        git -C "$repo" status --short >&2
+        echo "Changes preserved. Review them before updating." >&2
+        exit 1
+      fi
     fi
 
     git -C "$repo" switch main
@@ -157,7 +168,10 @@ if [ -z "$repo" ]; then
     exit 1
 fi
 
-ssh_opts="-T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
+ssh_opts="-n -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
+# SSH must not read the Bash program being streamed into Atlas.
+# Without -n, the first nested SSH can consume the remaining script.
+echo "Checking Anrisol SSH and noninteractive sudo from Atlas..."
 if ssh $ssh_opts anrisol "sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null 2>&1"; then
     target="anrisol"
     destination="/home/loops/nixos-anrisol"
