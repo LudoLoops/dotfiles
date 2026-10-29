@@ -48,7 +48,7 @@ function __update_local
             command git -C "$repo" switch main || return 1
             command git -C "$repo" pull --ff-only || return 1
 
-            if not test -x "$repo/tools/update-atlas.sh"
+            if not test -f "$repo/tools/update-atlas.sh"
                 echo "❌ Atlas updater not found at $repo/tools/update-atlas.sh"
                 return 1
             end
@@ -113,11 +113,11 @@ case "$ID" in
     git -C "$repo" pull --ff-only
 
     if [ "$host" = atlas ]; then
-      test -x "$repo/tools/update-atlas.sh" || {
+      test -f "$repo/tools/update-atlas.sh" || {
         echo "Atlas updater not found: $repo/tools/update-atlas.sh" >&2
         exit 1
       }
-      "$repo/tools/update-atlas.sh"
+      bash "$repo/tools/update-atlas.sh"
     else
       nix flake update --flake "$repo"
       if ! git -C "$repo" diff --quiet -- flake.lock; then
