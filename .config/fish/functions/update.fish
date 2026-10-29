@@ -171,7 +171,9 @@ esac'
             echo "   Run ssh-add -l on TufTux to check your agent identities."
             return 1
         end
-        set -a ssh_flags -A
+        # Force a fresh connection so an existing ControlMaster cannot
+        # silently bypass forwarding on an earlier non-forwarded session.
+        set -a ssh_flags -A -o ControlMaster=no -o ControlPath=none
     end
 
     command ssh $ssh_flags "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
