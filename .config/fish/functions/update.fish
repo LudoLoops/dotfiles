@@ -15,12 +15,12 @@ function __update_local
 
             if type -q paccache
                 echo "🧹 Cleaning package cache..."
-                command sudo paccache -rk1 || echo "⚠️  Package cache cleanup failed"
+                command sudo -n paccache -rk1 || echo "⚠️  Package cache cleanup failed"
             end
 
             if type -q flatpak
                 echo "📦 Updating Flatpaks..."
-                command flatpak update -y || echo "⚠️  Flatpak update failed"
+                command flatpak update --user -y || echo "⚠️  User Flatpak update failed"
             end
 
         case debian ubuntu
@@ -33,34 +33,25 @@ function __update_local
         case nixos
             set -l repo "$HOME/nixos-atlas"
             if not test -f "$repo/flake.nix"
-                echo "❌ NixOS flake not found at $repo"
+                echo "❌ Atlas flake not found at $repo"
                 return 1
             end
 
-            set -l dirty (command git -C "$repo" status --porcelain)
-            if test (count $dirty) -gt 0
+            if test -n (command git -C "$repo" status --porcelain)
                 echo "❌ Atlas repository is dirty: $repo"
-                echo "   Commit, stash, or discard local changes before running update."
                 return 1
             end
 
-            echo "📦 Updating Atlas from its configuration repository..."
             command git -C "$repo" switch main || return 1
             command git -C "$repo" pull --ff-only || return 1
 
-            echo "♻️  Updating Nix flake inputs..."
-            command nix flake update --flake "$repo" || return 1
-
-            if not command git -C "$repo" diff --quiet -- flake.lock
-                echo "📝 Publishing updated flake.lock to GitLab..."
-                command git -C "$repo" add flake.lock || return 1
-                command git -C "$repo" commit -m "chore(flake): update inputs" || return 1
-                command git -C "$repo" push origin main || return 1
-            else
-                echo "✅ Nix flake inputs already up to date"
+            if not test -x "$repo/tools/update-atlas.sh"
+                echo "❌ Atlas updater not found at $repo/tools/update-atlas.sh"
+                return 1
             end
 
-            command sudo nixos-rebuild switch --flake "$repo#atlas" || return 1
+            # Keep Atlas' latest-Herdr update behavior.
+            command bash "$repo/tools/update-atlas.sh" || return 1
 
         case '*'
             echo "❌ Unsupported OS: $os_id"
@@ -70,21 +61,29 @@ function __update_local
     echo "✅ System update complete"
 end
 
-function __update_remote --argument ssh_target display_name
+function __update_remote --argument-names ssh_target display_name
     echo
     echo "━━━ $display_name ━━━"
 
-    set -l script 'set -e
+    if not string match -qr '^[A-Za-z0-9][A-Za-z0-9_-]*$' -- "$display_name"
+        echo "❌ Invalid host name: $display_name"
+        return 1
+    end
+
+    set -l script 'set -euo pipefail
+export GIT_TERMINAL_PROMPT=0
+export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10"
+host="$1"
 . /etc/os-release
 
 case "$ID" in
   arch|cachyos|manjaro)
     paru -Syu --noconfirm --sudoflags "-n"
     if command -v paccache >/dev/null 2>&1; then
-      sudo paccache -rk1 || true
+      sudo -n paccache -rk1 || echo "Package cache cleanup skipped"
     fi
     if command -v flatpak >/dev/null 2>&1; then
-      flatpak update -y || true
+      flatpak update --user -y || echo "User Flatpak update skipped"
     fi
     ;;
   debian|ubuntu)
@@ -94,31 +93,35 @@ case "$ID" in
     sudo -n apt autoremove -y
     ;;
   nixos)
-    repo="$HOME/nixos-atlas"
+    case "$host" in
+      atlas|nova) repo="$HOME/nixos-$host" ;;
+      *) echo "No NixOS deployment defined for $host" >&2; exit 1 ;;
+    esac
     test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
 
     if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-      echo "Atlas repository is dirty: $repo" >&2
-      echo "Commit, stash, or discard local changes before running update." >&2
+      echo "Repository is dirty: $repo" >&2
       exit 1
     fi
 
     git -C "$repo" switch main
     git -C "$repo" pull --ff-only
 
-    echo "Updating Nix flake inputs..."
-    nix flake update --flake "$repo"
-
-    if ! git -C "$repo" diff --quiet -- flake.lock; then
-      echo "Publishing updated flake.lock to GitLab..."
-      git -C "$repo" add flake.lock
-      git -C "$repo" commit -m "chore(flake): update inputs"
-      git -C "$repo" push origin main
+    if [ "$host" = atlas ]; then
+      test -x "$repo/tools/update-atlas.sh" || {
+        echo "Atlas updater not found: $repo/tools/update-atlas.sh" >&2
+        exit 1
+      }
+      "$repo/tools/update-atlas.sh"
     else
-      echo "Nix flake inputs already up to date"
+      nix flake update --flake "$repo"
+      if ! git -C "$repo" diff --quiet -- flake.lock; then
+        git -C "$repo" add flake.lock
+        git -C "$repo" commit -m "chore(flake): update inputs"
+        git -C "$repo" push origin main
+      fi
+      sudo -n nixos-rebuild switch --flake "$repo#$host"
     fi
-
-    sudo nixos-rebuild switch --flake "$repo#atlas"
     ;;
   *)
     echo "Unsupported OS: $ID" >&2
@@ -127,7 +130,7 @@ case "$ID" in
 esac'
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh -t "$ssh_target" "printf %s $encoded | base64 -d | bash"
+    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
 end
 
 function __update_anrisol
@@ -137,6 +140,8 @@ function __update_anrisol
     echo "━━━ anrisol ━━━"
 
     set -l script 'set -euo pipefail
+export GIT_TERMINAL_PROMPT=0
+export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10"
 repo="$HOME/1Dev-nvme/projects/nixos-anrisol"
 identity="$HOME/.ssh/id_ed25519_anrisol-atlas"
 
@@ -173,17 +178,17 @@ fi
 
 echo "Deploying ANRISOL over Tailscale..."
 rsync -az --exclude=.git \
-    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -i $identity" \
+    -e "ssh -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=10 -i $identity" \
     "$repo/" root@anrisol:/root/nixos-anrisol/
 
-ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$identity" \
+ssh -o BatchMode=yes -o IdentitiesOnly=yes -o ConnectTimeout=10 -i "$identity" \
     root@anrisol "nixos-rebuild switch --flake /root/nixos-anrisol#anrisol"
 
 echo "ANRISOL update complete"
 '
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh -T atlas "printf %s $encoded | base64 -d | bash"
+    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 atlas "printf %s $encoded | base64 -d | bash"
 end
 
 function __update_inventory_path
@@ -196,16 +201,50 @@ end
 
 function __update_ensure_inventory
     set -l inventory (__update_inventory_path)
+    set -l defaults (__update_inventory_default_path)
 
-    if test -f "$inventory"
+    if not test -f "$inventory"
+        if test -f "$defaults"
+            command cp "$defaults" "$inventory"
+        else
+            echo '{"hosts":[]}' >"$inventory"
+        end
         return
     end
 
-    set -l default_inventory (__update_inventory_default_path)
-    if test -f "$default_inventory"
-        command cp "$default_inventory" "$inventory"
+    # Add new machines to existing inventories without overriding user choices.
+    if not test -f "$defaults"
+        return
+    end
+    if not type -q jq
+        echo "❌ jq is required to update the host inventory"
+        return 1
+    end
+
+    set -l merged (mktemp); or return 1
+    command jq -s '
+      .[0] as $current
+      | .[1] as $defaults
+      | ($current.hosts // []) as $known
+      | {
+          hosts: (
+            $known + [
+              $defaults.hosts[]?
+              | select(.name as $name | ($known | any((.name | ascii_downcase) == ($name | ascii_downcase)) | not))
+            ]
+            | sort_by(.name)
+          )
+        }
+    ' "$inventory" "$defaults" >"$merged"
+    or begin
+        command rm -f "$merged"
+        return 1
+    end
+
+    if command cmp -s "$inventory" "$merged"
+        command rm -f "$merged"
     else
-        echo '{"hosts":[]}' >"$inventory"
+        command mv "$merged" "$inventory"
     end
 end
 
