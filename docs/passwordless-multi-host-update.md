@@ -18,13 +18,12 @@ Check the connections **before** running updates:
 ```sh
 ssh -o BatchMode=yes atlas 'sudo -n nixos-rebuild --help >/dev/null'
 ssh -o BatchMode=yes loops@nova 'sudo -n nixos-rebuild --help >/dev/null'
-ssh -o BatchMode=yes atlas 'ssh -o BatchMode=yes anrisol true'
-ssh -o BatchMode=yes atlas 'ssh -o BatchMode=yes anrisol "sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null"'
+ssh -o BatchMode=yes anrisol 'sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null'
 ```
 
-Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `wheel` sudo. Anrisol is updated *through Atlas* using the existing SSH alias `anrisol`, which uses the SOPS-managed key and logs in as `loops`. Prefer `sudo -n nixos-rebuild` on Anrisol; a key-only `root@anrisol` login is only a compatibility fallback. The narrow `sudo` rule is declared in GitLab `lelabdev/infra/srv-anrisol/nix` MR !5. **It requires one privileged NixOS activation before passwordless updates can work**. No SSH private keys go in the repository.
+Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `wheel` sudo. Anrisol is reached **directly from TufTux**, without an Atlas jump host. Anrisol requires an authorized SSH identity and a noninteractive `sudo -n nixos-rebuild` rule for the `loops` account. No private keys go in the repository.
 
-If the fallback root login is also unavailable, a privileged Anrisol session must activate the sudo rule once. The script will report this explicitly rather than request a password. `nixos-rebuild` can apply arbitrary NixOS configuration and must be treated as root-equivalent even with a command-scoped sudo rule.
+The update script clones `lelabdev/infra/srv-anrisol/nix` into a temporary directory on TufTux, synchronizes its tracked contents directly to Anrisol, and runs a path-flake rebuild on Anrisol. It does not use an Atlas checkout or initiate SSH from Anrisol to Atlas. This workflow applies the repository's committed `flake.lock`; updating that lock is a separate Git operation.
 
 ### Private GitLab access on Nova
 
@@ -78,6 +77,6 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 - TufTux: `paru` + cache cleanup + user Flatpaks
 - Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
 - Nova: its own GitLab SSH identity, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
-- Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then rebuild from `path:/home/loops/nixos-anrisol#anrisol` so the synchronized files are included even if Anrisol's local Git index is stale (fallback: legacy SSH root access)
+- Anrisol: clone GitLab on TufTux, rsync directly to Anrisol over SSH, and rebuild using the synchronized path flake; no Atlas dependency
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
