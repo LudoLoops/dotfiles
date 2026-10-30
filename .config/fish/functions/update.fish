@@ -222,7 +222,9 @@ fi
 
 ssh $ssh_opts "$target" "mkdir -p $destination"
 rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$repo/" "$target:$destination/"
-ssh $ssh_opts "$target" "$rebuild switch --flake $destination#anrisol"
+# The rsync target is not necessarily a Git-tracked checkout: use a path flake
+# so Nix includes synced files even if the destination Git index is stale.
+ssh $ssh_opts "$target" "$rebuild switch --flake path:$destination#anrisol"
 echo "Anrisol update complete"
 echo "ANRISOL_UPDATE_OK"
 '
