@@ -128,10 +128,10 @@ case "$ID" in
     git -C "$repo" switch main
 
     if [ "$host" = nova ]; then
-      echo "Nova: checking GitLab access using the SSH agent forwarded from TufTux..."
+      echo "Nova: checking GitLab access with its own SSH identity..."
       if ! git -C "$repo" ls-remote --exit-code origin refs/heads/main >/dev/null; then
         echo "Nova cannot read its private GitLab repository." >&2
-        echo "Ensure TufTux ssh-agent has a GitLab-authorized key; no private keys need copying to Nova." >&2
+        echo "Check the GitLab SSH identity configured on Nova and its repository permissions." >&2
         exit 1
       fi
     fi
@@ -151,9 +151,7 @@ case "$ID" in
         git -C "$repo" commit -m "chore(flake): update inputs"
         git -C "$repo" push origin main
       fi
-      # The private nixos-common flake may be fetched again during the root
-      # rebuild, so keep the temporary SSH agent available to that command.
-      sudo -n --preserve-env=SSH_AUTH_SOCK,GIT_SSH_COMMAND nixos-rebuild switch --flake "$repo#$host"
+      sudo -n nixos-rebuild switch --flake "$repo#$host"
     fi
     ;;
   *)
@@ -164,19 +162,6 @@ esac'
 
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
     set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10
-
-    if test (string lower -- "$display_name") = nova
-        # Nova has no GitLab deploy key: forward the local agent for the
-        # duration of this update instead of storing a private key on Nova.
-        if not set -q SSH_AUTH_SOCK
-            echo "❌ Nova requires TufTux SSH agent forwarding for private GitLab access."
-            echo "   Run ssh-add -l on TufTux to check your agent identities."
-            return 1
-        end
-        # Force a fresh connection so an existing ControlMaster cannot
-        # silently bypass forwarding on an earlier non-forwarded session.
-        set -a ssh_flags -A -o ControlMaster=no -o ControlPath=none
-    end
 
     command ssh $ssh_flags "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
 end
