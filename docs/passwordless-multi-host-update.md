@@ -78,6 +78,6 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 - TufTux: `paru` + cache cleanup + user Flatpaks
 - Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
 - Nova: its own GitLab SSH identity, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
-- Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then run `sudo -n nixos-rebuild` via `loops` (fallback: legacy SSH root access)
+- Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then rebuild from `path:/home/loops/nixos-anrisol#anrisol` so the synchronized files are included even if Anrisol's local Git index is stale (fallback: legacy SSH root access)
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
