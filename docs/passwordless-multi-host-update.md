@@ -28,24 +28,19 @@ If the fallback root login is also unavailable, a privileged Anrisol session mus
 
 ### Private GitLab access on Nova
 
-Nova has no GitLab SSH private key. For `update --host nova`, the TufTux SSH
-agent is forwarded **only for the duration of that SSH session**. No key is
-copied to Nova. On TufTux, a GitLab-authorized SSH identity must already be
-loaded in your agent:
+Nova uses its own GitLab SSH identity, configured declaratively by
+`modules/gitlab-credentials.nix` in `lelabdev/infra/srv-nova/nix`.
+The private key stays on Nova at
+`/home/loops/.ssh/id_ed25519_gitlab_nova`; it must never be committed
+to Git or copied from TufTux.
 
-```sh
-ssh-add -l
-ssh -A -o ControlMaster=no -o ControlPath=none loops@nova \
-  'git -C ~/nixos-nova ls-remote --exit-code origin refs/heads/main'
-```
+`update --host nova` connects to Nova without SSH agent forwarding.
+Nova checks repository access with its own identity, then pulls and
+updates its flake. The identity must have the necessary GitLab permissions
+to read the private repository and push an updated `flake.lock`.
 
-The update script runs the same GitLab preflight without waiting for a password.
-If it fails, configure the existing TufTux SSH agent/key; do not replace GitLab
-access with unauthenticated HTTPS. Agent forwarding grants Nova temporary use
-of the forwarded identities while the connection is alive, so use it only with
-a trusted and secured server. A dedicated read-only GitLab deploy key on Nova
-is an alternative if forwarding is undesirable, but publishing `flake.lock`
-also requires GitLab write access.
+If the GitLab preflight fails, verify the Nova identity and GitLab permissions.
+Do not enable agent forwarding or substitute unauthenticated HTTPS.
 
 ### Pending Atlas flake.lock changes
 
@@ -82,7 +77,7 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 
 - TufTux: `paru` + cache cleanup + user Flatpaks
 - Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
-- Nova: temporary TufTux SSH agent forwarding for GitLab access, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
+- Nova: its own GitLab SSH identity, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
 - Anrisol: on Atlas, locate the NVMe NixOS checkout, pull/flake update, rsync over Tailscale, then run `sudo -n nixos-rebuild` via `loops` (fallback: legacy SSH root access)
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
