@@ -169,87 +169,37 @@ end
 function __update_anrisol
     echo
     echo "━━━ anrisol ━━━"
-    set -l script 'set -euo pipefail
-export GIT_TERMINAL_PROMPT=0
-export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10"
 
-repo=""
-for candidate in "$HOME/1Dev-nvme/projects/nixos-anrisol" "$HOME/1Dev-nvme/projects/1dev/nixos-anrisol" "$HOME/nixos-anrisol"; do
-    if [ -f "$candidate/flake.nix" ] && [ -d "$candidate/.git" ]; then
-        repo="$candidate"
-        break
-    fi
-done
-if [ -z "$repo" ]; then
-    echo "Anrisol repository missing on Atlas NVMe" >&2
-    exit 1
-fi
+    # Connect directly from TufTux. GitLab is the source of truth;
+    # do not use Atlas as a jump host or deployment workspace.
+    set -l target anrisol
+    set -l repo_url git@gitlab.com:lelabdev/infra/srv-anrisol/nix.git
+    set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
 
-ssh_opts="-n -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes"
-# SSH must not read the Bash program being streamed into Atlas.
-# Without -n, the first nested SSH can consume the remaining script.
-echo "Checking Anrisol SSH and noninteractive sudo from Atlas..."
-if ssh $ssh_opts anrisol "sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null 2>&1"; then
-    target="anrisol"
-    destination="/home/loops/nixos-anrisol"
-    rebuild="sudo -n /run/current-system/sw/bin/nixos-rebuild"
-elif ssh $ssh_opts root@anrisol "true" 2>/dev/null; then
-    target="root@anrisol"
-    destination="/root/nixos-anrisol"
-    rebuild="/run/current-system/sw/bin/nixos-rebuild"
-else
-    echo "Anrisol has neither passwordless loops sudo nor key-only root SSH" >&2
-    echo "Enable the NixOS nixos-rebuild sudo rule on Anrisol once" >&2
-    exit 1
-fi
+    set -l checkout (command mktemp -d); or return 1
+    set -l destination /home/loops/nixos-anrisol
+    set -l result 1
 
-echo "Using Atlas checkout: $repo"
-echo "Deploy SSH target: $target"
-if [ -n "$(git -C "$repo" status --porcelain)" ]; then
-    echo "Repository has local changes: $repo" >&2
-    git -C "$repo" status --short >&2
-    echo "Changes preserved. Review them before updating." >&2
-    exit 1
-fi
-git -C "$repo" switch main
-git -C "$repo" pull --ff-only
-nix flake update --flake "$repo"
-if ! git -C "$repo" diff --quiet -- flake.lock; then
-    git -C "$repo" add flake.lock
-    git -C "$repo" commit -m "chore(flake): update inputs"
-    git -C "$repo" push origin main
-fi
-
-ssh $ssh_opts "$target" "mkdir -p $destination"
-rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$repo/" "$target:$destination/"
-# The rsync target is not necessarily a Git-tracked checkout: use a path flake
-# so Nix includes synced files even if the destination Git index is stale.
-ssh $ssh_opts "$target" "$rebuild switch --flake path:$destination#anrisol"
-echo "Anrisol update complete"
-echo "ANRISOL_UPDATE_OK"
-'
-    set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    if test -z "$encoded"
-        echo "❌ Anrisol update: remote script encoding produced empty input"
-        return 1
+    if command git clone --quiet --depth 1 --branch main "$repo_url" "$checkout/repo"
+        if command ssh $ssh_flags "$target" 'sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null 2>&1'
+            if command ssh $ssh_flags "$target" "mkdir -p $destination"
+                if command rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$checkout/repo/" "$target:$destination/"
+                    # Use a path flake: rsync destinations may not have a current Git index.
+                    if command ssh $ssh_flags "$target" "sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake path:$destination#anrisol"
+                        echo "Anrisol update complete"
+                        set result 0
+                    end
+                end
+            end
+        else
+            echo "❌ Direct Anrisol SSH or passwordless rebuild unavailable." >&2
+        end
+    else
+        echo "❌ Unable to clone Anrisol configuration from GitLab on TufTux." >&2
     end
 
-    # Show remote output immediately, but reject a silent SSH exit code 0.
-    # Anrisol must acknowledge that the full deployment actually finished.
-    set -l output_file (command mktemp); or return 1
-    command ssh -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 atlas "printf %s $encoded | base64 -d | bash" | command tee "$output_file"
-    set -l pipeline_status $pipestatus
-    if test "$pipeline_status[1]" -ne 0 -o "$pipeline_status[2]" -ne 0
-        command rm -f "$output_file"
-        echo "❌ Anrisol update: remote execution failed"
-        return 1
-    end
-    if not command grep -qx 'ANRISOL_UPDATE_OK' "$output_file"
-        command rm -f "$output_file"
-        echo "❌ Anrisol update: no completion confirmation received from Atlas"
-        return 1
-    end
-    command rm -f "$output_file"
+    command rm -rf -- "$checkout"
+    return $result
 end
 
 function __update_inventory_path
