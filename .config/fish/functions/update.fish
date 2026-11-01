@@ -166,54 +166,12 @@ esac'
     command ssh $ssh_flags "$ssh_target" "printf %s $encoded | base64 -d | bash -s -- '$display_name'"
 end
 
-function __update_anrisol
+function __update_via_atlas --argument-names host
     echo
-    echo "━━━ anrisol ━━━"
-
-    # Anrisol fetches GitLab itself; TufTux only lends its SSH agent.
-    # The private key never leaves TufTux.
-    set -l started_agent false
-    if test -z "$SSH_AUTH_SOCK"
-        eval (command ssh-agent -c) >/dev/null
-        or return 1
-        set started_agent true
-    end
-    if not command ssh-add -l >/dev/null 2>&1
-        command ssh-add "$HOME/.ssh/id_ed25519_gitlab"
-        or begin
-            if test "$started_agent" = true
-                command ssh-agent -k >/dev/null
-            end
-            return 1
-        end
-    end
-    set -l ssh_flags -A -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
-    set -l script 'set -euo pipefail
-repo="$HOME/nixos-anrisol"
-expected="git@gitlab.com:lelabdev/infra/srv-anrisol/nix.git"
-test -d "$repo/.git" || { echo "Missing Anrisol Git checkout: $repo" >&2; exit 1; }
-test -z "$(git -C "$repo" status --porcelain)" || { echo "Anrisol checkout has local changes; preserve/reconcile them first." >&2; git -C "$repo" status --short; exit 1; }
-current="$(git -C "$repo" remote get-url origin)"
-if [ "$current" != "$expected" ]; then
-  echo "Anrisol: updating origin to the canonical GitLab repository"
-  git -C "$repo" remote set-url origin "$expected"
-fi
-export GIT_TERMINAL_PROMPT=0
-export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentitiesOnly=no -o ConnectTimeout=10"
-git -C "$repo" fetch origin main
-git -C "$repo" switch main
-git -C "$repo" merge --ff-only origin/main
-# No lockfile commit or push: GitLab remains the source of truth.
-sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake "path:$repo#anrisol"
-echo "Anrisol update complete"
-'
-    set -l encoded (command printf '%s' "$script" | command base64 -w0)
-    command ssh $ssh_flags anrisol "printf %s $encoded | base64 -d | bash"
-    set -l result $status
-    if test "$started_agent" = true
-        command ssh-agent -k >/dev/null
-    end
-    return $result
+    echo "━━━ $host (via Atlas) ━━━"
+    # Atlas owns the encrypted deploy tokens. No GitLab identity on TufTux.
+    set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
+    command ssh $ssh_flags atlas "bash /home/loops/nixos-atlas/tools/update-servers.sh $host"
 end
 
 function __update_inventory_path
@@ -393,10 +351,11 @@ function __update_host --argument requested
             echo "❌ No SSH target configured for $requested"
             return 1
         end
-        if test (string lower -- "$requested") = anrisol
-            __update_anrisol
-        else
-            __update_remote "$ssh_target" "$requested"
+        switch (string lower -- "$requested")
+            case anrisol nova
+                __update_via_atlas (string lower -- "$requested")
+            case '*'
+                __update_remote "$ssh_target" "$requested"
         end
     end
 end
