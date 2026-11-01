@@ -172,9 +172,20 @@ function __update_anrisol
 
     # Anrisol fetches GitLab itself; TufTux only lends its SSH agent.
     # The private key never leaves TufTux.
+    set -l started_agent false
     if test -z "$SSH_AUTH_SOCK"
-        echo "❌ No SSH agent: load a GitLab key on TufTux first."
-        return 1
+        eval (command ssh-agent -c) >/dev/null
+        or return 1
+        set started_agent true
+    end
+    if not command ssh-add -l >/dev/null 2>&1
+        command ssh-add "$HOME/.ssh/id_ed25519_gitlab"
+        or begin
+            if test "$started_agent" = true
+                command ssh-agent -k >/dev/null
+            end
+            return 1
+        end
     end
     set -l ssh_flags -A -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
     set -l script 'set -euo pipefail
@@ -198,6 +209,11 @@ echo "Anrisol update complete"
 '
     set -l encoded (command printf '%s' "$script" | command base64 -w0)
     command ssh $ssh_flags anrisol "printf %s $encoded | base64 -d | bash"
+    set -l result $status
+    if test "$started_agent" = true
+        command ssh-agent -k >/dev/null
+    end
+    return $result
 end
 
 function __update_inventory_path
