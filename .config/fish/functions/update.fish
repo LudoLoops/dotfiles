@@ -167,8 +167,6 @@ esac'
 end
 
 function __update_via_atlas --argument-names host
-    echo
-    echo "━━━ $host (via Atlas) ━━━"
     # Atlas owns the encrypted deploy tokens. No GitLab identity on TufTux.
     set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
     command ssh $ssh_flags atlas "bash /home/loops/nixos-atlas/tools/update-servers.sh $host"
