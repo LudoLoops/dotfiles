@@ -170,36 +170,34 @@ function __update_anrisol
     echo
     echo "━━━ anrisol ━━━"
 
-    # Connect directly from TufTux. GitLab is the source of truth;
-    # do not use Atlas as a jump host or deployment workspace.
-    set -l target anrisol
-    set -l repo_url git@gitlab.com:lelabdev/infra/srv-anrisol/nix.git
-    set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
-
-    set -l checkout (command mktemp -d); or return 1
-    set -l destination /home/loops/nixos-anrisol
-    set -l result 1
-
-    if command git clone --quiet --depth 1 --branch main "$repo_url" "$checkout/repo"
-        if command ssh $ssh_flags "$target" 'sudo -n /run/current-system/sw/bin/nixos-rebuild --help >/dev/null 2>&1'
-            if command ssh $ssh_flags "$target" "mkdir -p $destination"
-                if command rsync -az --exclude=.git -e "ssh -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes" "$checkout/repo/" "$target:$destination/"
-                    # Use a path flake: rsync destinations may not have a current Git index.
-                    if command ssh $ssh_flags "$target" "sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake path:$destination#anrisol"
-                        echo "Anrisol update complete"
-                        set result 0
-                    end
-                end
-            end
-        else
-            echo "❌ Direct Anrisol SSH or passwordless rebuild unavailable." >&2
-        end
-    else
-        echo "❌ Unable to clone Anrisol configuration from GitLab on TufTux." >&2
+    # Anrisol fetches GitLab itself; TufTux only lends its SSH agent.
+    # The private key never leaves TufTux.
+    if test -z "$SSH_AUTH_SOCK"
+        echo "❌ No SSH agent: load a GitLab key on TufTux first."
+        return 1
     end
-
-    command rm -rf -- "$checkout"
-    return $result
+    set -l ssh_flags -A -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
+    set -l script 'set -euo pipefail
+repo="$HOME/nixos-anrisol"
+expected="git@gitlab.com:lelabdev/infra/srv-anrisol/nix.git"
+test -d "$repo/.git" || { echo "Missing Anrisol Git checkout: $repo" >&2; exit 1; }
+test -z "$(git -C "$repo" status --porcelain)" || { echo "Anrisol checkout has local changes; preserve/reconcile them first." >&2; git -C "$repo" status --short; exit 1; }
+current="$(git -C "$repo" remote get-url origin)"
+if [ "$current" != "$expected" ]; then
+  echo "Anrisol: updating origin to the canonical GitLab repository"
+  git -C "$repo" remote set-url origin "$expected"
+fi
+export GIT_TERMINAL_PROMPT=0
+export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o IdentitiesOnly=no -o ConnectTimeout=10"
+git -C "$repo" fetch origin main
+git -C "$repo" switch main
+git -C "$repo" merge --ff-only origin/main
+# No lockfile commit or push: GitLab remains the source of truth.
+sudo -n /run/current-system/sw/bin/nixos-rebuild switch --flake "path:$repo#anrisol"
+echo "Anrisol update complete"
+'
+    set -l encoded (command printf '%s' "$script" | command base64 -w0)
+    command ssh $ssh_flags anrisol "printf %s $encoded | base64 -d | bash"
 end
 
 function __update_inventory_path
