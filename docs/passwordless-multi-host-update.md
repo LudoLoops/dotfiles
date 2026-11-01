@@ -23,7 +23,7 @@ ssh -o BatchMode=yes anrisol 'sudo -n /run/current-system/sw/bin/nixos-rebuild -
 
 Atlas has an explicit passwordless `nixos-rebuild` rule; Nova has passwordless `wheel` sudo. Anrisol is reached **directly from TufTux**, without an Atlas jump host. Anrisol requires an authorized SSH identity and a noninteractive `sudo -n nixos-rebuild` rule for the `loops` account. No private keys go in the repository.
 
-The update script clones `lelabdev/infra/srv-anrisol/nix` into a temporary directory on TufTux, synchronizes its tracked contents directly to Anrisol, and runs a path-flake rebuild on Anrisol. It does not use an Atlas checkout or initiate SSH from Anrisol to Atlas. This workflow applies the repository's committed `flake.lock`; updating that lock is a separate Git operation.
+TufTux now delegates Nova and Anrisol updates to Atlas over SSH. Atlas keeps per-group GitLab HTTPS Deploy Tokens encrypted with SOPS; the remote servers fetch GitLab directly using temporary credentials in tmpfs. No TufTux clone, rsync, or SSH agent forwarding is involved for these two hosts. See `secrets/GITLAB-DEPLOY.md` in `srv-atlas/nix`. Until the tokens and remote checkouts are ready, these updates fail safely rather than overwrite local files.
 
 ### Private GitLab access on Nova
 
