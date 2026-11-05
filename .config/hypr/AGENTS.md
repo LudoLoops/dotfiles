@@ -16,7 +16,7 @@ Tout le reste (wallpaper, idle, lock, notifications, bar) = DMS.
 `hl.bind("SUPER + W", hl.dsp.focus({ workspace = "r-1" }))` — le dernier
 bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua).
 `Super+S` / `Super+W` : navigation `r+1` / `r-1` sur le moniteur actif, y compris les bureaux vides.
-- Les binds personnalisés de `hyprland.lua` (bureaux numérotés, menus et Print) sont
+- Les binds personnalisés de `hyprland.lua` (bureaux numérotés, menus) et de `dms/binds-user.lua` (dont Print) sont
   précédés de `hl.unbind(...)` après les `require("dms.*")` : évite de conserver
   simultanément le bind par défaut DMS et le bind personnalisé.
   Le libellé « overridden by config.kdl » de l’éditeur DMS est codé en dur et
@@ -67,15 +67,14 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
 - ⚠️ **`hyprctl dispatch` attend une expression LUA depuis 0.56** (l'ancienne syntaxe échoue avec
   « dispatch in lua is a shorthand for hl.dispatch(...) »). Exemple :
   `hyprctl dispatch 'hl.dsp.window.move({ workspace = "11", follow = false, window = "address:0x..." })'`.
-- **Screenshot (Print)** : `.config/hypr/bin/screenshot-annotate.sh` — capture le **moniteur actif**
-  (grim, image figée donc pas de sélection live), puis **satty** pour annoter/recadrer, et
-  **Entrée = copie uniquement dans le presse-papier**, sans création de fichier
-  (`--actions-on-enter save-to-clipboard`, `--early-exit all`).
-  Le bind est posé dans `hyprland.lua` après les require() → il prend le pas sur le
-  `dms screenshot` de DMS (dont le bind reste enregistré mais masqué : le dernier gagne).
-  `Shift+Print` lance `hyprcrop freeze` (sélection interactive d'une zone, fenêtre ou écran ; copie dans le presse-papier et sauvegarde dans `/dev/shm/hyprcrop`).
-  `Ctrl+Print` / `Alt+Print` restent ceux de DMS (écran complet / fenêtre).
-  Le script résout lui-même `HYPRLAND_INSTANCE_SIGNATURE`, donc il marche aussi lancé à la main.
+- **Captures d'écran** : les raccourcis personnalisés sont dans `dms/binds-user.lua` (pas dans `hyprland.lua`).
+  - `Print` : `dms screenshot window --no-file` — fenêtre active vers le presse-papiers, notification DMS.
+  - `Ctrl+Print` : `dms ipc call screenshotPlus capture` — sélection figée et annotations.
+  - `Shift+Print` : `dms screenshot full --no-file` — moniteur entier vers le presse-papiers.
+  - `Alt+Print` : `dms ipc call screenshotPlus capture` — sélection figée et annotations.
+  - `Alt+Ctrl+Print`, `Alt+Shift+Print` et `Ctrl+Shift+Print` : non affectés.
+  - Screenshot+ est un plugin tiers : `pcmid/dms-screenshot-plus`, exige DMS >= 1.6 ; moteur `cli` conseillé tant que le problème screencopy Quickshell n'est pas corrigé.
+  - Les anciens scripts HyprCrop/Satty dans `bin/` sont conservés pour retour arrière, mais ne sont plus utilisés par ces raccourcis.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|
