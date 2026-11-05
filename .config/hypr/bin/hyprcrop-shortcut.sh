@@ -21,4 +21,5 @@ if [ "$annotate" = yes ]; then
   satty --filename "$capture" --resize smart --floating-hack --copy-command wl-copy --actions-on-enter save-to-clipboard --early-exit all
 else
   wl-copy --type image/png < "$capture"
+  notify-send --app-name="Screenshot" --expire-time=2000 "Capture copiée" "Fenêtre active dans le presse-papiers" 2>/dev/null || true
 fi
