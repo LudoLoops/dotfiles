@@ -19,4 +19,6 @@ esac
 trap 'rm -f -- "$capture"' EXIT
 if [ "$annotate" = yes ]; then
   satty --filename "$capture" --resize smart --floating-hack --copy-command wl-copy --actions-on-enter save-to-clipboard --early-exit all
+else
+  wl-copy --type image/png < "$capture"
 fi
