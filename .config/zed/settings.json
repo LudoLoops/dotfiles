@@ -10,17 +10,22 @@
   "proxy": "",
   "ssh_connections": [
     {
-      "host": "aether",
+      "host": "atlas",
       "args": [],
       "projects": [
         {
           "paths": [
-            "/home/loops/dev/Nexoria-hub/dformpro"
+            "/home/loops"
           ]
         },
         {
           "paths": [
-            "/home/loops/dev/punchin-hub/punchin.now/./"
+            "/home/loops/1Dev-nvme"
+          ]
+        },
+        {
+          "paths": [
+            "/home/loops/1Dev-nvme/projects/elypeachie-hub/elypeachie/./"
           ]
         }
       ]
