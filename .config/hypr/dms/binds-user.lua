@@ -57,7 +57,6 @@ hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("ghostty"), { description = "Ghostty" 
 hl.unbind("ALT + TAB")
 hl.bind("ALT + TAB", hl.dsp.window.cycle_next(), { description = "Next window" })
 hl.unbind("ALT + space")
-hl.unbind("Print")
 hl.unbind("SUPER + F")
 hl.bind("SUPER + F", hl.dsp.window.fullscreen_state({ internal = 2, client = 0, action = "toggle" }), { description = "Fake fullscreen" })
 hl.unbind("SUPER + RETURN")
@@ -66,3 +65,23 @@ hl.bind("SUPER + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized", acti
 hl.unbind("SUPER + T")
 hl.bind("SUPER + T", hl.dsp.exec_cmd("kitty"), { description = "Kitty" })
 hl.unbind("SUPER + space")
+
+-- Screenshot shortcuts (user overrides loaded after dms.binds).
+-- Print: DMS quick window copy with native preview.
+-- Ctrl+Print: HyprCrop window + Satty.
+-- Shift+Print: HyprCrop monitor + Satty.
+-- Alt+Print: HyprCrop frozen region + Satty.
+-- Alt+Ctrl+Print: DMS window + Satty (comparison).
+-- Alt+Shift+Print: DMS monitor + Satty (comparison).
+for _, key in ipairs({
+    "Print", "CTRL + Print", "SHIFT + Print", "ALT + Print",
+    "ALT + CTRL + Print", "ALT + SHIFT + Print", "CTRL + SHIFT + Print"
+}) do
+    hl.unbind(key)
+end
+hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { description = "DMS window to clipboard" })
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"), { description = "HyprCrop window & Satty" })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"), { description = "HyprCrop monitor & Satty" })
+hl.bind("ALT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"), { description = "HyprCrop region & Satty" })
+hl.bind("ALT + CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS window & Satty (test)" })
+hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS monitor & Satty (test)" })
