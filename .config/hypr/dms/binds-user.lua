@@ -66,22 +66,20 @@ hl.unbind("SUPER + T")
 hl.bind("SUPER + T", hl.dsp.exec_cmd("kitty"), { description = "Kitty" })
 hl.unbind("SUPER + space")
 
--- Screenshot shortcuts (user overrides loaded after dms.binds).
--- Print: DMS quick window copy with native preview.
--- Ctrl+Print: HyprCrop window + Satty.
--- Shift+Print: HyprCrop monitor + Satty.
--- Alt+Print: HyprCrop frozen region + Satty.
--- Alt+Ctrl+Print: DMS window + Satty (comparison).
--- Alt+Shift+Print: DMS monitor + Satty (comparison).
+-- Screenshot shortcuts: native DMS + optional Screenshot+ annotations.
+-- Screenshot+ must be installed and enabled separately (see its upstream README).
+-- Print: DMS active window to clipboard with native notification.
+-- Ctrl+Print: Screenshot+ selection, frozen screen, annotations.
+-- Shift+Print: DMS full monitor screenshot.
+-- Alt+Print: Screenshot+ selection, frozen screen, annotations.
+-- Old comparison bindings intentionally cleared.
 for _, key in ipairs({
     "Print", "CTRL + Print", "SHIFT + Print", "ALT + Print",
     "ALT + CTRL + Print", "ALT + SHIFT + Print", "CTRL + SHIFT + Print"
 }) do
     hl.unbind(key)
 end
-hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { description = "DMS window to clipboard" })
-hl.bind("CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"), { description = "HyprCrop window & Satty" })
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"), { description = "HyprCrop monitor & Satty" })
-hl.bind("ALT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"), { description = "HyprCrop region & Satty" })
-hl.bind("ALT + CTRL + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS window & Satty (test)" })
-hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS monitor & Satty (test)" })
+hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { description = "DMS active window to clipboard" })
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ annotated selection" })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("dms screenshot full --no-file"), { description = "DMS full monitor to clipboard" })
+hl.bind("ALT + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ annotated selection" })
