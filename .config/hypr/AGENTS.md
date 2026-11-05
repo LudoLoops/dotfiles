@@ -67,14 +67,13 @@ bind enregistré sur une même touche gagne (binds-user.lua gagne sur binds.lua)
 - ⚠️ **`hyprctl dispatch` attend une expression LUA depuis 0.56** (l'ancienne syntaxe échoue avec
   « dispatch in lua is a shorthand for hl.dispatch(...) »). Exemple :
   `hyprctl dispatch 'hl.dsp.window.move({ workspace = "11", follow = false, window = "address:0x..." })'`.
-- **Captures d'écran** : les raccourcis personnalisés sont dans `dms/binds-user.lua` (pas dans `hyprland.lua`).
-  - `Print` : `dms screenshot window --no-file` — fenêtre active vers le presse-papiers, notification DMS.
-  - `Ctrl+Print` : `dms ipc call screenshotPlus capture` — sélection figée et annotations.
-  - `Shift+Print` : `dms screenshot full --no-file` — moniteur entier vers le presse-papiers.
-  - `Alt+Print` : `dms ipc call screenshotPlus capture` — sélection figée et annotations.
-  - `Alt+Ctrl+Print`, `Alt+Shift+Print` et `Ctrl+Shift+Print` : non affectés.
-  - Screenshot+ est un plugin tiers : `pcmid/dms-screenshot-plus`, exige DMS >= 1.6 ; moteur `cli` conseillé tant que le problème screencopy Quickshell n'est pas corrigé.
-  - Les anciens scripts HyprCrop/Satty dans `bin/` sont conservés pour retour arrière, mais ne sont plus utilisés par ces raccourcis.
+- **Captures d'écran** : raccourcis dans `dms/binds-user.lua` (pas dans `hyprland.lua`).
+  - `Print` : DMS fenêtre active vers presse-papiers + notification native.
+  - `Ctrl+Print` : DMS fenêtre active via `bin/dms-satty.sh window` puis annotations Satty.
+  - `Shift+Print` : DMS moniteur entier via `bin/dms-satty.sh full` puis annotations Satty.
+  - `Alt+Print` : Screenshot+ (`dms ipc call screenshotPlus capture`) pour sélection figée + annotations intégrées.
+  - Screenshot+ n'a pas de mode IPC direct fenêtre/plein écran. Dans l'overlay, `F` sélectionne tout le moniteur ; `Échap` revient progressivement sur l'outil/annotation/sélection puis ferme.
+  - Les scripts HyprCrop sont conservés dans le dépôt pour référence, mais ne sont plus appelés.
 - **Correspondance des binds** (tous dans `dms/binds-user.lua`) :
   | Mango | Hyprland |
   |---|---|
