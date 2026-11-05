@@ -256,11 +256,15 @@ hl.bind("SUPER + CTRL + SHIFT + 9", hl.dsp.window.move({ workspace = "19" }), { 
 -- Ctrl+Print: active window + Satty
 -- Shift+Print: focused monitor full screen + Satty
 -- Alt+Print: select frozen region + Satty
+-- Alt+Shift+Print: DMS focused monitor + Satty (comparison)
+-- Alt+Ctrl+Print: DMS focused window + Satty (comparison)
 -- Ctrl+Shift+Print: intentionally unbound
 hl.unbind("Print")
 hl.unbind("CTRL + Print")
 hl.unbind("SHIFT + Print")
 hl.unbind("ALT + Print")
+hl.unbind("ALT + SHIFT + Print")
+hl.unbind("ALT + CTRL + Print")
 hl.unbind("CTRL + SHIFT + Print")
 hl.bind(
 	"Print",
@@ -281,4 +285,14 @@ hl.bind(
 	"ALT + Print",
 	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"),
 	{ description = "Select region & annotate (Satty)" }
+)
+hl.bind(
+	"ALT + SHIFT + Print",
+	hl.dsp.exec_cmd("sh -c 'dms screenshot full --stdout --no-file --no-clipboard --no-notify | satty -f - --resize smart --floating-hack --copy-command wl-copy --actions-on-enter save-to-clipboard --early-exit all'"),
+	{ description = "DMS full focused monitor & annotate (Satty)" }
+)
+hl.bind(
+	"ALT + CTRL + Print",
+	hl.dsp.exec_cmd("sh -c 'dms screenshot window --stdout --no-file --no-clipboard --no-notify | satty -f - --resize smart --floating-hack --copy-command wl-copy --actions-on-enter save-to-clipboard --early-exit all'"),
+	{ description = "DMS active window & annotate (Satty)" }
 )
