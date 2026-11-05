@@ -66,13 +66,12 @@ hl.unbind("SUPER + T")
 hl.bind("SUPER + T", hl.dsp.exec_cmd("kitty"), { description = "Kitty" })
 hl.unbind("SUPER + space")
 
--- Screenshot shortcuts: native DMS + optional Screenshot+ annotations.
--- Screenshot+ must be installed and enabled separately (see its upstream README).
--- Print: DMS active window to clipboard with native notification.
--- Ctrl+Print: Screenshot+ selection, frozen screen, annotations.
--- Shift+Print: DMS full monitor screenshot.
--- Alt+Print: Screenshot+ selection, frozen screen, annotations.
--- Old comparison bindings intentionally cleared.
+-- Screenshot shortcuts: DMS native captures + Satty for targeted annotation; Screenshot+ for areas.
+-- Print: active window clipboard + DMS notification.
+-- Ctrl+Print: active window (DMS capture) + Satty annotations.
+-- Shift+Print: full monitor (DMS capture) + Satty annotations.
+-- Alt+Print: Screenshot+ frozen area selection and inline annotations.
+-- Screenshot+ currently has no IPC capture-window/full-screen mode.
 for _, key in ipairs({
     "Print", "CTRL + Print", "SHIFT + Print", "ALT + Print",
     "ALT + CTRL + Print", "ALT + SHIFT + Print", "CTRL + SHIFT + Print"
@@ -80,6 +79,6 @@ for _, key in ipairs({
     hl.unbind(key)
 end
 hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { description = "DMS active window to clipboard" })
-hl.bind("CTRL + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ annotated selection" })
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("dms screenshot full --no-file"), { description = "DMS full monitor to clipboard" })
-hl.bind("ALT + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ annotated selection" })
+hl.bind("CTRL + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS active window & Satty" })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS full monitor & Satty" })
+hl.bind("ALT + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ select region & annotate" })
