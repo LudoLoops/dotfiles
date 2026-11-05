@@ -251,24 +251,26 @@ hl.bind("SUPER + CTRL + SHIFT + 8", hl.dsp.window.move({ workspace = "18" }), { 
 hl.unbind("SUPER + CTRL + SHIFT + 9")
 hl.bind("SUPER + CTRL + SHIFT + 9", hl.dsp.window.move({ workspace = "19" }), { description = "Send to 19 (laptop)" })
 
--- --- Screenshots HyprCrop optimized: temporary PNG removed after clipboard/annotation ---
--- Print: select frozen region + Satty
--- Ctrl+Print: active window + Satty
+-- --- Screenshots HyprCrop: clipboard-only captures or Satty annotations ---
+-- Print: active window + Satty
+-- Ctrl+Print: active window directly to clipboard
 -- Shift+Print: focused monitor full screen + Satty
--- Ctrl+Shift+Print: active window directly to clipboard
+-- Alt+Print: select frozen region + Satty
+-- Ctrl+Shift+Print: intentionally unbound
 hl.unbind("Print")
 hl.unbind("CTRL + Print")
 hl.unbind("SHIFT + Print")
+hl.unbind("ALT + Print")
 hl.unbind("CTRL + SHIFT + Print")
 hl.bind(
 	"Print",
-	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"),
-	{ description = "Select region & annotate (Satty)" }
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"),
+	{ description = "Active window & annotate (Satty)" }
 )
 hl.bind(
 	"CTRL + Print",
-	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"),
-	{ description = "Active window & annotate (Satty)" }
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window-clipboard"),
+	{ description = "Active window to clipboard" }
 )
 hl.bind(
 	"SHIFT + Print",
@@ -276,7 +278,7 @@ hl.bind(
 	{ description = "Full focused monitor & annotate (Satty)" }
 )
 hl.bind(
-	"CTRL + SHIFT + Print",
-	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window-clipboard"),
-	{ description = "Active window to clipboard" }
+	"ALT + Print",
+	hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"),
+	{ description = "Select region & annotate (Satty)" }
 )
