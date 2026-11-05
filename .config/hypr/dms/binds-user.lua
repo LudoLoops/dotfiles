@@ -83,5 +83,5 @@ hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { descripti
 hl.bind("CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh window"), { description = "HyprCrop window & Satty" })
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh full"), { description = "HyprCrop monitor & Satty" })
 hl.bind("ALT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/hyprcrop-shortcut.sh select"), { description = "HyprCrop region & Satty" })
-hl.bind("ALT + CTRL + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS window & Satty (test)" })
-hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd("/home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS monitor & Satty (test)" })
+hl.bind("ALT + CTRL + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS window & Satty (test)" })
+hl.bind("ALT + SHIFT + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS monitor & Satty (test)" })
