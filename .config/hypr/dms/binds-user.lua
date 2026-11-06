@@ -82,3 +82,10 @@ hl.bind("Print", hl.dsp.exec_cmd("dms screenshot window --no-file"), { descripti
 hl.bind("CTRL + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh window"), { description = "DMS active window & Satty" })
 hl.bind("SHIFT + Print", hl.dsp.exec_cmd("sh /home/loops/.config/hypr/bin/dms-satty.sh full"), { description = "DMS full monitor & Satty" })
 hl.bind("ALT + Print", hl.dsp.exec_cmd("dms ipc call screenshotPlus capture"), { description = "Screenshot+ select region & annotate" })
+
+-- Pocket TTS: Super+R toggles reading/pause/resume; Super+Shift+R stops.
+-- Keep the DMS toggle-split command on Super+Alt+R.
+hl.unbind("SUPER + R")
+hl.bind("SUPER + R", hl.dsp.exec_cmd("/home/loops/.local/bin/read-aloud"), { description = "Read aloud / pause / resume" })
+hl.bind("SUPER + SHIFT + R", hl.dsp.exec_cmd("/home/loops/.local/bin/read-aloud stop"), { description = "Stop reading aloud" })
+hl.bind("SUPER + ALT + R", hl.dsp.layout("togglesplit"), { description = "Toggle split" })

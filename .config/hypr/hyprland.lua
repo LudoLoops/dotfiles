@@ -124,6 +124,7 @@ require("dms.layout")
 require("dms.cursor")
 require("dms.binds")
 require("dms.binds-user")
+
 require("dms.windowrules")
 
 -- Keep only the Zen Browser Picture-in-Picture window visible on all workspaces.

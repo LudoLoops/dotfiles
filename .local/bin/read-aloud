@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Read the current Wayland selection with Kyutai Pocket TTS.
+set -euo pipefail
+state_dir="${XDG_RUNTIME_DIR:-/tmp}/read-aloud-${UID}"
+mkdir -p "$state_dir"
+pidfile="$state_dir/worker.pid"
+pausedfile="$state_dir/paused"
+logfile="${XDG_CACHE_HOME:-$HOME/.cache}/read-aloud.log"
+
+if [[ "${1:-}" == "--worker" ]]; then
+    audio="$2"
+    text="$3"
+    trap 'rm -f "$audio"' EXIT
+    if ! "$HOME/.local/bin/pocket-tts" generate --language french --voice estelle --text "$text" --output-path "$audio" --quiet >>"$logfile" 2>&1; then
+        notify-send "Lecture vocale" "Échec de génération (voir ~/.cache/read-aloud.log)"
+        exit 1
+    fi
+    pw-play "$audio" >>"$logfile" 2>&1
+    exit
+fi
+
+action="${1:-toggle}"
+exec 9>"$state_dir/lock"
+flock -x 9
+pid=""
+if [[ -f "$pidfile" ]]; then
+    candidate="$(cat "$pidfile")"
+    if [[ "$candidate" =~ ^[0-9]+$ ]] && kill -0 "$candidate" 2>/dev/null && [[ -r "/proc/$candidate/cmdline" ]] && tr '\0' ' ' <"/proc/$candidate/cmdline" | grep -Fq 'read-aloud --worker'; then
+        pid="$candidate"
+    else
+        rm -f "$pidfile" "$pausedfile"
+    fi
+fi
+
+if [[ "$action" == "stop" ]]; then
+    if [[ -n "$pid" ]]; then
+        # Resume stopped processes so they can receive TERM and clean up.
+        kill -CONT -- "-$pid" 2>/dev/null || true
+        kill -TERM -- "-$pid" 2>/dev/null || true
+        notify-send "Lecture vocale" "Arrêtée"
+    fi
+    rm -f "$pidfile" "$pausedfile"
+    exit 0
+fi
+
+if [[ -n "$pid" ]]; then
+    if [[ -f "$pausedfile" ]]; then
+        kill -CONT -- "-$pid"
+        rm -f "$pausedfile"
+        notify-send "Lecture vocale" "Reprise"
+    else
+        kill -STOP -- "-$pid"
+        touch "$pausedfile"
+        notify-send "Lecture vocale" "Pause"
+    fi
+    exit 0
+fi
+
+text="$(timeout 3 wl-paste --primary --no-newline 2>/dev/null || true)"
+if [[ -z "${text//[[:space:]]/}" ]]; then
+    notify-send "Lecture vocale" "Sélectionne d'abord du texte"
+    exit 1
+fi
+if (( ${#text} > 5000 )); then
+    text="${text:0:5000}"
+    notify-send "Lecture vocale" "Sélection limitée à 5 000 caractères"
+fi
+audio="$(mktemp "$state_dir/audio-XXXXXX.wav")"
+setsid "$0" --worker "$audio" "$text" </dev/null >/dev/null 2>&1 9>&- &
+echo "$!" > "$pidfile"
+rm -f "$pausedfile"
+notify-send "Lecture vocale" "Génération en cours…"
