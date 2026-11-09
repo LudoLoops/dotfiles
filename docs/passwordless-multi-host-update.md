@@ -50,7 +50,7 @@ runs the rebuild, and commits/pushes the new `flake.lock`. The prior
 generated lock remains recoverable:
 
 ```sh
-ssh atlas 'git -C ~/nixos-atlas stash list'
+ssh atlas 'git -C ~/1Dev-nvme/projects/infra-hub/nixos-atlas stash list'
 ```
 
 Other dirty files still block the update. Do not apply the old stashed
@@ -75,8 +75,8 @@ The script only updates **user** Flatpaks without prompts; system Flatpaks may s
 ## Implementation
 
 - TufTux: `paru` + cache cleanup + user Flatpaks
-- Atlas: `~/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
-- Nova: its own GitLab SSH identity, then `~/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
+- Atlas: `~/1Dev-nvme/projects/infra-hub/nixos-atlas/tools/update-atlas.sh` (keeps Herdr tracking its latest stable release)
+- Nova: its own GitLab SSH identity, then `~/1Dev-nvme/projects/infra-hub/nixos-nova` pull, flake refresh, lock commit/push, `sudo -n nixos-rebuild`
 - Anrisol: clone GitLab on TufTux, rsync directly to Anrisol over SSH, and rebuild using the synchronized path flake; no Atlas dependency
 
 On errors (uncommitted Git changes, missing credentials, unreachable host), the failing machine is reported. Other enabled hosts continue to run.
