@@ -1,5 +1,8 @@
 function rebuild --description 'Pull Atlas configuration and rebuild NixOS'
-    set -l repo "$HOME/nixos-atlas"
+    set -l repo "$HOME/1Dev-nvme/projects/infra-hub/nixos-atlas"
+    if not test -f "$repo/flake.nix"
+        set repo "$HOME/nixos-atlas"
+    end
 
     if not test -f "$repo/flake.nix"
         echo "❌ NixOS flake not found at $repo"
