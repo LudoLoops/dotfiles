@@ -31,7 +31,10 @@ function __update_local
             command sudo -n apt autoremove -y || return 1
 
         case nixos
-            set -l repo "$HOME/nixos-atlas"
+            set -l repo "$HOME/1Dev-nvme/projects/infra-hub/nixos-atlas"
+            if not test -f "$repo/flake.nix"
+                set repo "$HOME/nixos-atlas"
+            end
             if not test -f "$repo/flake.nix"
                 echo "❌ Atlas flake not found at $repo"
                 return 1
@@ -104,7 +107,12 @@ case "$ID" in
     ;;
   nixos)
     case "$host" in
-      atlas|nova) repo="$HOME/nixos-$host" ;;
+      atlas|nova)
+        repo="$HOME/1Dev-nvme/projects/infra-hub/nixos-$host"
+        if [ ! -f "$repo/flake.nix" ]; then
+          repo="$HOME/nixos-$host"
+        fi
+        ;;
       *) echo "No NixOS deployment defined for $host" >&2; exit 1 ;;
     esac
     test -f "$repo/flake.nix" || { echo "NixOS flake not found at $repo" >&2; exit 1; }
@@ -169,7 +177,8 @@ end
 function __update_via_atlas --argument-names host
     # Atlas owns the encrypted deploy tokens. No GitLab identity on TufTux.
     set -l ssh_flags -T -o BatchMode=yes -o NumberOfPasswordPrompts=0 -o ConnectTimeout=10 -o StrictHostKeyChecking=yes
-    command ssh $ssh_flags atlas "ATLAS_UPDATE_COLOR=1 bash /home/loops/nixos-atlas/tools/update-servers.sh $host"
+    set -l atlas_command 'repo="$HOME/1Dev-nvme/projects/infra-hub/nixos-atlas"; if [ ! -f "$repo/tools/update-servers.sh" ]; then repo="$HOME/nixos-atlas"; fi; ATLAS_UPDATE_COLOR=1 bash "$repo/tools/update-servers.sh"'
+    command ssh $ssh_flags atlas "$atlas_command $host"
 end
 
 function __update_inventory_path
