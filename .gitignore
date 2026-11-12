@@ -20,7 +20,8 @@ fish_variables
 .config/environment.d/90-dms.conf
 .config/kitty/dank-tabs.conf
 .config/kitty/dank-theme.conf
-.config/wezterm/colors/dank-theme.toml
+.config/wezterm/colors/*
+!.config/wezterm/colors/.gitkeep
 .config/mango/dms/colors.conf
 .config/mango/dms/cursor.conf
 .config/hypr/dms/colors.lua
