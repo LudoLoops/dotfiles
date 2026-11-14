@@ -471,9 +471,13 @@ function update
     set_color normal
     for host in $ordered
         if contains -- "$host" $succeeded
+            set_color --bold green
             printf '  ✓ %-12s SUCCESS\n' "$host"
+            set_color normal
         else
+            set_color --bold red
             printf '  ✗ %-12s FAILED\n' "$host"
+            set_color normal
         end
     end
     if test (count $failed) -gt 0
