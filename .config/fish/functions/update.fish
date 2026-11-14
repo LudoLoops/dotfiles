@@ -76,7 +76,9 @@ end
 
 function __update_remote --argument-names ssh_target display_name
     echo
-    echo "━━━ $display_name ━━━"
+    set_color --bold cyan
+    echo "━━━ "(string upper -- "$display_name")" ━━━━━━━━━━━━━━━━━━━━━"
+    set_color normal
 
     if not string match -qr '^[A-Za-z0-9][A-Za-z0-9_-]*$' -- "$display_name"
         echo "❌ Invalid host name: $display_name"
@@ -351,7 +353,9 @@ function __update_host --argument requested
 
     if test "$is_local" = true
         echo
-        echo "━━━ $requested ━━━"
+        set_color --bold cyan
+        echo "━━━ "(string upper -- "$requested")" ━━━━━━━━━━━━━━━━━━━━━"
+        set_color normal
         __update_local
     else
         if test -z "$ssh_target"
@@ -425,18 +429,61 @@ function update
         return
     end
 
-    set -l failed
+    # Keep the local workstation distinct, then group the NixOS servers.
+    # Other inventory hosts are still updated after the known machines.
+    set -l ordered
+    for preferred in TufTux atlas nova anrisol
+        for host in $hosts
+            if test (string lower -- "$host") = (string lower -- "$preferred")
+                set -a ordered "$host"
+            end
+        end
+    end
     for host in $hosts
-        __update_host "$host"
-        or set -a failed "$host"
+        if not contains -- "$host" $ordered
+            set -a ordered "$host"
+        end
     end
 
-    if test (count $failed) -gt 0
-        echo
-        echo "❌ Failed: "(string join ', ' $failed)
-        return 1
+    set -l failed
+    set -l succeeded
+    set -l server_heading_shown false
+    for host in $ordered
+        if contains -- (string lower -- "$host") atlas nova anrisol
+            if test "$server_heading_shown" = false
+                echo
+                set_color --bold cyan
+                echo "━━━ NIXOS SERVERS ━━━━━━━━━━━━━━━━━"
+                set_color normal
+                set server_heading_shown true
+            end
+        end
+        if __update_host "$host"
+            set -a succeeded "$host"
+        else
+            set -a failed "$host"
+        end
     end
 
     echo
-    echo "✅ All enabled machines updated"
+    set_color --bold cyan
+    echo "━━━ UPDATE SUMMARY ━━━━━━━━━━━━━━━━"
+    set_color normal
+    for host in $ordered
+        if contains -- "$host" $succeeded
+            set_color --bold green
+            printf '  ✓ %-12s SUCCESS\n' "$host"
+            set_color normal
+        else
+            set_color --bold red
+            printf '  ✗ %-12s FAILED\n' "$host"
+            set_color normal
+        end
+    end
+    if test (count $failed) -gt 0
+        echo "  Failed: "(string join ', ' $failed)
+        return 1
+    end
+
+    echo "  All enabled machines updated"
 end
