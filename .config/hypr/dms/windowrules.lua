@@ -10,8 +10,8 @@ hl.window_rule({ match = { class = "^zen$", title = "^Picture-in-Picture$" }, fl
 -- DMS-RULE: id=wr_1792723802544745494, name=steam_app_32370
 hl.window_rule({ match = { class = "^steam_app_32370$" }, fullscreen = true })
 
--- DMS-RULE: id=wr_1794150453725030819, name=com.github.wwmm.easyeffects
-hl.window_rule({ match = { class = "^com.github.wwmm.easyeffects$", float = true } })
+-- DMS-RULE: id=wr_1794643289276456046, name=nm-connection-editor
+hl.window_rule({ match = { class = "^nm-connection-editor$", float = true } })
 
 -- DMS-RULE: id=dms-window-opaque, name=DMS Window Opaque
 hl.window_rule({ match = { class = "^(dev\\.duxlabs\\.shell|com\\.danklinux\\.dms)$" }, opaque = true })
